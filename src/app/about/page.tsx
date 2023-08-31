@@ -1,11 +1,20 @@
-import Image from 'next/image'
-import Link from 'next/link'
+'use client'
 
-export default function Home() {
-  return (
-    <div className="bg-slate-500">
-      <p>about page</p>
-      <Link href="/">home</Link>
-    </div>
-  )
+export const dynamic = 'force-dynamic'
+
+import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr'
+import gql from 'graphql-tag'
+
+const query = gql`
+  query {
+    hello
+  }
+`
+
+import React from 'react'
+
+export default function PollPage() {
+  const { data } = useSuspenseQuery(query)
+
+  return <div>{data ? JSON.stringify(data) : <div>Loading...</div>}</div>
 }

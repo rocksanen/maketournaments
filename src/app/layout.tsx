@@ -1,6 +1,7 @@
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
+import { ApolloWrapper } from './apollo-wrapper'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -16,7 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className='bg-purple-200'>{children}</body>
+      <ApolloWrapper>
+        <body className="bg-purple-200">{children}</body>
+      </ApolloWrapper>
     </html>
   )
 }
