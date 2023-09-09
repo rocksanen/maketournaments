@@ -2,6 +2,7 @@
 
 export const dynamic = 'force-dynamic'
 
+import userModel from '@/model/userModel'
 import { useSuspenseQuery } from '@apollo/experimental-nextjs-app-support/ssr'
 import gql from 'graphql-tag'
 
@@ -10,8 +11,6 @@ const query = gql`
     hello
   }
 `
-
-import React from 'react'
 
 export default function PollPage() {
   const { data } = useSuspenseQuery(query)
