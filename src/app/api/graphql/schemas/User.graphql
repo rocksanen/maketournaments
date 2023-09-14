@@ -1,6 +1,8 @@
 type User {
-    _id: ID
-    name: String
-    email: String
-    password: String
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  tournaments: [Tournament]
+  userCreated: String!
 }

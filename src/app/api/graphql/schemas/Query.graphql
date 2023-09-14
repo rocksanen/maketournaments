@@ -1,6 +1,6 @@
 type Query {
     # User Queries
-    user(_id: ID!): User
+    user(id: ID!): User
     allUsers: [User]
 
     # Match Queries
@@ -20,5 +20,4 @@ type Query {
     allTournaments: [Tournament]
 
     hello: String
-    user: [User]
 }

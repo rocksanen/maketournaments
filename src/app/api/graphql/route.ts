@@ -1,6 +1,6 @@
 import { ApolloServer } from '@apollo/server'
 import typeDefs from './schemas/index'
-import { resolvers } from './resolvers'
+import resolvers from './resolvers/index'
 import { startServerAndCreateNextHandler } from '@as-integrations/next'
 import { NextRequest } from 'next/server'
 import { connectToDatabase } from '@/utils/db'
@@ -10,8 +10,8 @@ connectToDatabase()
 
 
 const server = new ApolloServer({
-  resolvers,
   typeDefs,
+  resolvers
 })
 
 const handler = startServerAndCreateNextHandler<NextRequest>(server)
