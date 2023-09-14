@@ -1,6 +1,3 @@
-// TODO : tournament interface in mongoose schema
-// It needs to have these following fields :
-// name, rules as list, date, players, admin, matches,
 
 import { Types } from "mongoose";
 import { Document } from "mongoose";

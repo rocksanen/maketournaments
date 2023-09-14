@@ -1,6 +1,3 @@
-//TODO : series interface in mongoose schema
-// It needs to have these following fields :
-// name, tournaments as list, admin
 
 import { Types } from "mongoose";
 import { Document } from "mongoose";

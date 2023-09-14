@@ -1,6 +1,4 @@
-// TODO: mongoose schema for user
-// schema has to have these following fields :
-// name, email, password, tournaments where user is either admin or user, isAdmin in a specific tournament
+
 import { User } from '@/types/User';
 import mongoose from 'mongoose';
 

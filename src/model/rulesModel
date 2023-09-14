@@ -1,4 +1,4 @@
-//TODO: mongoose schema for rules
+
 
 import { Schema, model } from "mongoose";
 import { Rules } from "@/types/Rules";

@@ -1,7 +1,4 @@
-// TODO : mongoose schema for tournament
-// schema has to have these following fields :
-// id, name, rules as list, date, players, admin, matches,
-//
+
 import { Tournament } from '@/types/Tournament';
 import mongoose, { Types } from 'mongoose';
 

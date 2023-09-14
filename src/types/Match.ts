@@ -1,6 +1,3 @@
-// TODO : match interface in mongoose schema
-// It needs to have these following fields :
-// players as list, winner, loser, date, startTime, endTime
 
 import { Types } from "mongoose";
 import { Document } from "mongoose";
