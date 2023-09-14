@@ -8,6 +8,6 @@ const fetchUsers = async () => {
 export const resolvers = {
   Query: {
     hello: () => 'worlldd',
-    user: fetchUsers,
+    //user: fetchUsers,
   },
 }
