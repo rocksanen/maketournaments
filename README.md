@@ -12,6 +12,8 @@ npm run dev to run development version
 
 example graphql query using postman/insomnia
 
+change the example user attributes in resolvers.ts
+
 POST: http://localhost:3000/api/graphql/
 {
   "query": "query { user { name email password }}"
