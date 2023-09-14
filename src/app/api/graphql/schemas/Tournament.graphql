@@ -1,0 +1,9 @@
+type Tournament {
+    id: ID!
+    name: String!
+    rules: [Rule!]!
+    date: String!
+    players: [User]
+    admin: User!
+    matches: [Match]
+}

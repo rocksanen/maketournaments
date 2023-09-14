@@ -1,0 +1,9 @@
+type Rules {
+    id: ID!
+    rounds: Int!
+    winnerpoints: Int!
+    loserpoints: Int!
+    drawpoints: Int!
+    nightmarepoints: Int!
+    nightmarePointsOn: Boolean!
+}

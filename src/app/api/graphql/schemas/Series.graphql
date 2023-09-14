@@ -1,0 +1,8 @@
+type Series {
+    id: ID!
+    name: String!
+    tournaments: [Tournament]
+    admin: User!
+    seriesCreated: String!
+    seriesEnded: String
+}

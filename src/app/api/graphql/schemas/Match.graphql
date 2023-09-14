@@ -1,0 +1,7 @@
+type Match {
+    id: ID!
+    players: [User]
+    winner: User
+    startTime: String!
+    endTime: String!
+}
