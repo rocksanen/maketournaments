@@ -9,9 +9,9 @@ const fetchUser = async () => {
 //post user to database for testing purposes
 const postUser = async () => {
   const user = new userModel({
-    name: "Kalle Kula",
-    email: "kalle@testmail.com",
-    password: "1234",
+    name: "Pelle Hermanni",
+    email: "pelle@testmail.com",
+    password: "123456",
   })
   const newUser = await user.save()
   return newUser

@@ -2,7 +2,6 @@
 import { Document } from "mongoose";
 
 interface Rules extends Document {
-    _id: number;
     rounds: number;
     winnerpoints: number;
     loserpoints: number;

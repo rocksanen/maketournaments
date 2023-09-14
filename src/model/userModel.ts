@@ -16,7 +16,8 @@ const userSchema = new mongoose.Schema<User>({
   },
   password: {
     type: String, 
-    required: true
+    required: true,
+    unique: true,
   },
   tournaments: [{
     type: mongoose.Schema.Types.ObjectId,
