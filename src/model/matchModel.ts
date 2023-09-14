@@ -1,4 +1,4 @@
-//TODO: mongoose schema for match
+
 
 import { Schema, model } from "mongoose";
 import { Match } from "@/types/Match";

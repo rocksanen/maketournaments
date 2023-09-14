@@ -1,5 +1,4 @@
 
-//TODO: mongoose model for series
 
 import { Series } from '@/types/Series';
 import mongoose from 'mongoose';

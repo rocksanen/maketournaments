@@ -1,6 +1,3 @@
-// TODO : rules interface in mongoose schema
-// It needs to have these following fields :
-// rounds, winnerpoints, loserpoints, drawpoints
 
 import { Document } from "mongoose";
 
