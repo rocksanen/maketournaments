@@ -1,5 +1,3 @@
-// TODO: user interface in mongoose schema
-
 import { Document } from "mongoose";
 
 interface User extends Document {
@@ -7,14 +5,8 @@ interface User extends Document {
     email: string;
     password: string;
     tournaments: number[];
-    userCreated: Date;
-  }
-
-interface UserLogin {
-    username: string;
-    email: string;
-    id: string;
+    provider: string;
   }
   
-export type {User, UserLogin};
+export type {User};
   
