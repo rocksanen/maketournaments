@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/providers/theme-provider'
 import Navbar from '@/components/shared/navbar'
 import Footer from '@/components/shared/footer'
 import { ApolloWrapper } from './apollo-wrapper'
+import NextUI from './NextUI'
 
 export const metadata: Metadata = {
   title: 'maketournaments',
@@ -20,15 +21,17 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html lang="en">
       <body>
         <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <ApolloWrapper>
-              <Navbar />
-              <main className="min-h-screen flex flex-col justify-center items-center">
-                {children}
-              </main>
-              <Footer />
-            </ApolloWrapper>
-          </ThemeProvider>
+          <NextUI>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <ApolloWrapper>
+                <Navbar />
+                <main className="min-h-screen flex flex-col justify-center items-center">
+                  {children}
+                </main>
+                <Footer />
+              </ApolloWrapper>
+            </ThemeProvider>
+          </NextUI>
         </AuthProvider>
       </body>
     </html>
