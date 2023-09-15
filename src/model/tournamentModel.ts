@@ -30,4 +30,4 @@ const tournamentSchema = new mongoose.Schema<Tournament>({
     }],
 });
 
-export default mongoose.model<Tournament>('Tournament', tournamentSchema);s
+export default mongoose.model<Tournament>('Tournament', tournamentSchema);

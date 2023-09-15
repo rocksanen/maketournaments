@@ -5,31 +5,27 @@ import mongoose from 'mongoose';
 const userSchema = new mongoose.Schema<User>({
   name: {
     type: String,
-    required: true,
-    minlength: 3,
-    maxlength: 20,
+    required: true
   },
   email: {
     type: String,
-    required: true,
     unique: true,
+    required: true
   },
   password: {
-    type: String, 
-    required: true,
-    unique: true,
+    type: String
   },
   tournaments: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tournament',
   }],
-  userCreated: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  provider: {
+    type: String,
+    default: 'credentials'
+  }
+}, { timestamps: true })
 
-
-const userModel = mongoose.model<User>('User', userSchema);
+// checking if the model exists, then use it else create it.
+const userModel = mongoose.models.User || mongoose.model<User>('User', userSchema)
 
 export default userModel;
