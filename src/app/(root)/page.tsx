@@ -8,6 +8,11 @@ import {
   TableColumn,
   TableRow,
   TableCell,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Button,
 } from '@nextui-org/react'
 import { Spinner } from '@nextui-org/react'
 
@@ -16,12 +21,9 @@ export default function Home() {
     <div className="flex flex-col gap-10">
       <h1>kkona</h1>
       <Spinner label="Primary" color="primary" labelColor="primary" />
-      <Checkbox className="bg-yellow-800 text-2xl">Checkbox</Checkbox>
+      <Checkbox>Checkbox</Checkbox>
 
-      <Table
-        className="bg-yellow-200 text-black"
-        aria-label="Example static collection table"
-      >
+      <Table aria-label="Example static collection table">
         <TableHeader>
           <TableColumn>NAME</TableColumn>
           <TableColumn>ROLE</TableColumn>
@@ -50,6 +52,20 @@ export default function Home() {
           </TableRow>
         </TableBody>
       </Table>
+
+      <Dropdown>
+        <DropdownTrigger>
+          <Button variant="bordered">Open Menu</Button>
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Static Actions">
+          <DropdownItem key="new">New file</DropdownItem>
+          <DropdownItem key="copy">Copy link</DropdownItem>
+          <DropdownItem key="edit">Edit file</DropdownItem>
+          <DropdownItem key="delete" className="text-danger" color="danger">
+            Delete file
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     </div>
   )
 }
