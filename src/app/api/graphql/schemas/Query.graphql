@@ -2,6 +2,9 @@ type Query {
     # User Queries
     user(id: ID!): User
     allUsers: [User]
+    createUser(name: String!, email: String!, password: String!): User!
+    updateUser(id: ID!, name: String, email: String, password: String): User
+    deleteUser(id: ID!): User
 
     # Match Queries
     match(id: ID!): Match
