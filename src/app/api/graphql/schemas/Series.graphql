@@ -6,3 +6,12 @@ type Series {
     seriesCreated: String!
     seriesEnded: String
 }
+
+input SeriesInput {
+    id: ID
+    name: String!
+    tournaments: [ID!]
+    admin: ID!
+    seriesCreated: String!
+    seriesEnded: String
+}

@@ -2,24 +2,29 @@ import Tournament from "@/model/tournamentModel";
 import {Rules} from "@/types/Rules";
 import {User} from "@/types/User";
 import {Match} from "@/types/Match";
+import {renameIdField} from "@/utils/idCon";
 
 interface CreateTournamentArgs {
-    name: string;
-    rules: Rules[];  // Update this with your Rules type definition if necessary
-    date: string;
-    players?: User[];  // Assuming this is an array of User IDs
-    admin: User;       // Assuming this is the User ID of the admin
-    matches?: Match[];  // Assuming this is an array of Match IDs
+    input: {
+        name: string;
+        rules: Rules[];
+        date: string;
+        players?: User[];
+        admin: User;
+        matches?: Match[];
+    }
 }
 
 interface UpdateTournamentArgs {
     id: string;
-    name?: string;
-    rules?: Rules[];  // Update this with your Rules type definition if necessary
-    date?: string;
-    players?: User[];  // Array of User IDs
-    admin?: User;      // User ID of the admin
-    matches?: Match[];  // Array of Match IDs
+    input: {
+        name?: string;
+        rules?: Rules[];
+        date?: string;
+        players?: User[];
+        admin?: User;
+        matches?: Match[];
+    }
 }
 
 const tournamentResolvers = {
@@ -46,20 +51,47 @@ const tournamentResolvers = {
     },
 
     Mutation: {
-        createTournament: async (_: any, args: CreateTournamentArgs) => {
+        createTournament: async (_: any, { input }: CreateTournamentArgs) => {
             try {
-                const newTournament = new Tournament(args);
-                const result = await newTournament.save();
-                return result;
+                // If you're storing references in the Tournament model, extract IDs
+                const adminId = input.admin;
+                const playerIds = input.players?.map(player => player.id);
+        
+                const newTournament = new Tournament({
+                    ...input,
+                    admin: adminId,
+                    players: playerIds
+                });
+        
+                const savedTournament = await newTournament.save();
+        
+                // Use the Model to fetch and populate the document
+                const result = await Tournament.findById(savedTournament._id).populate('rules admin players');
+                
+
+                if (!result) {
+                    throw new Error('Failed to retrieve and populate saved tournament');
+                }
+
+                const resultObj = result.toJSON();
+                const out = renameIdField(resultObj);
+
+                return out;
             } catch (error) {
                 console.error("Failed to create tournament:", error);
                 throw new Error('Failed to create tournament');
             }
         },
 
-        updateTournament: async (_: any, { id, ...args }: UpdateTournamentArgs) => {
+        updateTournament: async (_: any, { id, input }: UpdateTournamentArgs) => {
             try {
-                const updatedTournament = await Tournament.findByIdAndUpdate(id, args, {
+                if (input.admin) {
+                    input.admin = input.admin.id; // Convert to ID if it's an object
+                }
+                if (input.players) {
+                    input.players = input.players.map(player => player.id); // Convert array of objects to array of IDs
+                }
+                const updatedTournament = await Tournament.findByIdAndUpdate(id, input, {
                     new: true
                 });
                 return updatedTournament;
@@ -83,3 +115,5 @@ const tournamentResolvers = {
         }
     }
 };
+
+export default tournamentResolvers;

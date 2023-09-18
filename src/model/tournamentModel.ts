@@ -8,7 +8,8 @@ const tournamentSchema = new mongoose.Schema<Tournament>({
         required: true,
     },
     rules: [{
-        type: Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Rules',
         required: true,
     }],
     date: {
@@ -30,4 +31,7 @@ const tournamentSchema = new mongoose.Schema<Tournament>({
     }],
 });
 
-export default mongoose.model<Tournament>('Tournament', tournamentSchema);
+
+
+const Tournament = mongoose.models.Tournament || mongoose.model('Tournament', tournamentSchema);
+export default Tournament;

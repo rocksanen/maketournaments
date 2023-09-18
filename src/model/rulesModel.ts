@@ -1,6 +1,6 @@
 
 
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import { Rules } from "@/types/Rules";
 
 const rulesSchema = new Schema<Rules>({
@@ -30,4 +30,5 @@ const rulesSchema = new Schema<Rules>({
     },
 });
 
-export default model<Rules>('Rules', rulesSchema);
+const Rules = mongoose.models.Rules || mongoose.model('Rules', rulesSchema);
+export default Rules;

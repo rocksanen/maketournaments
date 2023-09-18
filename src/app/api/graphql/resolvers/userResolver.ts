@@ -6,18 +6,22 @@ interface UserArgs {
 }
 
 interface CreateUserArgs {
-    name: string;
-    email: string;
-    password: string;
-    // add other fields as necessary
+    input: {
+        name: string;
+        email: string;
+        password: string;
+        // add other fields as necessary
+    };
 }
 
 interface UpdateUserArgs {
-    id: string;
-    name?: string;
-    email?: string;
-    password?: string;
-    // add other fields as necessary
+    input: {
+        id: string;
+        name?: string;
+        email?: string;
+        password?: string;
+        // add other fields as necessary
+    };
 }
 
 interface DeleteUserArgs {
@@ -46,14 +50,15 @@ const userResolvers = {
             }
         },
     },
+
     Mutation: {
-        createUser: async (_: any, args: CreateUserArgs) => {
+        createUser: async (_: any, { input }: CreateUserArgs) => {
             try {
                 // Hash the password before saving
-                const hashedPassword = await bcrypt.hash(args.password, 10);
+                const hashedPassword = await bcrypt.hash(input.password, 10);
                 
                 const newUser = new userModel({
-                    ...args,
+                    ...input,
                     password: hashedPassword,
                 });
                 
@@ -65,14 +70,15 @@ const userResolvers = {
             }
         },
 
-        updateUser: async (_: any, { id, ...args }: UpdateUserArgs) => {
+        updateUser: async (_: any, { input }: UpdateUserArgs) => {
+            const { id, ...rest } = input;
             try {
-                if (args.password) {
+                if (rest.password) {
                     // Hash the new password before updating
-                    args.password = await bcrypt.hash(args.password, 10);
+                    rest.password = await bcrypt.hash(rest.password, 10);
                 }
 
-                const updatedUser = await userModel.findByIdAndUpdate(id, args, {
+                const updatedUser = await userModel.findByIdAndUpdate(id, rest, {
                     new: true // returns the updated document
                 });
                 return updatedUser;
