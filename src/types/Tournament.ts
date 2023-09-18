@@ -7,7 +7,7 @@ interface Tournament extends Document {
     rules: number[];
     date: Date;
     players: number[];
-    admin: Types.ObjectId;
+    admin: Types.ObjectId[];
     matches: number[];
     }
 
