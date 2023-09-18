@@ -19,11 +19,11 @@ const tournamentSchema = new mongoose.Schema<Tournament>({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }],
-    admin: {
+    admin: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
-    },
+    }],
     matches: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Match'
