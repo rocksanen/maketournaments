@@ -1,29 +1,32 @@
 import Tournament from "@/model/tournamentModel";
+import {Rules} from "@/types/Rules";
+import {User} from "@/types/User";
+import {Match} from "@/types/Match";
 
 interface CreateTournamentArgs {
     name: string;
-    rules: any[];  // Update this with your Rules type definition if necessary
+    rules: Rules[];  // Update this with your Rules type definition if necessary
     date: string;
-    players?: string[];  // Assuming this is an array of User IDs
-    admin: string;       // Assuming this is the User ID of the admin
-    matches?: string[];  // Assuming this is an array of Match IDs
+    players?: User[];  // Assuming this is an array of User IDs
+    admin: User;       // Assuming this is the User ID of the admin
+    matches?: Match[];  // Assuming this is an array of Match IDs
 }
 
 interface UpdateTournamentArgs {
     id: string;
     name?: string;
-    rules?: any[];  // Update this with your Rules type definition if necessary
+    rules?: Rules[];  // Update this with your Rules type definition if necessary
     date?: string;
-    players?: string[];  // Array of User IDs
-    admin?: string;      // User ID of the admin
-    matches?: string[];  // Array of Match IDs
+    players?: User[];  // Array of User IDs
+    admin?: User;      // User ID of the admin
+    matches?: Match[];  // Array of Match IDs
 }
 
 const tournamentResolvers = {
     Query: {
         tournament: async (_: any, { id }: { id: string }) => {
             try {
-                const tournament = await Tournament.findById(id).populate('players admin matches');
+                const tournament = await Tournament.findById(id);
                 return tournament;
             } catch (error) {
                 console.error("Failed to fetch tournament:", error);
@@ -33,7 +36,7 @@ const tournamentResolvers = {
         
         allTournaments: async () => {
             try {
-                const tournaments = await Tournament.find().populate('players admin matches');
+                const tournaments = await Tournament.find();
                 return tournaments;
             } catch (error) {
                 console.error("Failed to fetch tournaments:", error);
@@ -58,7 +61,7 @@ const tournamentResolvers = {
             try {
                 const updatedTournament = await Tournament.findByIdAndUpdate(id, args, {
                     new: true
-                }).populate('players admin matches');
+                });
                 return updatedTournament;
             } catch (error) {
                 console.error("Failed to update tournament:", error);

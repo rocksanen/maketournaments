@@ -21,6 +21,9 @@ type Query {
     # Tournament Queries
     tournament(id: ID!): Tournament
     allTournaments: [Tournament]
+    createTournament(name: String!, rules: [Rules!]!, date: String!, players: [ID], admin: ID!, matches: [ID]): Tournament!
+    updateTournament(id: ID!, name: String, rules: [Rules!], date: String, players: [ID], admin: ID, matches: [ID]): Tournament
+    deleteTournament(id: ID!): Tournament
 
     hello: String
 }
