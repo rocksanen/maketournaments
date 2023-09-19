@@ -19,3 +19,5 @@ declare module 'next-auth' {
     }
   }
 }
+
+export type {Session};

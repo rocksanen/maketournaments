@@ -11,7 +11,11 @@ function SignOutButton() {
     })
   }
 
-  return <Button onClick={signout}>Sign Out</Button>
+  return (
+    <Button className="w-full text-left" onClick={signout}>
+      Sign Out
+    </Button>
+  )
 }
 
 export default SignOutButton
