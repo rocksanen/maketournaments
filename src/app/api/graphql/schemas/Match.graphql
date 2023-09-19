@@ -5,3 +5,11 @@ type Match {
     startTime: String!
     endTime: String!
 }
+
+input MatchInput {
+    id: ID
+    players: [ID!]
+    winner: ID
+    startTime: String!
+    endTime: String!
+}

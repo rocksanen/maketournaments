@@ -30,6 +30,5 @@ const seriesSchema = new mongoose.Schema<Series>({
     },
 });
 
-export default mongoose.model<Series>('Series', seriesSchema);
-
-
+const Series = mongoose.models.Series || mongoose.model('Series', seriesSchema);
+export default Series;

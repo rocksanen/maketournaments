@@ -7,3 +7,22 @@ type Tournament {
     admin: User!
     matches: [Match]
 }
+
+input CreateTournamentInput {
+    name: String!
+    rules: [ID!]!
+    date: String!
+    players: [ID!]
+    admin: ID!
+    matches: [ID!]
+}
+
+input UpdateTournamentInput {
+    id: ID!
+    name: String
+    rules: [ID!]
+    date: String
+    players: [ID!]
+    admin: ID
+    matches: [ID!]
+}

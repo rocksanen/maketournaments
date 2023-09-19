@@ -25,7 +25,6 @@ const userSchema = new mongoose.Schema<User>({
   }
 }, { timestamps: true })
 
-// checking if the model exists, then use it else create it.
-const userModel = mongoose.models.User || mongoose.model<User>('User', userSchema)
 
-export default userModel;
+const User = mongoose.models.User || mongoose.model('User', userSchema);
+export default User;

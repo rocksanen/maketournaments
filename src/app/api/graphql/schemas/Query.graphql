@@ -21,3 +21,17 @@ type Query {
 
     hello: String
 }
+
+type Mutation {
+    createUser(input: CreateUserInput!): User!
+    updateUser(input: UpdateUserInput!): User
+    deleteUser(id: ID!): User
+
+    createTournament(input: CreateTournamentInput!): Tournament!
+    updateTournament(input: UpdateTournamentInput!): Tournament
+    deleteTournament(id: ID!): Boolean
+
+    createRules(input: RulesInput!): Rules!
+    updateRules(input: UpdateRulesInput!): Rules
+    deleteRules(id: ID!): Rules
+}

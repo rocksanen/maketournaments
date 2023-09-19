@@ -5,13 +5,12 @@ import { startServerAndCreateNextHandler } from '@as-integrations/next'
 import { NextRequest } from 'next/server'
 import { connectToDatabase } from '@/utils/db'
 
-
 connectToDatabase()
 
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers
+  resolvers,
 })
 
 const handler = startServerAndCreateNextHandler<NextRequest>(server)
