@@ -1,6 +1,5 @@
-
-
-import { Schema, model } from "mongoose";
+import mongoose from "mongoose";
+import { Schema, model, mongo } from "mongoose";
 import { Match } from "@/types/Match";
 
 const matchSchema = new Schema<Match>({
@@ -22,4 +21,5 @@ const matchSchema = new Schema<Match>({
     },
 });
 
-export default model<Match>('Match', matchSchema);
+const Match = mongoose.models.Match || mongoose.model('Match', matchSchema);
+export default Match;

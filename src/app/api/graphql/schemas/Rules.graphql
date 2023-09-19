@@ -1,0 +1,28 @@
+type Rules {
+    id: ID!
+    rounds: Int!
+    winnerpoints: Int!
+    loserpoints: Int!
+    drawpoints: Int!
+    nightmarepoints: Int!
+    nightmarePointsOn: Boolean!
+}
+
+input RulesInput {
+    rounds: Int!
+    winnerpoints: Int!
+    loserpoints: Int!
+    drawpoints: Int!
+    nightmarepoints: Int!
+    nightmarePointsOn: Boolean!
+}
+
+input UpdateRulesInput {
+    id: ID!
+    rounds: Int
+    winnerpoints: Int
+    loserpoints: Int
+    drawpoints: Int
+    nightmarepoints: Int
+    nightmarePointsOn: Boolean
+}
