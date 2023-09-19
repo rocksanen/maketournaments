@@ -23,15 +23,23 @@ type Query {
 }
 
 type Mutation {
+    # User Mutations
     createUser(input: CreateUserInput!): User!
     updateUser(input: UpdateUserInput!): User
     deleteUser(id: ID!): Boolean
 
+    # Tournament Mutations
     createTournament(input: CreateTournamentInput!): Tournament!
     updateTournament(input: UpdateTournamentInput!): Tournament
     deleteTournament(id: ID!): Boolean
 
+    # Rules Mutations
     createRules(input: RulesInput!): Rules!
     updateRules(input: UpdateRulesInput!): Rules
     deleteRules(id: ID!): Boolean
+
+    # Match Mutations
+    createMatch(input: CreateMatchInput!): Match!
+    updateMatch(input: UpdateMatchInput!): Match
+    deleteMatch(id: ID!): Boolean
 }
