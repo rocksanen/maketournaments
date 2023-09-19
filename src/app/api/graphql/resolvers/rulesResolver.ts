@@ -77,7 +77,7 @@ const rulesResolvers = {
                 if (!deletedRule) {
                     throw new Error('Rules not found');
                 }
-                return deletedRule;
+                return true;
             } catch (error) {
                 console.error("Failed to delete rules:", error);
                 throw new Error('Failed to delete rules');

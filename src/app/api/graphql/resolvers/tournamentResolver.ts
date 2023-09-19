@@ -16,8 +16,8 @@ interface CreateTournamentArgs {
 }
 
 interface UpdateTournamentArgs {
-    id: string;
     input: {
+        id: string;
         name?: string;
         rules?: Rules[];
         date?: string;
@@ -83,18 +83,24 @@ const tournamentResolvers = {
             }
         },
 
-        updateTournament: async (_: any, { id, input }: UpdateTournamentArgs) => {
+        updateTournament: async (_: any, args: UpdateTournamentArgs) => {
+            const { id, ...inputData } = args.input;
+        
             try {
-                if (input.admin) {
-                    input.admin = input.admin.id; // Convert to ID if it's an object
+                if (inputData.admin) {
+                    inputData.admin = inputData.admin.id; // Convert to ID if it's an object
                 }
-                if (input.players) {
-                    input.players = input.players.map(player => player.id); // Convert array of objects to array of IDs
+                if (inputData.players) {
+                    inputData.players = inputData.players.map(player => player.id); // Convert array of objects to array of IDs
                 }
-                const updatedTournament = await Tournament.findByIdAndUpdate(id, input, {
+                const updatedTournament = await Tournament.findByIdAndUpdate(id, inputData, {
                     new: true
-                });
-                return updatedTournament;
+                }).populate('rules admin players');
+
+                const resultObj = updatedTournament.toJSON();
+                const out = renameIdField(resultObj);
+
+                return out;
             } catch (error) {
                 console.error("Failed to update tournament:", error);
                 throw new Error('Failed to update tournament');
@@ -107,7 +113,8 @@ const tournamentResolvers = {
                 if (!deletedTournament) {
                     throw new Error('Tournament not found');
                 }
-                return deletedTournament;
+
+                return true;
             } catch (error) {
                 console.error("Failed to delete tournament:", error);
                 throw new Error('Failed to delete tournament');

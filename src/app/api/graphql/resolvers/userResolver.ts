@@ -94,7 +94,7 @@ const userResolvers = {
                 if (!deletedUser) {
                     throw new Error('User not found');
                 }
-                return deletedUser;
+                return true;
             } catch (error) {
                 console.error("Failed to delete user:", error);
                 throw new Error('Failed to delete user');
