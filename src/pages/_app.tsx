@@ -7,17 +7,17 @@ import { ApolloProvider } from '@apollo/client'
 import createApolloClient from '@/utils/apolloClient'
 
 function MyApp({ Component, pageProps }: AppProps) {
-  const client = createApolloClient();
+  const client = createApolloClient()
   return (
-    <NextThemesProvider defaultTheme="system" attribute="class">
-      <NextUIProvider>
-        <ApolloProvider client={client}>
+    <ApolloProvider client={client}>
+      <NextThemesProvider defaultTheme="system" attribute="class">
+        <NextUIProvider>
           <Layout>
             <Component {...pageProps} />
           </Layout>
-        </ApolloProvider>
-      </NextUIProvider>
-    </NextThemesProvider>
+        </NextUIProvider>
+      </NextThemesProvider>
+    </ApolloProvider>
   )
 }
 

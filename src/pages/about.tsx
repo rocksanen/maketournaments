@@ -1,9 +1,10 @@
 import { useQuery, gql } from '@apollo/client'
 
 const QUERY = gql`
-  query Countries {
+  query {
     allUsers {
       name
+      email
     }
   }
 `
@@ -16,13 +17,13 @@ export default function About() {
   }
 
   if (error) {
-    console.error("about error", error)
+    console.error('about error', error)
     return <h2>error</h2>
   }
 
   return (
     <div>
-      <h2>Countries</h2>
+      <h2>users</h2>
       <p>{JSON.stringify(data)}</p>
     </div>
   )
