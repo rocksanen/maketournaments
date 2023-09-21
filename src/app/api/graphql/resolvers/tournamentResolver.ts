@@ -10,7 +10,7 @@ interface CreateTournamentArgs {
         rules: Rules[];
         date: string;
         players?: User[];
-        admin: User;
+        admin: User[];
         matches?: Match[];
     }
 }
@@ -22,7 +22,7 @@ interface UpdateTournamentArgs {
         rules?: Rules[];
         date?: string;
         players?: User[];
-        admin?: User;
+        admin?: User[];
         matches?: Match[];
     }
 }
@@ -31,7 +31,8 @@ const tournamentResolvers = {
     Query: {
         tournament: async (_: any, { id }: { id: string }) => {
             try {
-                const tournament = await Tournament.findById(id).populate('rules admin players matches');;
+                const tournament = await Tournament.findById(id).populate('rules admin players matches');
+                console.log(tournament);
                 return tournament;
             } catch (error) {
                 console.error("Failed to fetch tournament:", error);
