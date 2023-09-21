@@ -1,0 +1,28 @@
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  tournaments: [Tournament]
+  userCreated: String!
+}
+
+input CreateUserInput {
+    name: String!
+    email: String!
+    password: String!
+}
+
+input UpdateUserInput {
+    id: ID!
+    name: String
+    email: String
+    password: String
+}
+
+input UserInput {
+    id: ID
+    name: String
+    email: String
+    password: String
+}

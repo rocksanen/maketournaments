@@ -1,0 +1,15 @@
+type Match {
+    id: ID!
+    players: [User]
+    winner: User
+    startTime: String!
+    endTime: String!
+}
+
+input MatchInput {
+    id: ID
+    players: [ID!]
+    winner: ID
+    startTime: String!
+    endTime: String!
+}
