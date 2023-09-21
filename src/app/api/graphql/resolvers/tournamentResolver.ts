@@ -88,9 +88,9 @@ const tournamentResolvers = {
             const { id, ...inputData } = args.input;
         
             try {
-                if (inputData.admin) {
+                /*if (inputData.admin) {
                     inputData.admin = inputData.admin.id; // Convert to ID if it's an object
-                }
+                }*/
                 if (inputData.players) {
                     inputData.players = inputData.players.map(player => player.id); // Convert array of objects to array of IDs
                 }
