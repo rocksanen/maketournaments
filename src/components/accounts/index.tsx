@@ -8,7 +8,7 @@ import { TrashIcon } from "../icons/accounts/trash-icon";
 import { HouseIcon } from "../icons/breadcrumb/house-icon";
 import { UsersIcon } from "../icons/breadcrumb/users-icon";
 import { SettingsIcon } from "../icons/sidebar/settings-icon";
-import { TableWrapper } from "../table/table";
+import { TableWrapper } from "../tournamentTable/table";
 import { AddUser } from "./add-user";
 
 export const Accounts = () => {

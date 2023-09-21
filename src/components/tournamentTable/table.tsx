@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@nextui-org/react";
 import React from "react";
-import { columns, users } from "./data";
+import { columns, tournaments } from "./data";
 import { RenderCell } from "./render-cell";
 
 export const TableWrapper = () => {
@@ -26,12 +26,12 @@ export const TableWrapper = () => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={users}>
+        <TableBody items={tournaments}>
           {(item) => (
             <TableRow>
               {(columnKey) => (
                 <TableCell>
-                  {RenderCell({ user: item, columnKey: columnKey })}
+                  {RenderCell({ tournament: item, columnKey: columnKey })}
                 </TableCell>
               )}
             </TableRow>
