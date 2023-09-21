@@ -17,14 +17,14 @@ export const CardAgents = () => {
           <div className="flex flex-col border-dashed border-2 border-divider py-2 px-6 rounded-xl">
             <span className="text-default-900 text-xl font-semibold">
               {" "}
-              {"⭐"}Agents
+              {"⭐"}Friends
             </span>
           </div>
         </div>
 
         <div className="flex items-center gap-6 flex-col">
           <span className="text-xs">
-            Meet your agenda and see their ranks to get the best results
+            Meet my friends : Eetu, Emil and Joni
           </span>
           <AvatarGroup isBordered>
             <Avatar src="https://i.pravatar.cc/150?u=a042581f4e29026024d" />

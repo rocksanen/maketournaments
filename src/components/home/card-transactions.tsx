@@ -3,34 +3,34 @@ import React from "react";
 
 const items = [
   {
-    name: "Jose Perez",
+    name: "Kill The Bear",
     picture: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    amount: "4500 USD",
+    amount: "3.",
     date: "9/20/2021",
   },
   {
-    name: "Jose Perez",
+    name: "Finnish Open",
     picture: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    amount: "4500 USD",
-    date: "9/20/2021",
+    amount: "1.",
+    date: "2/3/2021",
   },
   {
-    name: "Jose Perez",
+    name: "Wilds Of Eldraine",
     picture: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    amount: "4500 USD",
-    date: "9/20/2021",
+    amount: "7.",
+    date: "12/21/2021",
   },
   {
-    name: "Jose Perez",
+    name: "Dominaria United",
     picture: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    amount: "4500 USD",
-    date: "9/20/2021",
+    amount: "4.",
+    date: "6/13/2021",
   },
   {
-    name: "Jose Perez",
+    name: "Turnamente Drammatico",
     picture: "https://i.pravatar.cc/150?u=a042581f4e29026024d",
-    amount: "4500 USD",
-    date: "9/20/2021",
+    amount: "1.",
+    date: "10/27/2021",
   },
 ];
 
@@ -41,7 +41,7 @@ export const CardTransactions = () => {
         <div className="flex gap-2.5 justify-center">
           <div className="flex flex-col border-dashed border-2 border-divider py-2 px-6 rounded-xl">
             <span className="text-default-900 text-xl font-semibold">
-              Latest Transactions
+              Latest Tournaments
             </span>
           </div>
         </div>
@@ -64,7 +64,7 @@ export const CardTransactions = () => {
                 <span className="text-success text-xs">{item.amount}</span>
               </div>
               <div>
-                <span className="text-default-500 text-xs">{item.date}</span>
+                <span className="text-default-500 text-xs ">{item.date}</span>
               </div>
             </div>
           ))}

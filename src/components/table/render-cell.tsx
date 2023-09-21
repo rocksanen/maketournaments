@@ -25,6 +25,13 @@ export const RenderCell = ({ user, columnKey }: Props) => {
           {user.email}
         </User>
       );
+    case "date":
+      return (
+        <div>
+          <span>{cellValue}</span>
+          <span className="text-xs text-gray-500">{user.date}</span>
+        </div>
+      );
     case "role":
       return (
         <div>
