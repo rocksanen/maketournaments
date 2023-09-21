@@ -31,7 +31,7 @@ const tournamentResolvers = {
     Query: {
         tournament: async (_: any, { id }: { id: string }) => {
             try {
-                const tournament = await Tournament.findById(id);
+                const tournament = await Tournament.findById(id).populate('rules admin players matches');;
                 return tournament;
             } catch (error) {
                 console.error("Failed to fetch tournament:", error);
@@ -41,7 +41,7 @@ const tournamentResolvers = {
         
         allTournaments: async () => {
             try {
-                const tournaments = await Tournament.find();
+                const tournaments = await Tournament.find().populate('rules admin players matches');;
                 return tournaments;
             } catch (error) {
                 console.error("Failed to fetch tournaments:", error);
@@ -66,7 +66,7 @@ const tournamentResolvers = {
                 const savedTournament = await newTournament.save();
         
                 // Use the Model to fetch and populate the document
-                const result = await Tournament.findById(savedTournament._id).populate('rules admin players');
+                const result = await Tournament.findById(savedTournament._id).populate('rules admin players matches');
                 
 
                 if (!result) {
@@ -95,7 +95,7 @@ const tournamentResolvers = {
                 }
                 const updatedTournament = await Tournament.findByIdAndUpdate(id, inputData, {
                     new: true
-                }).populate('rules admin players');
+                }).populate('rules admin players matches');
 
                 const resultObj = updatedTournament.toJSON();
                 const out = renameIdField(resultObj);
