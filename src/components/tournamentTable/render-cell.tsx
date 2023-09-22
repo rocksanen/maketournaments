@@ -72,15 +72,6 @@ export const RenderCell = ({ tournament, columnKey }: Props) => {
             </Tooltip>
           </div>
           <div>
-            <Tooltip
-              content="Delete user"
-              color="danger"
-              onClick={() => console.log("Delete user", tournament.id)}
-            >
-              <button>
-                <DeleteIcon size={20} fill="#FF0080" />
-              </button>
-            </Tooltip>
           </div>
         </div>
       );

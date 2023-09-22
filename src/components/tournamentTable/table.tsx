@@ -19,7 +19,6 @@ export const TableWrapper = () => {
           {(column) => (
             <TableColumn
               key={column.uid}
-              hideHeader={column.uid === "actions"}
               align={column.uid === "actions" ? "center" : "start"}
             >
               {column.name}
