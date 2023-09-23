@@ -1,85 +1,90 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import { signIn, useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
-import Link from 'next/link';
+import React, { Dispatch, SetStateAction, useState } from 'react'
+import { signIn, useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input } from '@nextui-org/react'
 
 interface SignInProps {
-  isSignInMode: boolean;
-  setSignInMode: Dispatch<SetStateAction<boolean>>;
+  isSignInMode: boolean
+  setSignInMode: Dispatch<SetStateAction<boolean>>
 }
 
 export default function SignIn(props: SignInProps) {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
 
-  const { data: session } = useSession();
-  console.log('Session: ', session);
+  const { data: session } = useSession()
+  console.log('Session: ', session)
 
-  const router = useRouter();
+  const router = useRouter()
 
   const handleSignIn = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
-    console.log('Email: ', email);
+    console.log('Email: ', email)
     await signIn('credentials', {
       redirect: false,
       email,
       password,
     })
       .then((response) => {
-        console.log(response);
-        router.replace('/profile');
+        console.log(response)
+        router.replace('/profile')
       })
       .catch((error) => {
-        console.log(error);
-      });
-  };
+        console.log(error)
+      })
+  }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-      {props.isSignInMode ? (
-        <div style={{ width: '75%' }}>
-          <h2 style={{ fontFamily: 'monospace', fontWeight: 'bolder' }}>Sign In</h2>
-          <form onSubmit={handleSignIn}>
-            <div style={{ marginBottom: '1rem' }}>
-              <input
-                type="email"
-                placeholder="Email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <button type="submit">SIGN IN</button>
-            </div>
-            <div style={{ fontSize: '0.8rem', color: '#00000088' }}>
-              <Link href="reset-password">Forgot Password?</Link>
-            </div>
-          </form>
-        </div>
-      ) : (
-        <div style={{ textAlign: 'center' }}>
-          <h2 style={{ color: 'white', fontSize: '2.4rem', fontWeight: 'extrabold' }}>Welcome Back!</h2>
-          <p style={{ fontSize: '1rem', color: 'white' }}>To continue your journey with us, please login</p>
-          <button
-            style={{ border: '2px solid #fff', borderRadius: '9999px', backgroundColor: 'transparent', color: 'white', width: '50%' }}
-            onClick={() => props.setSignInMode(true)}
-          >
-            SIGN IN
-          </button>
-        </div>
-      )}
+    <div className="h-screen flex justify-center items-center">
+      <form onSubmit={handleSignIn}>
+        <Card className="w-96 flex items-center justify-center">
+          <CardHeader className="flex items-center justify-center py-6">
+            <h3 className="text-xl font-medium ml-4 text-black dark:text-white">Login</h3>
+          </CardHeader>
+
+          <Divider className="border-t border-gray-300" />
+
+          <CardBody className="">
+            <Input
+              type="email"
+              placeholder="Email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="py-3"
+            />
+
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              fullWidth
+              className="py-3"
+            />
+          </CardBody>
+
+          <CardBody className="p-6">
+            <Button color="primary" type="submit">
+              Login
+            </Button>
+          </CardBody>
+          <Divider className="border-t border-gray-300" />
+          <CardFooter className="flex items-center justify-center py-6">
+            <p className="text-center text-black dark:text-white">
+              Don&apos;t have an account?
+              <span
+                onClick={() => props.setSignInMode(false)}
+                style={{ cursor: 'pointer', color: 'blue' }}
+              >
+                <span className="text-blue-400 pl-1">Login</span>
+              </span>
+            </p>
+          </CardFooter>
+        </Card>
+      </form>
     </div>
-  );
+  )
 }

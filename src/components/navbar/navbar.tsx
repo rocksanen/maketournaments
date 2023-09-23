@@ -1,25 +1,28 @@
-import { Input, Link, Navbar, NavbarContent } from "@nextui-org/react";
-import React from "react";
-import { FeedbackIcon } from "../icons/navbar/feedback-icon";
-import { GithubIcon } from "../icons/navbar/github-icon";
-import { SupportIcon } from "../icons/navbar/support-icon";
-import { SearchIcon } from "../icons/searchicon";
-import { BurguerButton } from "./burguer-button";
-import { NotificationsDropdown } from "./notifications-dropdown";
-import { UserDropdown } from "./user-dropdown";
+import { Input, Link, Navbar, NavbarContent } from '@nextui-org/react'
+import React from 'react'
+import { FeedbackIcon } from '../icons/navbar/feedback-icon'
+import { GithubIcon } from '../icons/navbar/github-icon'
+import { SupportIcon } from '../icons/navbar/support-icon'
+import { SearchIcon } from '../icons/searchicon'
+import { BurguerButton } from './burguer-button'
+import { NotificationsDropdown } from './notifications-dropdown'
+import { UserDropdown } from './user-dropdown'
+import { useSession } from 'next-auth/react'
 
 interface Props {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const NavbarWrapper = ({ children }: Props) => {
+  const { data: session } = useSession()
+
   return (
     <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
       <Navbar
         isBordered
         className="w-full"
         classNames={{
-          wrapper: "w-full max-w-full",
+          wrapper: 'w-full max-w-full',
         }}
       >
         <NavbarContent className="md:hidden">
@@ -31,16 +34,13 @@ export const NavbarWrapper = ({ children }: Props) => {
             isClearable
             className="w-full"
             classNames={{
-              input: "w-full",
-              mainWrapper: "w-full",
+              input: 'w-full',
+              mainWrapper: 'w-full',
             }}
             placeholder="Search..."
           />
         </NavbarContent>
-        <NavbarContent
-          justify="end"
-          className="w-fit data-[justify=end]:flex-grow-0"
-        >
+        <NavbarContent justify="end" className="w-fit data-[justify=end]:flex-grow-0">
           <div className="flex items-center gap-2 max-md:hidden">
             <FeedbackIcon />
             <span>Feedback?</span>
@@ -52,18 +52,21 @@ export const NavbarWrapper = ({ children }: Props) => {
             <SupportIcon />
           </div>
 
-          <Link
-            href="https://github.com/rocksanen/maketournaments"
-            target={"_blank"}
-          >
+          <Link href="https://github.com/rocksanen/maketournaments" target={'_blank'}>
             <GithubIcon />
           </Link>
           <NavbarContent>
-            <UserDropdown />
+            {session ? (
+              <UserDropdown />
+            ) : (
+              <Link href="/login">
+                <p className="text-blue-400">Login</p>
+              </Link>
+            )}
           </NavbarContent>
         </NavbarContent>
       </Navbar>
       {children}
     </div>
-  );
-};
+  )
+}

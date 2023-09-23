@@ -3,15 +3,14 @@ import SignIn from './signin'
 import SignUp from './signup'
 
 export default function Form() {
-  const [isSignInMode, setSignInMode] = useState<boolean>(false)
+  const [isSignInMode, setSignInMode] = useState<boolean>(true)
   return (
     <div>
-      <div>
+      {isSignInMode ? (
         <SignIn isSignInMode={isSignInMode} setSignInMode={setSignInMode} />
-      </div>
-      <div>
+      ) : (
         <SignUp isSignInMode={isSignInMode} setSignInMode={setSignInMode} />
-      </div>
+      )}
     </div>
   )
 }
