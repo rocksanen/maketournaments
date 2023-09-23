@@ -1,4 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react'
+import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input } from '@nextui-org/react'
 
 interface SignUpProps {
   isSignInMode: boolean
@@ -43,87 +44,66 @@ export default function SignUp(props: SignUpProps) {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '5px',
-      }}
-    >
-      {props.isSignInMode ? (
-        <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-          <h2 style={{ fontWeight: 'bolder' }}>New Here?</h2>
-          <p>Create an account and start your journey with us</p>
-          <button
-            style={{
-              border: '2px solid #fff',
-              borderRadius: '9999px',
-              backgroundColor: 'transparent',
-              color: 'white',
-              width: '50%',
-            }}
-            onClick={() => props.setSignInMode(false)}
-          >
-            SIGN UP
-          </button>
-        </div>
-      ) : (
-        <div style={{ width: '75%' }}>
-          <h2>Create Account</h2>
-          <form onSubmit={handleSignup}>
-            <div style={{ marginBottom: '1rem' }}>
-              <input
-                type="text"
-                placeholder="Name"
-                name="name"
-                minLength={1}
-                maxLength={50}
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <input
-                type="email"
-                placeholder="Email"
-                name="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              {isEmailInvalid && <span>A user already exists with the entered email</span>}
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <input
-                type="password"
-                placeholder="Password"
-                name="password"
-                minLength={8}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div style={{ marginBottom: '1rem', textAlign: 'center' }}>
-              <button
-                type="submit"
-                style={{
-                  border: 'none',
-                  borderRadius: '9999px',
-                  backgroundColor: 'red',
-                  color: 'white',
-                  width: '60%',
-                }}
+    <div className="h-screen flex justify-center items-center">
+      <form onSubmit={handleSignup}>
+        <Card className="w-96 flex items-center justify-center">
+          <CardHeader className="flex items-center justify-center py-6">
+            <h3 className="text-xl font-medium ml-4 text-black dark:text-white">Register</h3>
+          </CardHeader>
+
+          <Divider className="border-t border-gray-300" />
+
+          <CardBody className="">
+            <Input
+              type="text"
+              placeholder="Name"
+              name="name"
+              minLength={1}
+              maxLength={50}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="py-3"
+            />
+            <Input
+              type="email"
+              placeholder="Email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="py-3"
+            />
+
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password"
+              fullWidth
+              className="py-3"
+            />
+          </CardBody>
+
+          <CardBody className="p-6">
+            <Button color="primary" type="submit">
+              Register
+            </Button>
+          </CardBody>
+          <Divider className="border-t border-gray-300" />
+          <CardFooter className="flex items-center justify-center py-6">
+            <p className="text-center text-black dark:text-white">
+              Already have an account?
+              <span
+                onClick={() => props.setSignInMode(true)}
+                style={{ cursor: 'pointer', color: 'blue' }}
               >
-                SIGN UP
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
+                <span className="text-blue-400 pl-1">Sign in</span>
+              </span>
+            </p>
+          </CardFooter>
+        </Card>
+      </form>
     </div>
   )
 }
