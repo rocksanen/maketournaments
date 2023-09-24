@@ -80,12 +80,6 @@ const tournamentResolvers = {
             const { id, ...inputData } = args.input;
         
             try {
-                /*if (inputData.admin) {
-                    inputData.admin = inputData.admin.id; // Convert to ID if it's an object
-                }*/
-                if (inputData.players) {
-                    inputData.players = inputData.players.map(player => player.id); // Convert array of objects to array of IDs
-                }
                 const updatedTournament = await Tournament.findByIdAndUpdate(id, inputData, {
                     new: true
                 }).populate('rules admin players matches');
