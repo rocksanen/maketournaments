@@ -1,4 +1,6 @@
-import seriesModel from '@/model/seriesModel';
+
+import seriesModel from '@/models/seriesModel';
+
 
 interface SeriesArgs {
     id: string;

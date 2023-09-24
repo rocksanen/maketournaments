@@ -1,4 +1,6 @@
-import matchModel from '@/model/matchModel';
+
+import matchModel from '@/models/matchModel'
+
 
 interface CreateMatchInput {
     players: string[];   // Array of User IDs
