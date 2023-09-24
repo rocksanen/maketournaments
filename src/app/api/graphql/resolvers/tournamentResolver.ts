@@ -52,15 +52,9 @@ const tournamentResolvers = {
 
     Mutation: {
         createTournament: async (_: any, { input }: CreateTournamentArgs) => {
-            try {
-                // If you're storing references in the Tournament model, extract IDs
-                const adminId = input.admin;
-                const playerIds = input.players?.map(player => player.id);
-        
+            try {    
                 const newTournament = new Tournament({
                     ...input,
-                    admin: adminId,
-                    players: playerIds
                 });
         
                 const savedTournament = await newTournament.save();
@@ -68,14 +62,13 @@ const tournamentResolvers = {
                 // Use the Model to fetch and populate the document
                 const result = await Tournament.findById(savedTournament._id).populate('rules admin players matches');
                 
-
                 if (!result) {
                     throw new Error('Failed to retrieve and populate saved tournament');
                 }
 
                 const resultObj = result.toJSON();
                 const out = renameIdField(resultObj);
-
+                
                 return out;
             } catch (error) {
                 console.error("Failed to create tournament:", error);
