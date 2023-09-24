@@ -32,7 +32,7 @@ const userResolvers = {
     Query: {
         user: async (_: any, { id }: UserArgs) => {
             try {
-                const user = await userModel.findById(id);
+                const user = await userModel.findById(id).select('-password');
                 return user;
             } catch (error) {
                 console.error("Failed to fetch user:", error);
@@ -42,7 +42,7 @@ const userResolvers = {
 
         allUsers: async () => {
             try {
-                const users = await userModel.find();
+                const users = await userModel.find().select('-password');
                 return users;
             } catch (error) {
                 console.error("Failed to fetch users:", error);
