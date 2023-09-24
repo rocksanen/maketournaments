@@ -1,31 +1,19 @@
-# maketournaments
 
-link to board: https://github.com/users/rocksanen/projects/1
+## For Run
 
+Install dependencies
 
-create .env.local in project root for environment variables
+    
+```bash
+npm install
+```
 
-run npm i to install dependencies
+Start the server
 
-npm run dev to run development version
+    
+        
+```bash
+npm run dev
+```
 
-
-example graphql query using postman/insomnia
-
-change the example user attributes in resolvers.ts
-
-POST: http://localhost:3000/api/graphql/
-{
-  "query": "query { user { name email password }}"
-}
-
-returns: 
-{
-    "data": {
-        "user": {
-            "name": "Kalle Kula",
-            "email": "kalle@testmail.com",
-            "password": "1234"
-        }
-    }
-}
+Now you can visit https://localhost:3000 in your browser.

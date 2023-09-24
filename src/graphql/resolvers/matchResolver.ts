@@ -1,0 +1,100 @@
+import matchModel from '@/models/matchModel'
+
+interface CreateMatchInput {
+    players: string[];   // Array of User IDs
+    winner?: string;     // Optional User ID
+    startTime: string;
+    endTime: string;
+}
+
+interface UpdateMatchInput {
+    id: string; 
+    players?: string[];  // Array of User IDs
+    winner?: string;     // Optional User ID
+    startTime?: string;
+    endTime?: string;
+}
+
+interface MatchArgs {
+    id: string;
+}
+
+interface CreateMatchArgs {
+    input: CreateMatchInput;
+}
+
+interface UpdateMatchArgs {
+    input: UpdateMatchInput;
+}
+
+interface DeleteMatchArgs {
+    id: string;
+}
+
+const matchResolvers = {
+    Query: {
+        match: async (_: any, { id }: MatchArgs) => {
+            try {
+                const match = await matchModel.findById(id).populate('players winner');
+                return match;
+            } catch (error) {
+                console.error("Failed to fetch match:", error);
+                throw new Error('Failed to fetch match');
+            }
+        },
+
+        allMatches: async () => {
+            try {
+                const matches = await matchModel.find().populate('players winner');
+                return matches;
+            } catch (error) {
+                console.error("Failed to fetch matches:", error);
+                throw new Error('Failed to fetch matches');
+            }
+        },
+    },
+
+    Mutation: {
+        createMatch: async (_: any, { input }: CreateMatchArgs) => {
+            try {
+                const newMatch = new matchModel({
+                    ...input
+                });
+                
+                const result = await newMatch.save();
+                return result;
+            } catch (error) {
+                console.error("Failed to create match:", error);
+                throw new Error('Failed to create match');
+            }
+        },
+
+        updateMatch: async (_: any, { input }: UpdateMatchArgs) => {
+            const { id, ...rest } = input;
+            try {
+                const updatedMatch = await matchModel.findByIdAndUpdate(id, rest, {
+                    new: true // returns the updated document
+                }).populate('players winner');
+                return updatedMatch;
+            } catch (error) {
+                console.error("Failed to update match:", error);
+                throw new Error('Failed to update match');
+            }
+        },
+
+        deleteMatch: async (_: any, { id }: DeleteMatchArgs) => {
+            try {
+                const deletedMatch = await matchModel.findByIdAndRemove(id);
+                if (!deletedMatch) {
+                    throw new Error('Match not found');
+                }
+                return true;
+            } catch (error) {
+                console.error("Failed to delete match:", error);
+                throw new Error('Failed to delete match');
+            }
+        }
+    }
+};
+
+export default matchResolvers;
