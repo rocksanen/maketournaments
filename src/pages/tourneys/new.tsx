@@ -10,6 +10,7 @@ import {
   DropdownItem,
 } from '@nextui-org/react'
 import { gql, useMutation } from '@apollo/client'
+import { useSession } from 'next-auth/react'
 
 const newTourneyMutation = gql`
   mutation CreateTournament(
@@ -27,6 +28,7 @@ function TourneysNew() {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set(['Select Ruleset']))
   const [hiddenField, setHiddenField] = useState('hidden')
   const [mutateFunction, { data, loading, error }] = useMutation(newTourneyMutation)
+  const { data: session } = useSession()
 
   const newTourney = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
