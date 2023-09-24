@@ -15,3 +15,12 @@ input SeriesInput {
     seriesCreated: String!
     seriesEnded: String
 }
+
+input UpdateSeriesInput {
+    id: ID!
+    name: String
+    tournaments: [ID]
+    admin: ID
+    seriesCreated: String
+    seriesEnded: String
+}

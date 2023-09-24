@@ -5,11 +5,11 @@ import { Document } from "mongoose";
 
 interface Tournament extends Document {
     name: string;
-    rules: number[];
+    rules: Types.ObjectId[];
     date: Date;
-    players: number[];
+    players: Types.ObjectId[];
     admin: Types.ObjectId[];
-    matches: number[];
+    matches: Types.ObjectId[];
     }
 
 interface TournamentInput {

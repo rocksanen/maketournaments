@@ -4,8 +4,8 @@ type Tournament {
     rules: [Rules!]!
     date: String!
     players: [User]
-    admin: User!
-    matches: [Match]
+    admin: [User!]!
+    matches: [Match!]
 }
 
 input CreateTournamentInput {
@@ -13,7 +13,7 @@ input CreateTournamentInput {
     rules: [ID!]!
     date: String!
     players: [ID!]
-    admin: ID!
+    admin: [ID!]!
     matches: [ID!]
 }
 
@@ -23,6 +23,6 @@ input UpdateTournamentInput {
     rules: [ID!]
     date: String
     players: [ID!]
-    admin: ID
+    admin: [ID!]
     matches: [ID!]
 }

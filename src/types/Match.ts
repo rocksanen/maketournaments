@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import { Document } from "mongoose";
 
 interface Match extends Document {
-    players: number[];
+    players: Types.ObjectId[];
     winner: Types.ObjectId;
     startTime: Date;
     endTime: Date;

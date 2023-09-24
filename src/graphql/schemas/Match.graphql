@@ -13,3 +13,22 @@ input MatchInput {
     startTime: String!
     endTime: String!
 }
+
+input CreateMatchInput {
+    players: [ID!]
+    winner: ID
+    startTime: String!
+    endTime: String!
+}
+
+input UpdateMatchInput {
+    id: ID!
+    players: [ID!]
+    winner: ID
+    startTime: String
+    endTime: String
+}
+
+input DeleteMatchInput {
+    id: ID!
+}
