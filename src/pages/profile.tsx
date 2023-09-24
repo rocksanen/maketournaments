@@ -7,6 +7,7 @@ import React from 'react'
 
 function Profile() {
   const { data: session } = useSession()
+  console.log("sesh", session)
 
   return (
     <div className="py-5 flex justify-center">
@@ -22,6 +23,12 @@ function Profile() {
           <div className="flex flex-col">
             <p className="text-small text-default-500">Email</p>
             <p className="text-md">{session?.user.email || 'Error fetching email'}</p>
+          </div>
+        </CardHeader>
+        <CardHeader className="flex gap-3">
+          <div className="flex flex-col">
+            <p className="text-small text-default-500">ID</p>
+            <p className="text-md">{session?.user.id || 'Error fetching id'}</p>
           </div>
         </CardHeader>
       </Card>
