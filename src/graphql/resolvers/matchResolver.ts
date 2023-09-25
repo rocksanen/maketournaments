@@ -1,5 +1,7 @@
 
 import matchModel from '@/models/matchModel'
+import { paginationArgs } from '@/types/paginationArgs';
+import { MAX_QUERY_LIMIT } from '@/utils/constants';
 
 
 interface CreateMatchInput {
@@ -45,9 +47,9 @@ const matchResolvers = {
             }
         },
 
-        allMatches: async () => {
+        allMatches: async (_: any, { limit, offset }: paginationArgs) => {
             try {
-                const matches = await matchModel.find().populate('players winner');
+                const matches = await matchModel.find().populate('players winner').limit(Math.min(limit, MAX_QUERY_LIMIT)).skip(offset * Math.min(limit, MAX_QUERY_LIMIT));
                 return matches;
             } catch (error) {
                 console.error("Failed to fetch matches:", error);

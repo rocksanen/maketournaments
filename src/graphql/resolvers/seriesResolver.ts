@@ -1,5 +1,7 @@
 
 import seriesModel from '@/models/seriesModel';
+import { paginationArgs } from '@/types/paginationArgs';
+import { MAX_QUERY_LIMIT } from '@/utils/constants';
 
 
 interface SeriesArgs {
@@ -43,9 +45,9 @@ const seriesResolvers = {
             }
         },
 
-        allSeries: async () => {
+        allSeries: async (_: any, { limit, offset }: paginationArgs) => {
             try {
-                const seriesList = await seriesModel.find().populate('tournaments admin');
+                const seriesList = await seriesModel.find().populate('tournaments admin').limit(Math.min(limit, MAX_QUERY_LIMIT)).skip(offset * Math.min(limit, MAX_QUERY_LIMIT));
                 return seriesList;
             } catch (error) {
                 console.error("Failed to fetch series list:", error);

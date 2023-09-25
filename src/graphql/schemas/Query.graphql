@@ -1,23 +1,23 @@
 type Query {
     # User Queries
     user(id: ID!): User
-    allUsers: [User]
+    allUsers(limit: Int, offset: Int): [User]
 
     # Match Queries
     match(id: ID!): Match
-    allMatches: [Match]
+    allMatches(limit: Int, offset: Int): [Match]
 
     # Rules Queries
     rules(id: ID!): Rules
-    allRules: [Rules]
+    allRules(limit: Int, offset: Int): [Rules]
 
     # Series Queries
     series(id: ID!): Series
-    allSeries: [Series]
+    allSeries(limit: Int, offset: Int): [Series]
 
     # Tournament Queries
     tournament(id: ID!): Tournament
-    allTournaments: [Tournament]
+    allTournaments(limit: Int, offset: Int): [Tournament]
 
     hello: String
 }

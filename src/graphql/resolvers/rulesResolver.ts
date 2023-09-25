@@ -1,4 +1,6 @@
 import RulesModel from "@/models/rulesModel";
+import { paginationArgs } from "@/types/paginationArgs";
+import { MAX_QUERY_LIMIT } from '@/utils/constants';
 
 interface CreateRulesArgs {
     input: {
@@ -35,9 +37,9 @@ const rulesResolvers = {
             }
         },
 
-        allRules: async () => {
+        allRules: async (_: any, { limit, offset }: paginationArgs) => {
             try {
-                const rules = await RulesModel.find();
+                const rules = await RulesModel.find().limit(Math.min(limit, MAX_QUERY_LIMIT)).skip(offset * Math.min(limit, MAX_QUERY_LIMIT));
                 return rules;
             } catch (error) {
                 console.error("Failed to fetch all rules:", error);
