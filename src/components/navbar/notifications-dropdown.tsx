@@ -5,9 +5,9 @@ import {
   DropdownSection,
   DropdownTrigger,
   NavbarItem,
-} from "@nextui-org/react";
-import React from "react";
-import { NotificationIcon } from "../icons/navbar/notificationicon";
+} from '@nextui-org/react'
+import React from 'react'
+import { NotificationIcon } from '../icons/navbar/notificationicon'
 
 export const NotificationsDropdown = () => {
   return (
@@ -21,8 +21,8 @@ export const NotificationsDropdown = () => {
         <DropdownSection title="Notificacions">
           <DropdownItem
             classNames={{
-              base: "py-2",
-              title: "text-base font-semibold",
+              base: 'py-2',
+              title: 'text-base font-semibold',
             }}
             key="1"
             description="Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim."
@@ -32,8 +32,8 @@ export const NotificationsDropdown = () => {
           <DropdownItem
             key="2"
             classNames={{
-              base: "py-2",
-              title: "text-base font-semibold",
+              base: 'py-2',
+              title: 'text-base font-semibold',
             }}
             description="Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim."
           >
@@ -42,8 +42,8 @@ export const NotificationsDropdown = () => {
           <DropdownItem
             key="3"
             classNames={{
-              base: "py-2",
-              title: "text-base font-semibold",
+              base: 'py-2',
+              title: 'text-base font-semibold',
             }}
             description="Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim."
           >
@@ -52,5 +52,5 @@ export const NotificationsDropdown = () => {
         </DropdownSection>
       </DropdownMenu>
     </Dropdown>
-  );
-};
+  )
+}

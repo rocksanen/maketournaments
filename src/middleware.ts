@@ -13,11 +13,11 @@ export default withAuth(
   {
     callbacks: {
       // If 'authorized' returns 'true', the middleware function will execute.
-      authorized: ({ token }) => !!token
+      authorized: ({ token }) => !!token,
     },
-  }
+  },
 )
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/profile/:path*']
+  matcher: ['/dashboard/:path*', '/profile/:path*'],
 }

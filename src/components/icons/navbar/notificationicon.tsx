@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 export const NotificationIcon = () => {
   return (
@@ -22,5 +22,5 @@ export const NotificationIcon = () => {
         fill="white"
       />
     </svg>
-  );
-};
+  )
+}

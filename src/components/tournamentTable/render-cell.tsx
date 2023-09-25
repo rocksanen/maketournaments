@@ -1,32 +1,28 @@
-import { User, Tooltip, Chip } from "@nextui-org/react";
-import React from "react";
-import { DeleteIcon } from "../icons/table/delete-icon";
-import { EditIcon } from "../icons/table/edit-icon";
-import { EyeIcon } from "../icons/table/eye-icon";
-import { tournaments } from "./data";
+import { User, Tooltip, Chip } from '@nextui-org/react'
+import React from 'react'
+import { DeleteIcon } from '../icons/table/delete-icon'
+import { EditIcon } from '../icons/table/edit-icon'
+import { EyeIcon } from '../icons/table/eye-icon'
+import { tournaments } from './data'
 
 interface Props {
-  tournament: (typeof tournaments)[number];
-  columnKey: string | React.Key;
+  tournament: (typeof tournaments)[number]
+  columnKey: string | React.Key
 }
 
 export const RenderCell = ({ tournament, columnKey }: Props) => {
   // @ts-ignore
-  const cellValue = tournament[columnKey];
+  const cellValue = tournament[columnKey]
   switch (columnKey) {
-    case "name":
-      return (
-        <div>
-          {cellValue}
-        </div>
-      );
-    case "date":
+    case 'name':
+      return <div>{cellValue}</div>
+    case 'date':
       return (
         <div>
           <span>{cellValue}</span>
         </div>
-      );
-    case "role":
+      )
+    case 'role':
       return (
         <div>
           <div>
@@ -36,46 +32,39 @@ export const RenderCell = ({ tournament, columnKey }: Props) => {
             <span>{tournament.team}</span>
           </div>
         </div>
-      );
-    case "status":
+      )
+    case 'status':
       return (
         <Chip
           size="sm"
           variant="flat"
-          color={
-            cellValue === "active"
-              ? "success"
-              : cellValue === "paused"
-              ? "danger"
-              : "warning"
-          }
+          color={cellValue === 'active' ? 'success' : cellValue === 'paused' ? 'danger' : 'warning'}
         >
           <span className="capitalize text-xs">{cellValue}</span>
         </Chip>
-      );
+      )
 
-    case "actions":
+    case 'actions':
       return (
         <div className="flex items-center gap-4 ">
           <div>
             <Tooltip content="Details">
-              <button onClick={() => console.log("View user", tournament.id)}>
+              <button onClick={() => console.log('View user', tournament.id)}>
                 <EyeIcon size={20} fill="#979797" />
               </button>
             </Tooltip>
           </div>
           <div>
             <Tooltip content="Edit user" color="secondary">
-              <button onClick={() => console.log("Edit user", tournament.id)}>
+              <button onClick={() => console.log('Edit user', tournament.id)}>
                 <EditIcon size={20} fill="#979797" />
               </button>
             </Tooltip>
           </div>
-          <div>
-          </div>
+          <div></div>
         </div>
-      );
+      )
     default:
-      return cellValue;
+      return cellValue
   }
-};
+}

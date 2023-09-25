@@ -20,4 +20,4 @@ declare module 'next-auth' {
   }
 }
 
-export type {Session};
+export type { Session }

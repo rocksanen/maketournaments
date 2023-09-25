@@ -4,28 +4,28 @@ import {
   DropdownMenu,
   DropdownSection,
   DropdownTrigger,
-} from "@nextui-org/react";
-import React, { useState } from "react";
-import { AcmeIcon } from "../icons/acme-icon";
-import { AcmeLogo } from "../icons/acmelogo";
-import { BottomIcon } from "../icons/sidebar/bottom-icon";
+} from '@nextui-org/react'
+import React, { useState } from 'react'
+import { AcmeIcon } from '../icons/acme-icon'
+import { AcmeLogo } from '../icons/acmelogo'
+import { BottomIcon } from '../icons/sidebar/bottom-icon'
 
 interface Company {
-  name: string;
-  location: string;
-  logo: React.ReactNode;
+  name: string
+  location: string
+  logo: React.ReactNode
 }
 
 export const CompaniesDropdown = () => {
   const [company, setCompany] = useState<Company>({
-    name: "First Era Magic",
-    location: "Helsinki, Finland",
+    name: 'First Era Magic',
+    location: 'Helsinki, Finland',
     logo: <AcmeIcon />,
-  });
+  })
   return (
     <Dropdown
       classNames={{
-        base: "w-full min-w-[260px]",
+        base: 'w-full min-w-[260px]',
       }}
     >
       <DropdownTrigger className="cursor-pointer">
@@ -35,42 +35,40 @@ export const CompaniesDropdown = () => {
             <h3 className="text-xl font-medium m-0 text-default-900 -mb-4 whitespace-nowrap">
               {company.name}
             </h3>
-            <span className="text-xs font-medium text-default-500">
-              {company.location}
-            </span>
+            <span className="text-xs font-medium text-default-500">{company.location}</span>
           </div>
           <BottomIcon />
         </div>
       </DropdownTrigger>
       <DropdownMenu
         onAction={(e) => {
-          if (e === "1") {
+          if (e === '1') {
             setCompany({
-              name: "Facebook",
-              location: "San Fransico, CA",
+              name: 'Facebook',
+              location: 'San Fransico, CA',
               logo: <AcmeIcon />,
-            });
+            })
           }
-          if (e === "2") {
+          if (e === '2') {
             setCompany({
-              name: "Instagram",
-              location: "Austin, Tx",
+              name: 'Instagram',
+              location: 'Austin, Tx',
               logo: <AcmeLogo />,
-            });
+            })
           }
-          if (e === "3") {
+          if (e === '3') {
             setCompany({
-              name: "Twitter",
-              location: "Brooklyn, NY",
+              name: 'Twitter',
+              location: 'Brooklyn, NY',
               logo: <AcmeIcon />,
-            });
+            })
           }
-          if (e === "4") {
+          if (e === '4') {
             setCompany({
-              name: "Acme Co.",
-              location: "Palo Alto, CA",
+              name: 'Acme Co.',
+              location: 'Palo Alto, CA',
               logo: <AcmeIcon />,
-            });
+            })
           }
         }}
         aria-label="Avatar Actions"
@@ -81,8 +79,8 @@ export const CompaniesDropdown = () => {
             startContent={<AcmeIcon />}
             description="San Fransico, CA"
             classNames={{
-              base: "py-4",
-              title: "text-base font-semibold",
+              base: 'py-4',
+              title: 'text-base font-semibold',
             }}
           >
             Facebook
@@ -92,8 +90,8 @@ export const CompaniesDropdown = () => {
             startContent={<AcmeLogo />}
             description="Austin, Tx"
             classNames={{
-              base: "py-4",
-              title: "text-base font-semibold",
+              base: 'py-4',
+              title: 'text-base font-semibold',
             }}
           >
             Instagram
@@ -103,8 +101,8 @@ export const CompaniesDropdown = () => {
             startContent={<AcmeIcon />}
             description="Brooklyn, NY"
             classNames={{
-              base: "py-4",
-              title: "text-base font-semibold",
+              base: 'py-4',
+              title: 'text-base font-semibold',
             }}
           >
             Twitter
@@ -114,8 +112,8 @@ export const CompaniesDropdown = () => {
             startContent={<AcmeIcon />}
             description="Palo Alto, CA"
             classNames={{
-              base: "py-4",
-              title: "text-base font-semibold",
+              base: 'py-4',
+              title: 'text-base font-semibold',
             }}
           >
             Acme Co.
@@ -123,5 +121,5 @@ export const CompaniesDropdown = () => {
         </DropdownSection>
       </DropdownMenu>
     </Dropdown>
-  );
-};
+  )
+}

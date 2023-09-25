@@ -1,8 +1,8 @@
-import React from "react";
+import React from 'react'
 
 interface Props {
-  title: string;
-  children?: React.ReactNode;
+  title: string
+  children?: React.ReactNode
 }
 
 export const SidebarMenu = ({ title, children }: Props) => {
@@ -11,5 +11,5 @@ export const SidebarMenu = ({ title, children }: Props) => {
       <span className="text-xs font-normal ">{title}</span>
       {children}
     </div>
-  );
-};
+  )
+}
