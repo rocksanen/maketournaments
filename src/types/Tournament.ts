@@ -10,6 +10,8 @@ interface Tournament extends Document {
     players: Types.ObjectId[];
     admin: Types.ObjectId[];
     matches: Types.ObjectId[];
+    invitationOnly: boolean;
+    maxPlayers: number;
     }
 
 interface TournamentInput {

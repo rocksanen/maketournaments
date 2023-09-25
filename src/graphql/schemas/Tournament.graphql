@@ -6,6 +6,8 @@ type Tournament {
     players: [User]
     admin: [User!]!
     matches: [Match!]
+    maxPlayers: Int
+    invitationOnly: Boolean
 }
 
 input CreateTournamentInput {
@@ -14,7 +16,8 @@ input CreateTournamentInput {
     date: String!
     players: [ID!]
     admin: [ID!]!
-    matches: [ID!]
+    maxPlayers: Int
+    invitationOnly: Boolean
 }
 
 input UpdateTournamentInput {
