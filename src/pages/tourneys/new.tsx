@@ -13,16 +13,27 @@ import { gql, useMutation } from '@apollo/client'
 import { useSession } from 'next-auth/react'
 
 const newTourneyMutation = gql`
-  mutation CreateTournament(
-    $tourneyName: String!
-    $ruleset: String!
-    $maxPlayers: Int!
-    $endDate: String!
-    $invitationOnly: Boolean!
-  ) {
-    createTournament(name: $tourneyName, rules: $ruleset, date: $endDate, players: $maxPlayers)
+  mutation CreateTournament($input: CreateTournamentInput!) {
+    createTournament(input: $input) {
+      name
+        
+      rules {
+          id
+      }
+      date
+      players {
+          id
+      }
+      admin {
+          id
+      }
+       invitationOnly
+        maxPlayers
+    }
   }
 `
+
+    
 
 function TourneysNew() {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set(['Select Ruleset']))
@@ -34,7 +45,7 @@ function TourneysNew() {
     e.preventDefault()
     const form = e.currentTarget
     const tourneyName = (form[0] as HTMLInputElement).value
-    const maxPlayers = (form[3] as HTMLInputElement).value
+    const maxPlayers = parseInt((form[3] as HTMLInputElement).value)
 
     const endDate = (form[4] as HTMLInputElement).value
     const invitationOnly = (form[5] as HTMLInputElement).checked
@@ -45,15 +56,22 @@ function TourneysNew() {
     if (!selectedKeys.has('Custom')) {
       ruleset = selectedKeys.values().next().value
     }
+
     mutateFunction({
       variables: {
-        tourneyName,
-        ruleset,
-        maxPlayers,
-        endDate,
-        invitationOnly,
-      },
-    })
+          input: {
+          name: tourneyName,
+          rules: ['65106775553dac66bcfac032'],
+          date: endDate,
+          maxPlayers: maxPlayers,
+          players: session?.user?.id,
+          admin: session?.user?.id,
+          invitationOnly: invitationOnly
+      }
+      }
+    });
+
+
   }
 
   const chooseGameMode = React.useMemo(() => {
@@ -70,7 +88,6 @@ function TourneysNew() {
 
   if (loading) return 'Submitting...'
   if (error) return alert(`Submission error! ${error.message}`)
-
   return (
     <div className="bg-amber-800 p-10 rounded-lg">
       <form className="flex flex-col gap-6" onSubmit={newTourney}>

@@ -29,6 +29,14 @@ const tournamentSchema = new mongoose.Schema<Tournament>({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Match'
     }],
+    invitationOnly: {
+        type: Boolean,
+        required: true,
+    },
+    maxPlayers: {
+        type: Number,
+        required: true,
+    }
 });
 
 

@@ -11,6 +11,8 @@ interface CreateTournamentArgs {
         date: string;
         players?: User[];
         admin: User[];
+        invitationOnly: boolean;
+        maxPlayers: number;
         matches?: Match[];
     }
 }
