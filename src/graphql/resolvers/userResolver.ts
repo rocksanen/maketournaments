@@ -1,5 +1,7 @@
 import userModel from '@/models/userModel';
 import bcrypt from 'bcrypt';
+import { paginationArgs } from '@/types/paginationArgs';
+import { MAX_QUERY_LIMIT } from '@/utils/constants';
 
 interface UserArgs {
     id: string;
@@ -40,9 +42,10 @@ const userResolvers = {
             }
         },
 
-        allUsers: async () => {
+        allUsers: async (_: any, { limit, offset }: paginationArgs) => {
             try {
-                const users = await userModel.find().select('-password');
+                const users = await userModel.find().select('-password').limit(Math.min(limit, MAX_QUERY_LIMIT)).skip(offset * Math.min(limit, MAX_QUERY_LIMIT));
+
                 return users;
             } catch (error) {
                 console.error("Failed to fetch users:", error);
