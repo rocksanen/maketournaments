@@ -7,7 +7,7 @@ import React from 'react'
 
 function Profile() {
   const { data: session } = useSession()
-  console.log("sesh", session)
+  console.log('sesh', session)
 
   return (
     <div className="py-5 flex justify-center">

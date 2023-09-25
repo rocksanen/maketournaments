@@ -13,7 +13,7 @@ const Home: NextPage = () => {
 
 //@ts-ignore
 export const getServerSideProps: GetServerSideProps = async (
-  context: GetServerSidePropsContext
+  context: GetServerSidePropsContext,
 ) => {
   const session = await getSession({ req: context.req })
 

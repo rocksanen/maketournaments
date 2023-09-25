@@ -1,15 +1,15 @@
-import { Button, Input } from "@nextui-org/react";
-import Link from "next/link";
-import React from "react";
-import { DotsIcon } from "../icons/accounts/dots-icon";
-import { ExportIcon } from "../icons/accounts/export-icon";
-import { InfoIcon } from "../icons/accounts/info-icon";
-import { TrashIcon } from "../icons/accounts/trash-icon";
-import { HouseIcon } from "../icons/breadcrumb/house-icon";
-import { UsersIcon } from "../icons/breadcrumb/users-icon";
-import { SettingsIcon } from "../icons/sidebar/settings-icon";
-import { TableWrapper } from "../tournamentTable/table";
-import { AddUser } from "./add-user";
+import { Button, Input } from '@nextui-org/react'
+import Link from 'next/link'
+import React from 'react'
+import { DotsIcon } from '../icons/accounts/dots-icon'
+import { ExportIcon } from '../icons/accounts/export-icon'
+import { InfoIcon } from '../icons/accounts/info-icon'
+import { TrashIcon } from '../icons/accounts/trash-icon'
+import { HouseIcon } from '../icons/breadcrumb/house-icon'
+import { UsersIcon } from '../icons/breadcrumb/users-icon'
+import { SettingsIcon } from '../icons/sidebar/settings-icon'
+import { TableWrapper } from '../tournamentTable/table'
+import { AddUser } from './add-user'
 
 export const Accounts = () => {
   return (
@@ -17,10 +17,10 @@ export const Accounts = () => {
       <ul className="flex">
         <li className="flex gap-2">
           <HouseIcon />
-          <Link href={"/"}>
+          <Link href={'/'}>
             <span>Home</span>
           </Link>
-          <span> / </span>{" "}
+          <span> / </span>{' '}
         </li>
       </ul>
 
@@ -29,8 +29,8 @@ export const Accounts = () => {
         <div className="flex items-center gap-3 flex-wrap md:flex-nowrap">
           <Input
             classNames={{
-              input: "w-full",
-              mainWrapper: "w-full",
+              input: 'w-full',
+              mainWrapper: 'w-full',
             }}
             placeholder="Search tournaments"
           />
@@ -49,5 +49,5 @@ export const Accounts = () => {
         <TableWrapper />
       </div>
     </div>
-  );
-};
+  )
+}

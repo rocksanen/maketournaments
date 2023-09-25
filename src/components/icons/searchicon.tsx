@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react'
 
 export const SearchIcon = () => {
   return (
@@ -26,5 +26,5 @@ export const SearchIcon = () => {
         strokeLinejoin="round"
       />
     </svg>
-  );
-};
+  )
+}

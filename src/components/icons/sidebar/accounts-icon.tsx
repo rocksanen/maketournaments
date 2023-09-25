@@ -1,14 +1,8 @@
-import React from "react";
+import React from 'react'
 
 export const AccountsIcon = () => {
   return (
-    <svg
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path
         className="fill-default-400"
         fillRule="evenodd"
@@ -17,5 +11,5 @@ export const AccountsIcon = () => {
         fill="#969696"
       />
     </svg>
-  );
-};
+  )
+}

@@ -1,6 +1,6 @@
-import { Card, CardBody } from "@nextui-org/react";
-import React from "react";
-import { Community } from "../icons/community";
+import { Card, CardBody } from '@nextui-org/react'
+import React from 'react'
+import { Community } from '../icons/community'
 
 export const CardBalance3 = () => {
   return (
@@ -18,5 +18,5 @@ export const CardBalance3 = () => {
         </div>
       </CardBody>
     </Card>
-  );
-};
+  )
+}

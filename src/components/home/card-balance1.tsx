@@ -1,10 +1,8 @@
-import { Card, CardBody } from "@nextui-org/react";
-import React from "react";
-import { Community } from "../icons/community";
+import { Card, CardBody } from '@nextui-org/react'
+import React from 'react'
+import { Community } from '../icons/community'
 
 export const CardBalance1 = () => {
-
-  
   return (
     <Card className="xl:max-w-sm bg-primary rounded-xl shadow-md px-3 w-full">
       <CardBody className="py-5">
@@ -21,5 +19,5 @@ export const CardBalance1 = () => {
         </div>
       </CardBody>
     </Card>
-  );
-};
+  )
+}

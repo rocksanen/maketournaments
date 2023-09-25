@@ -6,7 +6,6 @@ import typeDefs from '@/graphql/schemas/index'
 import resolvers from '@/graphql/resolvers/index'
 import { connectToDatabase } from '@/utils/db'
 
-
 // const resolvers = {
 //   Query: {
 //     hello: () => 'world',

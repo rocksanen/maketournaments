@@ -1,18 +1,12 @@
-import React from "react";
+import React from 'react'
 
 interface Props {
-  color?: string;
+  color?: string
 }
 
-export const Community = ({ color = "white" }: Props) => {
+export const Community = ({ color = 'white' }: Props) => {
   return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-    >
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
       <path
         className="fill-default-900"
         fillRule="evenodd"
@@ -21,5 +15,5 @@ export const Community = ({ color = "white" }: Props) => {
         fill="#200E32"
       />
     </svg>
-  );
-};
+  )
+}

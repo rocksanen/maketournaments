@@ -16,24 +16,22 @@ const newTourneyMutation = gql`
   mutation CreateTournament($input: CreateTournamentInput!) {
     createTournament(input: $input) {
       name
-        
+
       rules {
-          id
+        id
       }
       date
       players {
-          id
+        id
       }
       admin {
-          id
+        id
       }
-       invitationOnly
-        maxPlayers
+      invitationOnly
+      maxPlayers
     }
   }
 `
-
-    
 
 function TourneysNew() {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set(['Select Ruleset']))
@@ -59,19 +57,17 @@ function TourneysNew() {
 
     mutateFunction({
       variables: {
-          input: {
+        input: {
           name: tourneyName,
           rules: ['65106775553dac66bcfac032'],
           date: endDate,
           maxPlayers: maxPlayers,
           players: session?.user?.id,
           admin: session?.user?.id,
-          invitationOnly: invitationOnly
-      }
-      }
-    });
-
-
+          invitationOnly: invitationOnly,
+        },
+      },
+    })
   }
 
   const chooseGameMode = React.useMemo(() => {
