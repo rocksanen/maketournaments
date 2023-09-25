@@ -17,7 +17,7 @@ export default function App() {
 
   return (
     <>
-      <Button onPress={onOpen}>Open Modal</Button>
+      <Button onPress={onOpen}>Edit your custom rule settings</Button>
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size='4xl' >
         <ModalContent>
           {(onClose) => (
