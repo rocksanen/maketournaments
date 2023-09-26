@@ -74,8 +74,10 @@ function TourneysNew() {
       },
     })
 
-    const createdTournamentId = result.data.createTournament.id
-    router.push(`/tourneys/editTournament?id=${createdTournamentId}`)
+    const createdTournament = result.data.createTournament
+    const createdTournamentId = createdTournament.id
+    const createdTournamentName = createdTournament ? createdTournament.name : 'Default Name'
+    router.push(`/tourneys/editTournament?id=${createdTournamentId}&name=${createdTournamentName}`)
   }
 
   const chooseGameMode = React.useMemo(() => {

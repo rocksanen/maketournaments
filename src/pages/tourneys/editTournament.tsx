@@ -2,6 +2,7 @@
 import React from 'react'
 import { useRouter } from 'next/router'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react'
+import { Card, CardHeader, CardBody, CardFooter } from '@nextui-org/react'
 
 const tournamentData = [
   {
@@ -80,33 +81,45 @@ const tournamentData = [
 
 export default function EditTournament() {
   const router = useRouter()
-  const { id } = router.query
+  const { id, name } = router.query
   console.log(id, 'id passing to editTournaments')
+  console.log(name, 'name passing to editTournaments')
 
   return (
-    <Table aria-label="Example static collection table">
-      <TableHeader>
-        <TableColumn>POSITION</TableColumn>
-        <TableColumn>NAME</TableColumn>
-        <TableColumn>WINS</TableColumn>
-        <TableColumn>TIE</TableColumn>
-        <TableColumn>LOSS</TableColumn>
-        <TableColumn>GAMES</TableColumn>
-        <TableColumn>POINTS</TableColumn>
-      </TableHeader>
-      <TableBody>
-        {tournamentData.map((data, index) => (
-          <TableRow key={index}>
-            <TableCell>{data.position}</TableCell>
-            <TableCell>{data.name}</TableCell>
-            <TableCell>{data.wins}</TableCell>
-            <TableCell>{data.tie}</TableCell>
-            <TableCell>{data.loss}</TableCell>
-            <TableCell>{data.games}</TableCell>
-            <TableCell>{data.points}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <div className="flex flex-col items-center justify-top w-full h-full">
+      <header className="flex flex-col items-center justify-center w-full h-1/6">
+        <h1 className="text-4xl font-bold text-white">{name ? name : 'The Great Tournament'}</h1>
+      </header>
+      <Table aria-label="Example static collection table">
+        <TableHeader>
+          <TableColumn>POSITION</TableColumn>
+          <TableColumn>NAME</TableColumn>
+          <TableColumn>WINS</TableColumn>
+          <TableColumn>TIE</TableColumn>
+          <TableColumn>LOSS</TableColumn>
+          <TableColumn>GAMES</TableColumn>
+          <TableColumn>POINTS</TableColumn>
+        </TableHeader>
+        <TableBody>
+          {tournamentData.map((data, index) => (
+            <TableRow key={index} className="table-row">
+              <TableCell
+                className={
+                  index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''
+                }
+              >
+                {data.position}
+              </TableCell>
+              <TableCell>{data.name}</TableCell>
+              <TableCell>{data.wins}</TableCell>
+              <TableCell>{data.tie}</TableCell>
+              <TableCell>{data.loss}</TableCell>
+              <TableCell>{data.games}</TableCell>
+              <TableCell>{data.points}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   )
 }
