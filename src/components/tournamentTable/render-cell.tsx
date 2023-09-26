@@ -4,6 +4,7 @@ import { DeleteIcon } from '../icons/table/delete-icon'
 import { EditIcon } from '../icons/table/edit-icon'
 import { EyeIcon } from '../icons/table/eye-icon'
 import { tournaments } from './data'
+import Link from 'next/link'
 
 interface Props {
   tournament: (typeof tournaments)[number]
@@ -55,10 +56,18 @@ export const RenderCell = ({ tournament, columnKey }: Props) => {
             </Tooltip>
           </div>
           <div>
-            <Tooltip content="Edit user" color="secondary">
-              <button onClick={() => console.log('Edit user', tournament.id)}>
-                <EditIcon size={20} fill="#979797" />
-              </button>
+            <Tooltip content="Edit tournament" color="secondary">
+              <Link
+                href={{
+                  pathname: '/tourneys/editTournament',
+                  query: { id: tournament.id },
+                }}
+                as={`/edit/${tournament.id}`}
+              >
+                <button>
+                  <EditIcon size={20} fill="#979797" />
+                </button>
+              </Link>
             </Tooltip>
           </div>
           <div></div>

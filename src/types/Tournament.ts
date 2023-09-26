@@ -1,5 +1,3 @@
-import { Tournament } from '@/types/Tournament'
-
 import { Types } from 'mongoose'
 import { Document } from 'mongoose'
 
