@@ -8,13 +8,17 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Link,
 } from '@nextui-org/react'
 import { gql, useMutation } from '@apollo/client'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
+import { useQuery } from '@apollo/client'
 
 const newTourneyMutation = gql`
   mutation CreateTournament($input: CreateTournamentInput!) {
     createTournament(input: $input) {
+      id
       name
 
       rules {
@@ -38,8 +42,9 @@ function TourneysNew() {
   const [hiddenField, setHiddenField] = useState('hidden')
   const [mutateFunction, { data, loading, error }] = useMutation(newTourneyMutation)
   const { data: session } = useSession()
+  const router = useRouter()
 
-  const newTourney = (e: React.FormEvent<HTMLFormElement>) => {
+  const newTourney = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     const form = e.currentTarget
     const tourneyName = (form[0] as HTMLInputElement).value
@@ -55,19 +60,22 @@ function TourneysNew() {
       ruleset = selectedKeys.values().next().value
     }
 
-    mutateFunction({
+    const result = await mutateFunction({
       variables: {
         input: {
           name: tourneyName,
           rules: ['65106775553dac66bcfac032'],
           date: endDate,
           maxPlayers: maxPlayers,
-          players: session?.user?.id,
+          players: [],
           admin: session?.user?.id,
           invitationOnly: invitationOnly,
         },
       },
     })
+
+    const createdTournamentId = result.data.createTournament.id
+    router.push(`/tourneys/editTournament?id=${createdTournamentId}`)
   }
 
   const chooseGameMode = React.useMemo(() => {
