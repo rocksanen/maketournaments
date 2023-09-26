@@ -14,6 +14,7 @@ import { gql, useMutation } from '@apollo/client'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import { useQuery } from '@apollo/client'
+import RulesView from '@/components/createTourney/rules-view'
 
 const newTourneyMutation = gql`
   mutation CreateTournament($input: CreateTournamentInput!) {
@@ -95,7 +96,7 @@ function TourneysNew() {
   if (loading) return 'Submitting...'
   if (error) return alert(`Submission error! ${error.message}`)
   return (
-    <div className="bg-amber-800 p-10 rounded-lg">
+    <div className=" p-10 rounded-lg">
       <form className="flex flex-col gap-6" onSubmit={newTourney}>
         <h2 className="text-3xl font-bold">Create a new tourney!</h2>
         <Input type="text" label="Tourney Name" placeholder="" />
@@ -131,6 +132,8 @@ function TourneysNew() {
         <Checkbox>Invitation Only</Checkbox>
         <Button type="submit">Submit</Button>
       </form>
+      <div className="m-20"></div>
+      <RulesView />
     </div>
   )
 }

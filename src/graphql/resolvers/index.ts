@@ -1,12 +1,12 @@
 import userResolvers from './userResolver'
-import rulesResolvers from './rulesResolver'
+import rulesetResolvers from './rulesetResolver'
 import tournamentResolvers from './tournamentResolver'
 import matchResolvers from './matchResolver'
 import seriesResolvers from './seriesResolver'
 
 const resolvers = [
   userResolvers,
-  rulesResolvers,
+  rulesetResolvers,
   tournamentResolvers,
   matchResolvers,
   seriesResolvers,

@@ -1,4 +1,4 @@
-type Rules {
+type Ruleset {
     id: ID!
     rounds: Int!
     winnerpoints: Int!
@@ -8,7 +8,7 @@ type Rules {
     nightmarePointsOn: Boolean!
 }
 
-input RulesInput {
+input RulesetInput {
     rounds: Int!
     winnerpoints: Int!
     loserpoints: Int!
@@ -17,7 +17,7 @@ input RulesInput {
     nightmarePointsOn: Boolean!
 }
 
-input UpdateRulesInput {
+input UpdateRulesetInput {
     id: ID!
     rounds: Int
     winnerpoints: Int

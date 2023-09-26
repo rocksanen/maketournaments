@@ -6,10 +6,10 @@ const tournamentSchema = new mongoose.Schema<Tournament>({
     type: String,
     required: true,
   },
-  rules: [
+  ruleset: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Rules',
+      ref: 'Ruleset',
       required: true,
     },
   ],
