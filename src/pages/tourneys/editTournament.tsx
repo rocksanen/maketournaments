@@ -1,8 +1,18 @@
 'use client'
 import React from 'react'
 import { useRouter } from 'next/router'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react'
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Button,
+} from '@nextui-org/react'
 import { Card, CardHeader, CardBody, CardFooter } from '@nextui-org/react'
+import { ExportIcon } from '@/components/icons/accounts/export-icon'
+import { Input } from '@nextui-org/react'
 
 const tournamentData = [
   {
@@ -79,6 +89,11 @@ const tournamentData = [
   },
 ]
 
+const columns = [
+  { name: 'NAME', uid: 'name' },
+  { name: 'STATUS', uid: 'status' },
+]
+
 export default function EditTournament() {
   const router = useRouter()
   const { id, name } = router.query
@@ -102,7 +117,7 @@ export default function EditTournament() {
         </TableHeader>
         <TableBody>
           {tournamentData.map((data, index) => (
-            <TableRow key={index} className="table-row">
+            <TableRow key={index} className={`table-row ${index === 2 ? 'third-row' : ''}`}>
               <TableCell
                 className={
                   index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''
@@ -120,6 +135,25 @@ export default function EditTournament() {
           ))}
         </TableBody>
       </Table>
+      <div className="export-csv">
+        <Button color="primary" startContent={<ExportIcon />}>
+          Export to CSV
+        </Button>
+      </div>
+      <Card className="w-1/2 h-1/8 items-center">
+        <CardBody>
+          <Input
+            type="text"
+            label="Invite player"
+            placeholder="Enter username"
+            className="w-full"
+            labelPlacement="outside-left"
+          />
+          <Button color="primary" className="w-1/6">
+            Send
+          </Button>
+        </CardBody>
+      </Card>
     </div>
   )
 }

@@ -29,3 +29,11 @@ body {
 .bronze {
   color: rgb(206, 146, 35);
 }
+.third-row {
+  border-bottom-color: rgba(31, 195, 228, 0.379);
+}
+.export-csv {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  align-self: flex-end;
+}
