@@ -15,3 +15,17 @@ body {
     width: 0px;
   }
 }
+.table-row {
+  border:1px solid #cccccc2f;
+}
+.gold {
+  color: gold;
+}
+
+.silver {
+  color: rgb(224, 213, 213);
+}
+
+.bronze {
+  color: rgb(206, 146, 35);
+}
