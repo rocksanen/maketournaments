@@ -1,7 +1,7 @@
 import mongoose, { Schema, model } from 'mongoose'
-import { Rules } from '@/types/Rules'
+import { Ruleset } from '@/types/Ruleset'
 
-const rulesSchema = new Schema<Rules>({
+const rulesetSchema = new Schema<Ruleset>({
   rounds: {
     type: Number,
     required: true,
@@ -28,5 +28,5 @@ const rulesSchema = new Schema<Rules>({
   },
 })
 
-const Rules = mongoose.models.Rules || mongoose.model('Rules', rulesSchema)
-export default Rules
+const Ruleset = mongoose.models.Ruleset || mongoose.model('Ruleset', rulesetSchema)
+export default Ruleset

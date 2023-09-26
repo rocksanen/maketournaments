@@ -1,7 +1,7 @@
 type Tournament {
     id: ID!
     name: String!
-    rules: [Rules!]!
+    ruleset: [Ruleset!]!
     date: String!
     players: [User]
     admin: [User!]!
@@ -12,7 +12,7 @@ type Tournament {
 
 input CreateTournamentInput {
     name: String!
-    rules: [ID!]!
+    ruleset: [ID!]!
     date: String!
     players: [ID!]
     admin: [ID!]!
@@ -23,7 +23,7 @@ input CreateTournamentInput {
 input UpdateTournamentInput {
     id: ID!
     name: String
-    rules: [ID!]
+    ruleset: [ID!]
     date: String
     players: [ID!]
     admin: [ID!]

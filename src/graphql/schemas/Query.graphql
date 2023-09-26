@@ -1,50 +1,50 @@
 type Query {
-    # User Queries
-    user(id: ID!): User
-    allUsers(limit: Int, offset: Int): [User]
+  # User Queries
+  user(id: ID!): User
+  allUsers(limit: Int, offset: Int): [User]
 
-    # Match Queries
-    match(id: ID!): Match
-    allMatches(limit: Int, offset: Int): [Match]
+  # Match Queries
+  match(id: ID!): Match
+  allMatches(limit: Int, offset: Int): [Match]
 
-    # Rules Queries
-    rules(id: ID!): Rules
-    allRules(limit: Int, offset: Int): [Rules]
+  # Ruleset Queries
+  ruleset(id: ID!): Ruleset
+  allRulesets(limit: Int, offset: Int): [Ruleset]
 
-    # Series Queries
-    series(id: ID!): Series
-    allSeries(limit: Int, offset: Int): [Series]
+  # Series Queries
+  series(id: ID!): Series
+  allSeries(limit: Int, offset: Int): [Series]
 
-    # Tournament Queries
-    tournament(id: ID!): Tournament
-    allTournaments(limit: Int, offset: Int): [Tournament]
+  # Tournament Queries
+  tournament(id: ID!): Tournament
+  allTournaments(limit: Int, offset: Int): [Tournament]
 
-    hello: String
+  hello: String
 }
 
 type Mutation {
-    # User Mutations
-    createUser(input: CreateUserInput!): User!
-    updateUser(input: UpdateUserInput!): User
-    deleteUser(id: ID!): Boolean
+  # User Mutations
+  createUser(input: CreateUserInput!): User!
+  updateUser(input: UpdateUserInput!): User
+  deleteUser(id: ID!): Boolean
 
-    # Tournament Mutations
-    createTournament(input: CreateTournamentInput!): Tournament!
-    updateTournament(input: UpdateTournamentInput!): Tournament
-    deleteTournament(id: ID!): Boolean
+  # Tournament Mutations
+  createTournament(input: CreateTournamentInput!): Tournament!
+  updateTournament(input: UpdateTournamentInput!): Tournament
+  deleteTournament(id: ID!): Boolean
 
-    # Rules Mutations
-    createRules(input: RulesInput!): Rules!
-    updateRules(input: UpdateRulesInput!): Rules
-    deleteRules(id: ID!): Boolean
+  # Ruleset Mutations
+  createRuleset(input: RulesetInput!): Ruleset!
+  updateRuleset(input: UpdateRulesetInput!): Ruleset
+  deleteRuleset(id: ID!): Boolean
 
-    # Match Mutations
-    createMatch(input: CreateMatchInput!): Match!
-    updateMatch(input: UpdateMatchInput!): Match
-    deleteMatch(id: ID!): Boolean
+  # Match Mutations
+  createMatch(input: CreateMatchInput!): Match!
+  updateMatch(input: UpdateMatchInput!): Match
+  deleteMatch(id: ID!): Boolean
 
-    # Series Mutations
-    createSeries(input: SeriesInput!): Series!
-    updateSeries(input: UpdateSeriesInput!): Series
-    deleteSeries(id: ID!): Boolean
+  # Series Mutations
+  createSeries(input: SeriesInput!): Series!
+  updateSeries(input: UpdateSeriesInput!): Series
+  deleteSeries(id: ID!): Boolean
 }

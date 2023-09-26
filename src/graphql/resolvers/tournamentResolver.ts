@@ -1,5 +1,5 @@
 import Tournament from '@/models/tournamentModel'
-import { Rules } from '@/types/Rules'
+import { Ruleset } from '@/types/Ruleset'
 import { User } from '@/types/User'
 import { Match } from '@/types/Match'
 import { renameIdField } from '@/utils/idCon'
@@ -9,7 +9,7 @@ import { MAX_QUERY_LIMIT } from '@/utils/constants'
 interface CreateTournamentArgs {
   input: {
     name: string
-    rules: Rules[]
+    rules: Ruleset[]
     date: string
     players?: User[]
     admin: User[]
@@ -23,7 +23,7 @@ interface UpdateTournamentArgs {
   input: {
     id: string
     name?: string
-    rules?: Rules[]
+    rules?: Ruleset[]
     date?: string
     players?: User[]
     admin?: User[]
@@ -35,7 +35,7 @@ const tournamentResolvers = {
   Query: {
     tournament: async (_: any, { id }: { id: string }) => {
       try {
-        const tournament = await Tournament.findById(id).populate('rules admin players matches')
+        const tournament = await Tournament.findById(id).populate('ruleset admin players matches')
         return tournament
       } catch (error) {
         console.error('Failed to fetch tournament:', error)
@@ -46,7 +46,7 @@ const tournamentResolvers = {
     allTournaments: async (_: any, { limit, offset }: paginationArgs) => {
       try {
         const tournaments = await Tournament.find()
-          .populate('rules admin players matches')
+          .populate('ruleset admin players matches')
           .limit(Math.min(limit, MAX_QUERY_LIMIT))
           .skip(offset * Math.min(limit, MAX_QUERY_LIMIT))
         return tournaments
@@ -68,7 +68,7 @@ const tournamentResolvers = {
 
         // Use the Model to fetch and populate the document
         const result = await Tournament.findById(savedTournament._id).populate(
-          'rules admin players matches',
+          'ruleset admin players matches',
         )
 
         if (!result) {
