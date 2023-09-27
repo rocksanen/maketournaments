@@ -1,8 +1,21 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react'
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  Button,
+} from '@nextui-org/react'
 import { Card, CardHeader, CardBody, CardFooter } from '@nextui-org/react'
+import { ExportIcon } from '@/components/icons/accounts/export-icon'
+import { Input } from '@nextui-org/react'
+import { TableWrapper } from '@/components/invitePlayers/invitationTable'
+import { Dropdown, DropdownItem } from '@nextui-org/react'
+import { gql, useMutation } from '@apollo/client'
 
 const tournamentData = [
   {
@@ -79,11 +92,42 @@ const tournamentData = [
   },
 ]
 
+const SEND_INVITATION = gql`
+  mutation SendInvitation($tournamentId: ID!, $email: String!) {
+    sendInvitation(tournamentId: $tournamentId, email: $email) {
+      success
+      message
+    }
+  }
+`
+
 export default function EditTournament() {
   const router = useRouter()
   const { id, name } = router.query
-  console.log(id, 'id passing to editTournaments')
-  console.log(name, 'name passing to editTournaments')
+  const [email, setEmail] = useState('')
+  const [sendInvitation] = useMutation(SEND_INVITATION)
+
+  const handleSendInvitation = async () => {
+    try {
+      const response = await sendInvitation({
+        variables: {
+          tournamentId: '6512c76c2f5af2aece86ceab', // this is a tournament id for tournament called kikkeli
+          email,
+        },
+      })
+
+      const { success, message } = response.data.sendInvitation
+
+      if (success) {
+        alert('Invitation sent successfully!')
+      } else {
+        alert(`Error sending invitation: ${message}`)
+      }
+    } catch (error) {
+      console.error('Error sending invitation:', error)
+      alert('Error sending invitation. Please try again later.')
+    }
+  }
 
   return (
     <div className="flex flex-col items-center justify-top w-full h-full">
@@ -102,7 +146,7 @@ export default function EditTournament() {
         </TableHeader>
         <TableBody>
           {tournamentData.map((data, index) => (
-            <TableRow key={index} className="table-row">
+            <TableRow key={index} className={`table-row ${index === 2 ? 'third-row' : ''}`}>
               <TableCell
                 className={
                   index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''
@@ -120,6 +164,33 @@ export default function EditTournament() {
           ))}
         </TableBody>
       </Table>
+      <div className="export-csv">
+        <Button color="primary" startContent={<ExportIcon />}>
+          Export to CSV
+        </Button>
+      </div>
+      <Card className="w-full h-1/4 flex flex-col gap-1 items-start justify-center">
+        <CardHeader className="flex items-center justify-between w-full">
+          <Input
+            type="text"
+            label="Invite player"
+            placeholder="Enter email address"
+            className="w-full"
+            labelPlacement="outside-left"
+            style={{ marginRight: '1rem' }}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Dropdown placeholder="Select role" className="w-1/4">
+            <DropdownItem value="player">Player</DropdownItem>
+            <DropdownItem value="admin">Admin</DropdownItem>
+          </Dropdown>
+          <Button color="primary" className="w-20 h-full" onClick={handleSendInvitation}>
+            Send
+          </Button>
+        </CardHeader>
+      </Card>
+      <TableWrapper />
     </div>
   )
 }
