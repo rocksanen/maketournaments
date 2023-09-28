@@ -56,6 +56,20 @@ const seriesResolvers = {
         throw new Error('Failed to fetch series list')
       }
     },
+
+    allSeriesByAdmin: async (_: any, { adminId }: { adminId: string }) => {
+      if (!adminId) {
+        throw new Error('Please log in to view your series')
+      }
+
+      try {
+        const seriesList = await seriesModel.find({ admin: adminId }).populate('tournaments admin')
+        return seriesList
+      } catch (error) {
+        console.error('Failed to fetch series list by admin:', error)
+        throw new Error('Failed to fetch series list by admin')
+      }
+    },
   },
 
   Mutation: {
@@ -71,11 +85,15 @@ const seriesResolvers = {
     },
 
     updateSeries: async (_: any, { input }: UpdateSeriesArgs) => {
-      const { id, ...rest } = input
+      const { id, tournaments } = input
       try {
-        const updatedSeries = await seriesModel.findByIdAndUpdate(id, rest, {
-          new: true, // returns the updated document
-        })
+        const updatedSeries = await seriesModel.findByIdAndUpdate(
+          id,
+          tournaments ? { $addToSet: { tournaments: { $each: tournaments } } } : {},
+          {
+            new: true,
+          },
+        )
         return updatedSeries
       } catch (error) {
         console.error('Failed to update series:', error)
