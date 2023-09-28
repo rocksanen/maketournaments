@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { changeStream } from '../../lib/mongoChangeStream'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+
+    console.log('kikkeli')
   if (req.headers.accept && req.headers.accept === 'text/event-stream') {
     res.setHeader('Content-Type', 'text/event-stream')
     res.setHeader('Cache-Control', 'no-cache')
