@@ -43,6 +43,18 @@ const tournamentResolvers = {
       }
     },
 
+    tournamentByName: async (_: any, { name }: { name: string }) => {
+      try {
+        const tournament = await Tournament.findOne({ name }).populate(
+          'ruleset admin players matches',
+        )
+        return tournament
+      } catch (error) {
+        console.error('Failed to fetch tournament:', error)
+        throw new Error('Failed to fetch tournament')
+      }
+    },
+
     allTournaments: async (_: any, { limit, offset }: paginationArgs) => {
       try {
         const tournaments = await Tournament.find()
