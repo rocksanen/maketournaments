@@ -6,10 +6,43 @@ import {
   DropdownTrigger,
   NavbarItem,
 } from '@nextui-org/react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
 
+interface Notification {
+  type: string
+  message: string
+  _id: {
+    _data: string
+  }
+}
+
 export const NotificationsDropdown = () => {
+  const [notificationId, setNotificationId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const eventSource = new EventSource('/api/sse')
+
+    eventSource.onopen = () => {
+      console.log('SSE connection opened.')
+    }
+
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data)
+      const id = data.documentKey._id
+      setNotificationId(id)
+    }
+
+    eventSource.onerror = (error) => {
+      console.error('SSE Error:', error)
+      eventSource.close() // Close the connection on error
+    }
+
+    return () => {
+      eventSource.close()
+    }
+  }, [])
+
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
@@ -18,36 +51,16 @@ export const NotificationsDropdown = () => {
         </NavbarItem>
       </DropdownTrigger>
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
-        <DropdownSection title="Notificacions">
-          <DropdownItem
+        <DropdownSection title="Notifications">
+        <DropdownItem
             classNames={{
               base: 'py-2',
               title: 'text-base font-semibold',
             }}
-            key="1"
-            description="Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim."
+            description={notificationId || ''}
+            textValue={notificationId || ''}
           >
-            📣 Edit your information
-          </DropdownItem>
-          <DropdownItem
-            key="2"
-            classNames={{
-              base: 'py-2',
-              title: 'text-base font-semibold',
-            }}
-            description="Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim."
-          >
-            🚀 Say goodbye to paper receipts!
-          </DropdownItem>
-          <DropdownItem
-            key="3"
-            classNames={{
-              base: 'py-2',
-              title: 'text-base font-semibold',
-            }}
-            description="Sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim."
-          >
-            📣 Edit your information
+            {notificationId ? 'New Notification' : 'No New Notifications'}
           </DropdownItem>
         </DropdownSection>
       </DropdownMenu>
