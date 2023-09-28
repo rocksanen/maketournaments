@@ -1,6 +1,7 @@
 import seriesModel from '@/models/seriesModel'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
+import tournamentModel from '@/models/tournamentModel'
 
 interface SeriesArgs {
   id: string
@@ -25,6 +26,11 @@ interface UpdateSeriesArgs {
     seriesCreated?: string
     seriesEnded?: string
   }
+}
+
+interface addTournamentToSeriesArgs {
+  tournamentId: string
+  seriesId: string
 }
 
 interface DeleteSeriesArgs {
@@ -85,19 +91,45 @@ const seriesResolvers = {
     },
 
     updateSeries: async (_: any, { input }: UpdateSeriesArgs) => {
-      const { id, tournaments } = input
+      const { id, ...rest } = input
       try {
-        const updatedSeries = await seriesModel.findByIdAndUpdate(
-          id,
-          tournaments ? { $addToSet: { tournaments: { $each: tournaments } } } : {},
-          {
-            new: true,
-          },
-        )
+        const updatedSeries = await seriesModel.findByIdAndUpdate(id, rest, {
+          new: true, // returns the updated document
+        })
         return updatedSeries
       } catch (error) {
         console.error('Failed to update series:', error)
         throw new Error('Failed to update series')
+      }
+    },
+
+    addTournamentToSeries: async (
+      _: any,
+      { seriesId, tournamentId }: addTournamentToSeriesArgs,
+    ) => {
+      try {
+        const series = await seriesModel.findById(seriesId)
+        if (!series) {
+          throw new Error('Series not found')
+        }
+
+        const tournament = await tournamentModel.findById(tournamentId)
+        if (!tournament) {
+          throw new Error('Tournament not found')
+        }
+
+        const tournamentExists = series.tournaments.includes(tournamentId)
+        if (tournamentExists) {
+          return { success: false, message: 'Tournament already exists in the series' }
+        }
+
+        series.tournaments.push(tournamentId)
+        await series.save()
+
+        return { success: true, message: 'Tournament added to series successfully' }
+      } catch (error) {
+        console.error('Error adding tournament to series:', error)
+        throw new Error('Error adding tournament to series')
       }
     },
 
