@@ -122,9 +122,7 @@ function RulesView() {
         <div className="max-w-md">
           <div className="space-y-1">
             <h4 className="text-medium font-medium">Ruleset {rulesets[index].id}</h4>
-            <p className="text-small text-default-400">
-              4 hours later...
-            </p>
+            <p className="text-small text-default-400">4 hours later...</p>
           </div>
           <Divider className="my-4" />
           <div className="h-5 items-center space-y-4 text-small">

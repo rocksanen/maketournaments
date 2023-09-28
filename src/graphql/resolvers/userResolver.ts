@@ -30,6 +30,11 @@ interface DeleteUserArgs {
   id: string
 }
 
+interface SendInvitationArgs {
+  tournamentId: string
+  email: string
+}
+
 const userResolvers = {
   Query: {
     user: async (_: any, { id }: UserArgs) => {
@@ -105,6 +110,28 @@ const userResolvers = {
       } catch (error) {
         console.error('Failed to delete user:', error)
         throw new Error('Failed to delete user')
+      }
+    },
+    sendInvitation: async (_: any, { tournamentId, email }: SendInvitationArgs) => {
+      try {
+        const user = await userModel.findOne({ email })
+        if (user) {
+          const tournamentExists = user.invitations.includes(tournamentId)
+
+          if (tournamentExists) {
+            throw new Error('Tournament already exists in invitations')
+          }
+
+          user.invitations.push(tournamentId)
+          await user.save()
+          return { success: true, message: 'Invitation sent successfully' }
+        } else {
+          // Implement email sending logic here
+          return { success: true, message: 'Invitation sent successfully' }
+        }
+      } catch (error) {
+        console.error('Error sending invitation:', error)
+        throw new Error('Error sending invitation')
       }
     },
   },

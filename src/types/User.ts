@@ -5,6 +5,8 @@ interface User extends Document {
   email: string
   password: string
   tournaments: Types.ObjectId[]
+  friends: Types.ObjectId[]
+  invitations: Types.ObjectId[]
   provider: string
 }
 
