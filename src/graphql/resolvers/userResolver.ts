@@ -124,6 +124,7 @@ const userResolvers = {
 
           user.invitations.push(tournamentId)
           await user.save()
+
           return { success: true, message: 'Invitation sent successfully' }
         } else {
           // Implement email sending logic here
