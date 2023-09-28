@@ -14,7 +14,10 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
+  Button,
+  Input,
 } from '@nextui-org/react'
+import { HouseIcon } from '@/components/icons/breadcrumb/house-icon'
 
 // gets all the series based on the adminId. So gets the current users series
 const FETCH_SERIES = gql`
@@ -44,15 +47,11 @@ const CREATE_SERIES = gql`
   }
 `
 
-const UPDATE_SERIES = gql`
-  mutation UpdateSeries($input: UpdateSeriesInput!) {
-    updateSeries(input: $input) {
-      id
-      name
-      tournaments {
-        id
-        name
-      }
+const ADD_TO_TOURNAMENT = gql`
+  mutation addTournamentToSeries($seriesId: ID!, $tournamentId: ID!) {
+    addTournamentToSeries(seriesId: $seriesId, tournamentId: $tournamentId) {
+      success
+      message
     }
   }
 `
@@ -60,11 +59,12 @@ const UPDATE_SERIES = gql`
 function SeriesNew() {
   const { data: session } = useSession()
 
-  const [seriesName, setSeriesName] = useState('')
+  const [tournamentName, setTournamentName] = useState('')
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
   // gets the selected series from the table
   const [selectedSeries, setSelectedSeries] = useState<Series | null>(null)
+  const [addTournamentToSeries] = useMutation(ADD_TO_TOURNAMENT)
 
   // get series data
   const { data, loading, error } = useQuery(FETCH_SERIES, {
@@ -85,41 +85,42 @@ function SeriesNew() {
     refetchQueries: [{ query: FETCH_SERIES, variables: { adminId: session?.user?.id } }],
   })
 
-  const [updateSeriesMutation] = useMutation(UPDATE_SERIES)
-
   const handleCreate = async () => {
     try {
       await createSeries({
         variables: {
           input: {
-            name: seriesName,
+            name: tournamentName,
             tournaments: [],
             admin: session?.user?.id,
             seriesCreated: new Date().toISOString(),
           },
         },
       })
-      setSeriesName('')
+      setTournamentName('')
     } catch (err) {
       console.error('Failed to create series', err)
     }
   }
-  /*
-  TODO: ApolloError: ID cannot represent value: { type: "Buffer", data: [Array] }
-  id is the problem?
-   */
+
   const handleAddTournamentToSeries = async (tournamentId: string) => {
     try {
-      await updateSeriesMutation({
+      const response = await addTournamentToSeries({
         variables: {
-          input: {
-            id: selectedSeries?.id,
-            tournaments: [tournamentId],
-          },
+          seriesId: selectedSeries?.id,
+          tournamentId: tournamentId,
         },
       })
-    } catch (err) {
-      console.log('Failed to add tournament to series', err)
+      const { success, message } = response.data.addTournamentToSeries
+
+      if (success) {
+        alert('Tournament added to series successfully')
+      } else {
+        alert(`Error: ${message}`)
+      }
+    } catch (error) {
+      console.error('Error adding tournament to series:', error)
+      alert('Error. Please try again later.')
     }
   }
 
@@ -141,69 +142,87 @@ function SeriesNew() {
   if (error) return <div>Error! {error.message}</div>
 
   return (
-    <div>
-      {session ? (
-        <div>
-          <h2>Series</h2>
-          <Table aria-label="Series table">
-            <TableHeader>
-              <TableColumn>NAME</TableColumn>
-              <TableColumn>ACTIONS</TableColumn>
-            </TableHeader>
-            <TableBody emptyContent="No rows to display.">
-              {data.allSeriesByAdmin.map((series: Series) => (
-                <TableRow key={series.id}>
-                  <TableCell>{series.name}</TableCell>
-                  <TableCell>
-                    <button onClick={() => handleInviteClick(series)}>Add tournament</button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-          <div>
-            <input
-              value={seriesName}
-              onChange={(e) => setSeriesName(e.target.value)}
-              placeholder="Series Name"
-            />
-            <button onClick={handleCreate}>+</button>
-          </div>
+    <div className="my-14 max-w-[95rem] mx-auto w-full flex flex-col gap-4">
+      <ul className="flex">
+        <li className="flex gap-2">
+          <HouseIcon />
+          <Link href={'/'}>
+            <span>Home</span>
+          </Link>
+          <span> / </span>
+        </li>
+      </ul>
 
-          <Modal isOpen={inviteModalOpen} onClose={handleInviteClose}>
-            <ModalContent>
-              <ModalHeader>Add Tournaments To Series</ModalHeader>
-              <ModalBody>
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={handleInputChange}
-                  placeholder="Search for tournament"
-                />
-                <div>
-                  {tournamentData && tournamentData.tournamentByName && (
-                    <div>
-                      {tournamentData.tournamentByName.name}
-                      <button
-                        onClick={() =>
-                          handleAddTournamentToSeries(tournamentData.tournamentByName.id)
-                        }
-                      >
-                        Add to Series
-                      </button>
-                    </div>
-                  )}
+      <h3 className="text-xl font-semibold">Add New Series</h3>
+      <div className="flex justify-between flex-wrap gap-4 items-center">
+        <div className="flex items-center gap-3 flex-wrap md:flex-nowrap">
+          {session ? (
+            <>
+              <Input
+                type="text"
+                placeholder="Series Name"
+                onChange={(e) => setTournamentName(e.target.value)}
+              />
+              <Button color="primary" onClick={handleCreate}>
+                Create Series
+              </Button>
+            </>
+          ) : (
+            <div>
+              <h2>Not signed in</h2>
+              <Link href="/login">Sign in</Link>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="max-w-[95rem] w-1/2">
+        <Table aria-label="Series table">
+          <TableHeader>
+            <TableColumn>NAME</TableColumn>
+            <TableColumn>ACTIONS</TableColumn>
+          </TableHeader>
+          <TableBody emptyContent="No rows to display.">
+            {data.allSeriesByAdmin.map((series: Series) => (
+              <TableRow key={series.id}>
+                <TableCell>{series.name}</TableCell>
+                <TableCell>
+                  <button onClick={() => handleInviteClick(series)}>Add tournaments</button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      <Modal isOpen={inviteModalOpen} onClose={handleInviteClose}>
+        <ModalContent>
+          <ModalHeader>Add Tournaments To Series</ModalHeader>
+          <ModalBody>
+            <Input
+              type="text"
+              value={searchTerm}
+              onChange={handleInputChange}
+              placeholder="Search for tournament"
+            />
+            {tournamentData && tournamentData.tournamentByName && (
+              <div>
+                <p className="text-tiny text-white/60">Tournament name</p>
+                <div className="flex justify-between items-center">
+                  <span>{tournamentData.tournamentByName.name}</span>
+                  <Button
+                    color="primary"
+                    size="sm"
+                    onClick={() => handleAddTournamentToSeries(tournamentData.tournamentByName.id)}
+                  >
+                    Add to Series
+                  </Button>
                 </div>
-              </ModalBody>
-            </ModalContent>
-          </Modal>
-        </div>
-      ) : (
-        <div>
-          <h2>Not signed in</h2>
-          <Link href="/login">Sign in</Link>
-        </div>
-      )}
+              </div>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </div>
   )
 }
