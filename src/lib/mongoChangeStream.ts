@@ -19,7 +19,7 @@ changeStream.on('change', (change) => {
 
   if (change.updateDescription.updatedFields.invitations) {
     const invitationId = change.updateDescription.updatedFields.invitations[0]
-    newInvitationEmitter.emit('newInvitation', {
+    newInvitationEmitter.emit('update', {
       type: 'newInvitation', // Customize as needed
       message: `New Invitation: ${invitationId}`,
     })
