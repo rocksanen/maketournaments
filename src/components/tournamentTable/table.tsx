@@ -1,14 +1,6 @@
-import {
-  Link,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@nextui-org/react'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
 import React from 'react'
-import { columns, tournaments } from './data'
+import { columns } from './data'
 import { RenderCell } from './render-cell'
 import { useQuery, gql } from '@apollo/client';
 
@@ -40,7 +32,7 @@ export const TableWrapper = () => {
   const tournaments = data.tournamentsByUser // Adjust based on the actual data structure
 
   return (
-    <div className=" w-full flex flex-col gap-4">
+    <div className="w-full flex flex-col gap-4">
       <Table aria-label="Example table with custom cells">
         <TableHeader columns={columns}>
           {(column) => (
@@ -49,11 +41,13 @@ export const TableWrapper = () => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={tournaments}>
+        <TableBody items={tournaments.map((tournament, index) => ({ key: index, ...tournament }))}>
           {(item) => (
-            <TableRow>
+            <TableRow key={item.id}>
               {(columnKey) => (
-                <TableCell>{RenderCell({ tournament: item, columnKey: columnKey })}</TableCell>
+                <TableCell>
+                  <RenderCell tournament={item} columnKey={columnKey} userId={userId} />
+                </TableCell>
               )}
             </TableRow>
           )}
