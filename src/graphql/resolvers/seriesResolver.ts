@@ -33,6 +33,11 @@ interface addTournamentToSeriesArgs {
   seriesId: string
 }
 
+interface deleteTournamentFromSeriesArgs {
+  tournamentId: string
+  seriesId: string
+}
+
 interface DeleteSeriesArgs {
   id: string
 }
@@ -74,6 +79,18 @@ const seriesResolvers = {
       } catch (error) {
         console.error('Failed to fetch series list by admin:', error)
         throw new Error('Failed to fetch series list by admin')
+      }
+    },
+    tournamentsBySeries: async (_: any, { seriesId }: { seriesId: string }) => {
+      try {
+        const series = await seriesModel.findById(seriesId).populate('tournaments')
+        if (!series) {
+          throw new Error('Series not found')
+        }
+        return series.tournaments
+      } catch (error) {
+        console.error('Failed to fetch tournaments by series:', error)
+        throw new Error('Failed to fetch tournaments by series')
       }
     },
   },
@@ -143,6 +160,38 @@ const seriesResolvers = {
       } catch (error) {
         console.error('Failed to delete series:', error)
         throw new Error('Failed to delete series')
+      }
+    },
+    deleteTournamentFromSeries: async (
+      _: any,
+      { seriesId, tournamentId }: deleteTournamentFromSeriesArgs,
+    ) => {
+      try {
+        const series = await seriesModel.findById(seriesId)
+        if (!series) {
+          throw new Error('Series not found')
+        }
+
+        const tournament = await tournamentModel.findById(tournamentId)
+        if (!tournament) {
+          throw new Error('Tournament not found')
+        }
+
+        // pull the tournament from the series
+        const result = await seriesModel.findByIdAndUpdate(
+          seriesId,
+          { $pull: { tournaments: tournamentId } },
+          { new: true },
+        )
+
+        if (!result) {
+          return { success: false, message: 'Tournament was not removed from series' }
+        }
+
+        return { success: true, message: 'Tournament deleted from series successfully' }
+      } catch (error) {
+        console.error('Error deleting tournament from series:', error)
+        throw new Error('Error deleting tournament from series')
       }
     },
   },

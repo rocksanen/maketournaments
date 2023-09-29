@@ -1,7 +1,7 @@
 type Series {
     id: ID!
     name: String!
-    tournaments: [String]
+    tournaments: [Tournament]
     admin: User!
     seriesCreated: String!
     seriesEnded: String
@@ -18,6 +18,7 @@ input SeriesInput {
 
 type Mutation {
     addTournamentToSeries(seriesId: ID!, tournamentId: ID!): TournamentToSeriesResponse!
+    deleteTournamentFromSeries(seriesId: ID!, tournamentId: ID!): TournamentToSeriesResponse!
 }
 
 type TournamentToSeriesResponse {

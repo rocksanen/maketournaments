@@ -17,12 +17,28 @@ import {
   Button,
   Input,
 } from '@nextui-org/react'
+import { EditIcon } from '@/components/icons/table/edit-icon'
+import { DeleteIcon } from '@/components/icons/table/delete-icon'
 import { HouseIcon } from '@/components/icons/breadcrumb/house-icon'
+import { Tournament } from '@/types/Tournament'
 
 // gets all the series based on the adminId. So gets the current users series
 const FETCH_SERIES = gql`
   query GetAllSeries($adminId: ID) {
     allSeriesByAdmin(adminId: $adminId) {
+      id
+      name
+      tournaments {
+        id
+        name
+      }
+    }
+  }
+`
+
+const GET_TOURNAMENTS_BY_SERIES = gql`
+  query GetTournamentsBySeries($seriesId: ID!) {
+    tournamentsBySeries(seriesId: $seriesId) {
       id
       name
     }
@@ -56,20 +72,36 @@ const ADD_TO_TOURNAMENT = gql`
   }
 `
 
+const DELETE_TOURNAMENT_FROM_SERIES = gql`
+  mutation deleteTournamentFromSeries($seriesId: ID!, $tournamentId: ID!) {
+    deleteTournamentFromSeries(seriesId: $seriesId, tournamentId: $tournamentId) {
+      success
+      message
+    }
+  }
+`
+
 function SeriesNew() {
   const { data: session } = useSession()
 
-  const [tournamentName, setTournamentName] = useState('')
+  const [seriesName, setSeriesName] = useState('')
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTournament, setSearchTournament] = useState('')
   // gets the selected series from the table
   const [selectedSeries, setSelectedSeries] = useState<Series | null>(null)
   const [addTournamentToSeries] = useMutation(ADD_TO_TOURNAMENT)
+  const [deleteTournamentFromSeries] = useMutation(DELETE_TOURNAMENT_FROM_SERIES)
 
   // get series data
   const { data, loading, error } = useQuery(FETCH_SERIES, {
     variables: { adminId: session?.user?.id },
   })
+
+  const { data: tournamentsBySeriesData } = useQuery(GET_TOURNAMENTS_BY_SERIES, {
+    variables: { seriesId: selectedSeries?.id },
+  })
+
+  console.log('data', tournamentsBySeriesData)
 
   // get tournament data
   const {
@@ -77,7 +109,7 @@ function SeriesNew() {
     error: tournamentError,
     refetch,
   } = useQuery(GET_TOURNAMENT_QUERY, {
-    variables: { name: searchTerm },
+    variables: { name: searchTournament },
   })
 
   // create series mutation, refetch used to update the table after new series is created
@@ -85,19 +117,19 @@ function SeriesNew() {
     refetchQueries: [{ query: FETCH_SERIES, variables: { adminId: session?.user?.id } }],
   })
 
-  const handleCreate = async () => {
+  const handleCreateSeries = async () => {
     try {
       await createSeries({
         variables: {
           input: {
-            name: tournamentName,
+            name: seriesName,
             tournaments: [],
             admin: session?.user?.id,
             seriesCreated: new Date().toISOString(),
           },
         },
       })
-      setTournamentName('')
+      setSeriesName('')
     } catch (err) {
       console.error('Failed to create series', err)
     }
@@ -110,16 +142,51 @@ function SeriesNew() {
           seriesId: selectedSeries?.id,
           tournamentId: tournamentId,
         },
+        // refetches all series and tournaments by series after adding tournament to series
+        refetchQueries: [
+          { query: FETCH_SERIES, variables: { adminId: session?.user?.id } },
+          { query: GET_TOURNAMENTS_BY_SERIES, variables: { seriesId: selectedSeries?.id } },
+        ],
       })
       const { success, message } = response.data.addTournamentToSeries
 
       if (success) {
+        setSeriesName('')
         alert('Tournament added to series successfully')
+        await refetch()
       } else {
         alert(`Error: ${message}`)
       }
     } catch (error) {
       console.error('Error adding tournament to series:', error)
+      alert('Error. Please try again later.')
+    }
+  }
+
+  const handleDeleteTournamentFromSeries = async (tournamentId: string) => {
+    try {
+      const response = await deleteTournamentFromSeries({
+        variables: {
+          seriesId: selectedSeries?.id,
+          tournamentId: tournamentId,
+        },
+        refetchQueries: [
+          // refetches all series and tournaments by series after deleting tournament from series
+          { query: FETCH_SERIES, variables: { adminId: session?.user?.id } },
+          { query: GET_TOURNAMENTS_BY_SERIES, variables: { seriesId: selectedSeries?.id } },
+        ],
+      })
+      const { success, message } = response.data.deleteTournamentFromSeries
+
+      if (success) {
+        setSearchTournament('')
+        alert('Tournament deleted from series successfully')
+        await refetch()
+      } else {
+        alert(`Error: ${message}`)
+      }
+    } catch (error) {
+      console.error('Error deleting tournament from series:', error)
       alert('Error. Please try again later.')
     }
   }
@@ -132,9 +199,8 @@ function SeriesNew() {
   const handleInviteClose = () => setInviteModalOpen(false)
 
   // Handles the input change for searching for tournaments. fetches everytime input changes
-  const handleInputChange = (e: any) => {
-    setSearchTerm(e.target.value)
-    refetch({ name: e.target.value })
+  const handleSearchTournamentInput = (e: any) => {
+    setSearchTournament(e.target.value)
   }
 
   if (tournamentError) return <div>Error fetching user! {tournamentError.message}</div>
@@ -161,9 +227,10 @@ function SeriesNew() {
               <Input
                 type="text"
                 placeholder="Series Name"
-                onChange={(e) => setTournamentName(e.target.value)}
+                value={seriesName}
+                onChange={(e) => setSeriesName(e.target.value)}
               />
-              <Button color="primary" onClick={handleCreate}>
+              <Button color="primary" onClick={handleCreateSeries}>
                 Create Series
               </Button>
             </>
@@ -179,15 +246,19 @@ function SeriesNew() {
       <div className="max-w-[95rem] w-1/2">
         <Table aria-label="Series table">
           <TableHeader>
-            <TableColumn>NAME</TableColumn>
-            <TableColumn>ACTIONS</TableColumn>
+            <TableColumn>Name</TableColumn>
+            <TableColumn>No. Tournaments</TableColumn>
+            <TableColumn>Actions</TableColumn>
           </TableHeader>
           <TableBody emptyContent="No rows to display.">
             {data.allSeriesByAdmin.map((series: Series) => (
               <TableRow key={series.id}>
                 <TableCell>{series.name}</TableCell>
+                <TableCell>{series.tournaments ? series.tournaments.length : 0}</TableCell>
                 <TableCell>
-                  <button onClick={() => handleInviteClick(series)}>Add tournaments</button>
+                  <button onClick={() => handleInviteClick(series)}>
+                    <EditIcon size={20} fill="#979797" />
+                  </button>
                 </TableCell>
               </TableRow>
             ))}
@@ -197,12 +268,12 @@ function SeriesNew() {
 
       <Modal isOpen={inviteModalOpen} onClose={handleInviteClose}>
         <ModalContent>
-          <ModalHeader>Add Tournaments To Series</ModalHeader>
+          <ModalHeader>Add Tournaments To {selectedSeries?.name}</ModalHeader>
           <ModalBody>
             <Input
               type="text"
-              value={searchTerm}
-              onChange={handleInputChange}
+              value={searchTournament}
+              onChange={handleSearchTournamentInput}
               placeholder="Search for tournament"
             />
             {tournamentData && tournamentData.tournamentByName && (
@@ -219,6 +290,27 @@ function SeriesNew() {
                   </Button>
                 </div>
               </div>
+            )}
+            <ModalHeader>Tournaments In {selectedSeries?.name}</ModalHeader>
+            {tournamentsBySeriesData && tournamentsBySeriesData.tournamentsBySeries && (
+              <Table aria-label="Tournaments in series table">
+                <TableHeader>
+                  <TableColumn>Name</TableColumn>
+                  <TableColumn>Actions</TableColumn>
+                </TableHeader>
+                <TableBody emptyContent="No rows to display.">
+                  {tournamentsBySeriesData.tournamentsBySeries.map((tournament: Tournament) => (
+                    <TableRow key={tournament.id}>
+                      <TableCell>{tournament.name}</TableCell>
+                      <TableCell>
+                        <button onClick={() => handleDeleteTournamentFromSeries(tournament?.id)}>
+                          <DeleteIcon size={20} fill="#979797" />
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             )}
           </ModalBody>
         </ModalContent>
