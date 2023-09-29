@@ -5,30 +5,39 @@ import { EditIcon } from '../icons/table/edit-icon'
 import Link from 'next/link'
 
 interface Props {
-  tournament: any;
+  tournament: any
   columnKey: string | React.Key
   userId: string
 }
 
 export const RenderCell = ({ tournament, columnKey, userId }: Props) => {
-  const cellValue = tournament[columnKey];
+  const cellValue = tournament[columnKey]
 
-  const isAdmin = tournament.admin.some((admin: any) => admin.id === userId);
-  const isPlayer = tournament.players.some((player: any) => player.id === userId);
+  const isAdmin = tournament.admin.some((admin: any) => admin.id === userId)
+  const isPlayer = tournament.players.some((player: any) => player.id === userId)
+  const role = isAdmin && isPlayer ? 'Admin/Player' : isAdmin ? 'Admin' : 'Player'
 
-  const role = isAdmin ? 'Admin' : isPlayer ? 'Player' : 'Unknown';
+  const currentDate = new Date()
+  const tournamentDate = new Date(Number(tournament.date))
+  const status = currentDate < tournamentDate ? 'Active' : 'Finished'
 
   switch (columnKey) {
     case 'name':
-      return <div>{cellValue}</div>;
+      return <div>{cellValue}</div>
     case 'date':
       return (
         <div>
-          <span>{new Date(cellValue).toLocaleDateString()}</span>
+          <span>{tournamentDate.toDateString()}</span>
         </div>
       )
     case 'role':
-      return <div>{role}</div>;
+      return <div>{role}</div>
+    case 'status':
+      return (
+        <Chip size="sm" variant="flat" color={status === 'Active' ? 'success' : 'warning'}>
+          <span className="capitalize text-xs">{status}</span>
+        </Chip>
+      )
     case 'actions':
       return (
         <div className="flex items-center gap-4 ">
@@ -57,8 +66,8 @@ export const RenderCell = ({ tournament, columnKey, userId }: Props) => {
             </div>
           )}
         </div>
-      );
+      )
     default:
-      return <div>{cellValue}</div>;
+      return <div>{cellValue}</div>
   }
 }
