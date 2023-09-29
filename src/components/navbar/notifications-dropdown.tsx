@@ -17,11 +17,15 @@ interface Notification {
   }
 }
 
-export const NotificationsDropdown = () => {
+export interface NotificationsDropdownProps {
+  userId: string
+}
+
+export const NotificationsDropdown = ({ userId }: NotificationsDropdownProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([])
 
   useEffect(() => {
-    const eventSource = new EventSource('/api/sse')
+    const eventSource = new EventSource(`/api/sse?userId=${userId}`)
 
     eventSource.onopen = () => {
       console.log('SSE connection opened.')
@@ -32,22 +36,22 @@ export const NotificationsDropdown = () => {
       setNotifications((prevNotifications) => [
         ...prevNotifications,
         {
-          type: data.type, // Assuming type is available in data
-          message: data.message, // Assuming message is available in data
-          _id: { _data: data._id }, // Assuming _id is available in data
+          type: data.type,
+          message: data.message,
+          _id: { _data: data._id },
         },
       ])
     }
 
     eventSource.onerror = (error) => {
       console.error('SSE Error:', error)
-      eventSource.close() // Close the connection on error
+      eventSource.close()
     }
 
     return () => {
       eventSource.close()
     }
-  }, [])
+  }, [userId])
 
   return (
     <Dropdown placement="bottom-end">

@@ -12,7 +12,6 @@ interface CreateUserArgs {
     name: string
     email: string
     password: string
-    // add other fields as necessary
   }
 }
 
@@ -22,7 +21,6 @@ interface UpdateUserArgs {
     name?: string
     email?: string
     password?: string
-    // add other fields as necessary
   }
 }
 
@@ -42,6 +40,7 @@ interface SendNotificationArgs {
     message: string
   }
 }
+
 type NotificationInput = {
   type: string
   message: string
@@ -78,7 +77,6 @@ const userResolvers = {
   Mutation: {
     createUser: async (_: any, { input }: CreateUserArgs) => {
       try {
-        // Hash the password before saving
         const hashedPassword = await bcrypt.hash(input.password, 10)
 
         const newUser = new userModel({
@@ -98,12 +96,11 @@ const userResolvers = {
       const { id, ...rest } = input
       try {
         if (rest.password) {
-          // Hash the new password before updating
           rest.password = await bcrypt.hash(rest.password, 10)
         }
 
         const updatedUser = await userModel.findByIdAndUpdate(id, rest, {
-          new: true, // returns the updated document
+          new: true,
         })
         return updatedUser
       } catch (error) {
@@ -139,7 +136,6 @@ const userResolvers = {
 
           return { success: true, message: 'Invitation sent successfully' }
         } else {
-          // Implement email sending logic here
           return { success: true, message: 'Invitation sent successfully' }
         }
       } catch (error) {

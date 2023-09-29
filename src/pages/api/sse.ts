@@ -2,6 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { changeStream } from '@/lib/mongoChangeStream'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  const { userId } = req.query
+
   if (req.headers.accept && req.headers.accept === 'text/event-stream') {
     res.setHeader('Content-Type', 'text/event-stream')
     res.setHeader('Cache-Control', 'no-cache')
@@ -19,7 +21,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     changeStream.on('change', (change) => {
-      sendUpdate(change)
+      if (change.updateDescription.updatedFields.invitations.includes(userId)) {
+        sendUpdate(change)
+      }
     })
 
     req.socket.on('close', () => {
