@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { newInvitationEmitter } from '@/lib/mongoChangeStream'
+import { changeStream } from '@/lib/mongoChangeStream'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.headers.accept && req.headers.accept === 'text/event-stream') {
@@ -12,18 +12,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       res.write(': heartbeat\n\n')
     }, HEARTBEAT_INTERVAL)
 
-    const sendUpdateSignal = () => {
-      const event = 'update\n\n'
+    const sendUpdate = (data: { [key: string]: string }) => {
+      const event = `data: ${JSON.stringify(data)}\n\n`
       res.write(event)
+      console.log('Sent SSE update:', data)
     }
 
-    newInvitationEmitter.on('update', () => {
-      sendUpdateSignal()
+    changeStream.on('change', (change) => {
+      sendUpdate(change)
     })
 
     req.socket.on('close', () => {
       clearInterval(intervalId)
-      newInvitationEmitter.removeAllListeners('update') // Remove event listeners on connection close
       res.end()
     })
   } else {

@@ -9,8 +9,16 @@ import {
 import React, { useEffect, useState } from 'react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
 
+interface Notification {
+  type: string
+  message: string
+  _id: {
+    _data: string
+  }
+}
+
 export const NotificationsDropdown = () => {
-  const [notifications, setNotifications] = useState<{ type: string; message: string }[]>([])
+  const [notifications, setNotifications] = useState<Notification[]>([])
 
   useEffect(() => {
     const eventSource = new EventSource('/api/sse')
@@ -19,12 +27,14 @@ export const NotificationsDropdown = () => {
       console.log('SSE connection opened.')
     }
 
-    eventSource.onmessage = () => {
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data)
       setNotifications((prevNotifications) => [
         ...prevNotifications,
         {
-          type: 'New Invitation',
-          message: 'You have a new invitation',
+          type: data.type, // Assuming type is available in data
+          message: data.message, // Assuming message is available in data
+          _id: { _data: data._id }, // Assuming _id is available in data
         },
       ])
     }
@@ -55,8 +65,10 @@ export const NotificationsDropdown = () => {
                 base: 'py-2',
                 title: 'text-base font-semibold',
               }}
+              description={'You have new invitation from user: ' + notification._id._data}
+              textValue={notification._id._data}
             >
-              {notification.type}: {notification.message}
+              {notification.type}
             </DropdownItem>
           ))}
         </DropdownSection>

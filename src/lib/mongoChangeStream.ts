@@ -1,8 +1,5 @@
 import mongoose from 'mongoose'
 import UserModel from '@/models/userModel'
-import EventEmitter from 'events'
-
-const newInvitationEmitter = new EventEmitter()
 
 const uri = process.env.MONGO_URI || ''
 
@@ -16,18 +13,10 @@ const changeStream = UserModel.watch([
 
 changeStream.on('change', (change) => {
   console.log('Change: ', change)
-
-  if (change.updateDescription.updatedFields.invitations) {
-    const invitationId = change.updateDescription.updatedFields.invitations[0]
-    newInvitationEmitter.emit('update', {
-      type: 'newInvitation', // Customize as needed
-      message: `New Invitation: ${invitationId}`,
-    })
-  }
 })
 
 changeStream.on('error', (error) => {
   console.error('Error: ', error)
 })
 
-export { newInvitationEmitter } // <-- Exporting only the emitter
+export { changeStream }
