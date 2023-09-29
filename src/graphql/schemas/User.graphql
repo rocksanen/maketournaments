@@ -2,38 +2,54 @@ type User {
   id: ID!
   name: String!
   email: String!
-  password: String!
   tournaments: [Tournament]
   friends: [User]
   invitations: [String]
-  userCreated: String!
+  provider: String
+  notifications: [Notification] # Add notifications field
+}
+
+type Notification {
+  type: String
+  message: String
 }
 
 input CreateUserInput {
-    name: String!
-    email: String!
-    password: String!
+  name: String!
+  email: String!
+  password: String!
 }
 
 input UpdateUserInput {
-    id: ID!
-    name: String
-    email: String
-    password: String
+  id: ID!
+  name: String
+  email: String
+  password: String
 }
 
 input UserInput {
-    id: ID
-    name: String
-    email: String
-    password: String
+  id: ID
+  name: String
+  email: String
+  password: String
 }
 
 type Mutation {
   sendInvitation(tournamentId: ID!, email: String!): SendInvitationResponse!
+  sendNotification(userId: ID!, notification: NotificationInput!): SendNotificationResponse! # Add this mutation
+}
+
+input NotificationInput {
+  type: String
+  message: String
 }
 
 type SendInvitationResponse {
+  success: Boolean!
+  message: String
+}
+
+type SendNotificationResponse { # Add this type
   success: Boolean!
   message: String
 }

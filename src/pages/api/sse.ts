@@ -12,7 +12,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       res.write(': heartbeat\n\n')
     }, HEARTBEAT_INTERVAL)
 
-    const sendUpdate = (data: { [key: string]: string }) => {
+    const sendUpdate = (data: { [key: string]: string | undefined; tournamentId?: string }) => {
       const event = `data: ${JSON.stringify(data)}\n\n`
       res.write(event)
       console.log('Sent SSE update:', data)

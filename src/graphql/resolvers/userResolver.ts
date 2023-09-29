@@ -35,6 +35,14 @@ interface SendInvitationArgs {
   email: string
 }
 
+interface SendNotificationArgs {
+  userId: string
+  notification: {
+    type: string
+    message: string
+  }
+}
+
 const userResolvers = {
   Query: {
     user: async (_: any, { id }: UserArgs) => {
@@ -51,7 +59,7 @@ const userResolvers = {
       try {
         const users = await userModel
           .find()
-          .select('-password')
+          .select('-password -notifications')
           .limit(Math.min(limit, MAX_QUERY_LIMIT))
           .skip(offset * Math.min(limit, MAX_QUERY_LIMIT))
 
@@ -133,6 +141,22 @@ const userResolvers = {
       } catch (error) {
         console.error('Error sending invitation:', error)
         throw new Error('Error sending invitation')
+      }
+    },
+    sendNotification: async (_: any, { userId, notification }: SendNotificationArgs) => {
+      try {
+        const user = await userModel.findById(userId)
+        if (!user) {
+          throw new Error('User not found')
+        }
+
+        user.notifications.push(notification)
+        await user.save()
+
+        return { success: true, message: 'Notification sent successfully' }
+      } catch (error) {
+        console.error('Error sending notification:', error)
+        throw new Error('Error sending notification')
       }
     },
   },

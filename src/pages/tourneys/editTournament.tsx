@@ -106,7 +106,12 @@ export default function EditTournament() {
   const { id, name } = router.query
   const [email, setEmail] = useState('')
   const [sendInvitation] = useMutation(SEND_INVITATION)
-
+  //6512c6ba2f5af2aece86cea4
+  //6512c6352f5af2aece86ce9e
+  //65128e9124cd2da4a35fc602
+  //6512843524cd2da4a35fc5f9
+  //6512832a24cd2da4a35fc5ef
+  //6512807e24cd2da4a35fc5e7
   const handleSendInvitation = async () => {
     try {
       const response = await sendInvitation({

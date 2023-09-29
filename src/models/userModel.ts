@@ -1,5 +1,5 @@
-import { User } from '@/types/User'
 import mongoose from 'mongoose'
+import { User } from '@/types/User'
 
 const userSchema = new mongoose.Schema<User>(
   {
@@ -37,6 +37,12 @@ const userSchema = new mongoose.Schema<User>(
       type: String,
       default: 'credentials',
     },
+    notifications: [
+      {
+        type: String, // Adjust the type to match your notification structure
+        message: String, // Adjust the type to match your notification structure
+      },
+    ],
   },
   { timestamps: true },
 )

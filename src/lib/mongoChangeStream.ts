@@ -7,7 +7,9 @@ mongoose.connect(uri)
 
 console.log('Setting up change stream')
 
-const changeStream = UserModel.watch()
+const changeStream = UserModel.watch([
+  { $match: { 'updateDescription.updatedFields.invitations': { $exists: true } } },
+])
 
 changeStream.on('change', (change) => {
   console.log('Change: ', change)
