@@ -42,6 +42,10 @@ interface SendNotificationArgs {
     message: string
   }
 }
+type NotificationInput = {
+  type: string
+  message: string
+}
 
 const userResolvers = {
   Query: {

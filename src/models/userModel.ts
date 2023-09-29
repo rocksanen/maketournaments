@@ -1,6 +1,11 @@
 import mongoose from 'mongoose'
 import { User } from '@/types/User'
 
+interface Notification {
+  type: string
+  message: string
+}
+
 const userSchema = new mongoose.Schema<User>(
   {
     name: {

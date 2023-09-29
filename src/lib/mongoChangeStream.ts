@@ -12,7 +12,9 @@ const changeStream = UserModel.watch([
 ])
 
 changeStream.on('change', (change) => {
-  console.log('Change: ', change)
+  const tournamentId = change.updateDescription.updatedFields.invitations[0]
+  const userId = change.documentKey._id
+  console.log(`User ${userId} received an invitation to tournament ${tournamentId}`)
 })
 
 changeStream.on('error', (error) => {
