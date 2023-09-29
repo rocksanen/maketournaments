@@ -15,6 +15,7 @@ type Query {
   series(id: ID!): Series
   allSeries(limit: Int, offset: Int): [Series]
   allSeriesByAdmin(adminId: ID): [Series]
+  tournamentsBySeries(seriesId: ID!): [Tournament]
 
   # Tournament Queries
   tournament(id: ID!): Tournament
