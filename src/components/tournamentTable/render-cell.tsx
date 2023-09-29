@@ -43,7 +43,7 @@ export const RenderCell = ({ tournament, columnKey, userId }: Props) => {
         <div className="flex items-center gap-4 ">
           <div>
             <Tooltip content="Details">
-              <button onClick={() => console.log('View tournament', tournament.id)}>
+              <button onClick={() => console.log('View user', tournament.id)}>
                 <EyeIcon size={20} fill="#979797" />
               </button>
             </Tooltip>
