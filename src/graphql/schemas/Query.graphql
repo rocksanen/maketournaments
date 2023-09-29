@@ -18,6 +18,7 @@ type Query {
   # Tournament Queries
   tournament(id: ID!): Tournament
   allTournaments(limit: Int, offset: Int): [Tournament]
+  tournamentsByUser(userId: ID!): [Tournament]
 
   hello: String
 }

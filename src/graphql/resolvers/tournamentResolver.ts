@@ -55,6 +55,20 @@ const tournamentResolvers = {
         throw new Error('Failed to fetch tournaments')
       }
     },
+    tournamentsByUser: async (_: any, { userId }: { userId: string }) => {
+      try {
+        const tournaments = await Tournament.find({
+          $or: [{ admin: userId }, { players: userId }],
+        }).populate('ruleset admin players matches')
+        if (!tournaments) {
+          throw new Error('No tournaments found for this user')
+        }
+        return tournaments
+      } catch (error) {
+        console.error('Failed to fetch tournaments for user:', error)
+        throw new Error('Failed to fetch tournaments for user')
+      }
+    },
   },
 
   Mutation: {
