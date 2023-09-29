@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { changeStream } from '@/lib/mongoChangeStream'
+import { changeStream, newInvitationEmitter } from '@/lib/mongoChangeStream'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.headers.accept && req.headers.accept === 'text/event-stream') {
@@ -18,8 +18,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       console.log('Sent SSE update:', data)
     }
 
-    changeStream.on('change', (change) => {
-      sendUpdate(change)
+    newInvitationEmitter.on('newInvitation', (data) => {
+      sendUpdate(data)
     })
 
     req.socket.on('close', () => {

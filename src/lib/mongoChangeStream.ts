@@ -1,5 +1,8 @@
 import mongoose from 'mongoose'
 import UserModel from '@/models/userModel'
+import EventEmitter from 'events'
+
+const newInvitationEmitter = new EventEmitter()
 
 const uri = process.env.MONGO_URI || ''
 
@@ -12,13 +15,19 @@ const changeStream = UserModel.watch([
 ])
 
 changeStream.on('change', (change) => {
-  const tournamentId = change.updateDescription.updatedFields.invitations[0]
-  const userId = change.documentKey._id
-  console.log(`User ${userId} received an invitation to tournament ${tournamentId}`)
+  console.log('Change: ', change)
+
+  if (change.updateDescription.updatedFields.invitations) {
+    const invitationId = change.updateDescription.updatedFields.invitations[0]
+    newInvitationEmitter.emit('newInvitation', {
+      type: 'newInvitation', // Customize as needed
+      message: `New Invitation: ${invitationId}`,
+    })
+  }
 })
 
 changeStream.on('error', (error) => {
   console.error('Error: ', error)
 })
 
-export { changeStream }
+export { changeStream, newInvitationEmitter }
