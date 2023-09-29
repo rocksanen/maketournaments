@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import { changeStream, newInvitationEmitter } from '@/lib/mongoChangeStream'
+import { newInvitationEmitter } from '@/lib/mongoChangeStream'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.headers.accept && req.headers.accept === 'text/event-stream') {

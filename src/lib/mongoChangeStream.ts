@@ -30,4 +30,4 @@ changeStream.on('error', (error) => {
   console.error('Error: ', error)
 })
 
-export { changeStream, newInvitationEmitter }
+export { newInvitationEmitter } // <-- Exporting only the emitter

@@ -28,18 +28,19 @@ export const NotificationsDropdown = () => {
     }
 
     eventSource.onmessage = (event) => {
-      const data: Notification = JSON.parse(event.data)
+      const data = JSON.parse(event.data)
+      const id = data.updateDescription.updateFields.invitations[0]
 
-      setNotifications((prevNotifications) => [
-        ...prevNotifications,
-        {
-          type: data.type,
-          message: data.message,
-          _id: {
-            _data: data._id._data, // Access the correct _data property
+      if (id) {
+        setNotifications((prevNotifications) => [
+          ...prevNotifications,
+          {
+            type: data.type, // Assuming type is available in data
+            message: data.message, // Assuming message is available in data
+            _id: { _data: id },
           },
-        },
-      ])
+        ])
+      }
     }
 
     eventSource.onerror = (error) => {
