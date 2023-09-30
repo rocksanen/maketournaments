@@ -1,3 +1,5 @@
+// notifications-dropdown.tsx
+
 import {
   Dropdown,
   DropdownItem,
@@ -24,6 +26,8 @@ export interface NotificationsDropdownProps {
 export const NotificationsDropdown = ({ userId }: NotificationsDropdownProps) => {
   const [notifications, setNotifications] = useState<Notification[]>([])
 
+  console.log('Received userId:', userId) // Added console log
+
   useEffect(() => {
     const eventSource = new EventSource(`/api/sse?userId=${userId}`)
 
@@ -32,13 +36,14 @@ export const NotificationsDropdown = ({ userId }: NotificationsDropdownProps) =>
     }
 
     eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data)
+      const data = event.data
+      console.log(data)
       setNotifications((prevNotifications) => [
         ...prevNotifications,
         {
           type: data.type,
           message: data.message,
-          _id: { _data: data._id },
+          _id: { _data: data },
         },
       ])
     }
@@ -69,7 +74,7 @@ export const NotificationsDropdown = ({ userId }: NotificationsDropdownProps) =>
                 base: 'py-2',
                 title: 'text-base font-semibold',
               }}
-              description={'You have new invitation from user: ' + notification._id._data}
+              description={notification._id._data}
               textValue={notification._id._data}
             >
               {notification.type}

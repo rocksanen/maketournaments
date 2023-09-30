@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { changeStream } from '@/lib/mongoChangeStream'
+import { user } from '@nextui-org/react'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { userId } = req.query
@@ -21,8 +22,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     changeStream.on('change', (change) => {
-      if (change.updateDescription.updatedFields.invitations.includes(userId)) {
-        sendUpdate(change)
+      const documentId = change.documentKey._id.toString() // Convert ObjectId to string
+      const updatedFields = change.updateDescription.updatedFields.invitations[0]
+      console.log('Received document ID:', documentId)
+      console.log('Received user ID:', userId)
+      console.log('Received updated fields:', updatedFields)
+
+      if (documentId === '6511f666b6c69c563580fc56') {
+        sendUpdate(documentId)
       }
     })
 

@@ -12,7 +12,7 @@ const changeStream = UserModel.watch([
 ])
 
 changeStream.on('change', (change) => {
-  console.log('Change: ', change)
+  //console.log('Change: ', change)
 })
 
 changeStream.on('error', (error) => {
