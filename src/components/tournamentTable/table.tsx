@@ -3,6 +3,7 @@ import React from 'react'
 import { columns } from './data'
 import { RenderCell } from './render-cell'
 import { useQuery, gql } from '@apollo/client'
+import { useSession } from 'next-auth/react'
 
 const GET_TOURNAMENTS_BY_USER = gql`
   query GetTournamentsByUser($userId: ID!) {
@@ -20,18 +21,20 @@ const GET_TOURNAMENTS_BY_USER = gql`
 `
 
 export const TableWrapper = () => {
-  const userId = '6511f666b6c69c563580fc56' // Static user ID
+  const session = useSession() // Just get the session without destructuring
+  const userId = session.data?.user?.id ?? null // Safely access user id
 
   const { loading, error, data } = useQuery(GET_TOURNAMENTS_BY_USER, {
     variables: { userId },
+    skip: !userId,
   })
 
+  if (session.status === 'loading') return <p>Loading...</p> // Check loading status here
+  if (!userId) return <p>Not Logged In</p>
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error: {error.message}</p>
 
-  const tournaments = data.tournamentsByUser // Adjust based on the actual data structure
-
-  console.log(tournaments)
+  const tournaments = data?.tournamentsByUser ?? []
 
   return (
     <div className="w-full flex flex-col gap-4">
