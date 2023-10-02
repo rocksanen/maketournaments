@@ -115,11 +115,11 @@ function TourneysNew() {
           labelPlacement="outside-left"
           placeholder=""
         />
+        <RulesView tourneyRuleset={tourneyRuleset} setTourneyRuleset={setTourneyRuleset} />
         <Checkbox>Invitation Only</Checkbox>
         <Button type="submit">Submit</Button>
       </form>
       <div className="m-20"></div>
-      <RulesView tourneyRuleset={tourneyRuleset} setTourneyRuleset={setTourneyRuleset} />
     </div>
   )
 }
