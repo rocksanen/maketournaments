@@ -68,6 +68,16 @@ function TourneysNew() {
     console.log('invitationOnly', invitationOnly)
     console.log('session?.user?.id', session?.user?.id)
 
+    if (!session?.user?.id) {
+      alert('Please log in to create a tournament')
+      return
+    }
+
+    if (!tourneyName || !maxPlayers || !endDate || !tourneyRuleset.id) {
+      alert('Please fill out all fields')
+      return
+    }
+
     const result = await mutateFunction({
       variables: {
         input: {
