@@ -46,7 +46,7 @@ export const NotificationsDropdown = () => {
     return () => {
       eventSource.close()
     }
-  }, [])
+  }, [notificationId, session?.user?.id])
 
   return (
     <Dropdown placement="bottom-end">
