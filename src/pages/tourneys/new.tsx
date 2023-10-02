@@ -8,27 +8,21 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
-  Link,
 } from '@nextui-org/react'
 import { gql, useMutation } from '@apollo/client'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 import RulesView from '@/components/createTourney/rules-view'
+import { RulesetInput } from '@/types/Ruleset'
 
 const newTourneyMutation = gql`
   mutation CreateTournament($input: CreateTournamentInput!) {
     createTournament(input: $input) {
-      id
       name
-
-      rules {
+      ruleset {
         id
       }
       date
-      players {
-        id
-      }
       admin {
         id
       }
@@ -38,8 +32,21 @@ const newTourneyMutation = gql`
   }
 `
 
+const customRule: RulesetInput = {
+  id: '65106775553dac66bcfac032',
+  rounds: 3,
+  winnerpoints: 3,
+  loserpoints: 0,
+  drawpoints: 1,
+  nightmarepoints: 0,
+  nightmarePointsOn: false,
+}
+
 function TourneysNew() {
   const [selectedKeys, setSelectedKeys] = React.useState(new Set(['Select Ruleset']))
+
+  const [tourneyRuleset, setTourneyRuleset] = useState<RulesetInput>(customRule)
+
   const [hiddenField, setHiddenField] = useState('hidden')
   const [mutateFunction, { data, loading, error }] = useMutation(newTourneyMutation)
   const { data: session } = useSession()
@@ -49,27 +56,37 @@ function TourneysNew() {
     e.preventDefault()
     const form = e.currentTarget
     const tourneyName = (form[0] as HTMLInputElement).value
-    const maxPlayers = parseInt((form[3] as HTMLInputElement).value)
+    const maxPlayers = parseInt((form[2] as HTMLInputElement).value)
 
-    const endDate = (form[4] as HTMLInputElement).value
-    const invitationOnly = (form[5] as HTMLInputElement).checked
-    let ruleset = 'default'
-    if (selectedKeys.has('Custom')) {
-      ruleset = (form[2] as HTMLInputElement).value
+    const endDate = (form[3] as HTMLInputElement).value
+    const invitationOnly = (form[4] as HTMLInputElement).checked
+
+    console.log('tourneyRuleset', tourneyRuleset.id)
+    console.log('tourneyName', tourneyName)
+    console.log('maxPlayers', maxPlayers)
+    console.log('endDate', endDate)
+    console.log('invitationOnly', invitationOnly)
+    console.log('session?.user?.id', session?.user?.id)
+
+    if (!session?.user?.id) {
+      alert('Please log in to create a tournament')
+      return
     }
-    if (!selectedKeys.has('Custom')) {
-      ruleset = selectedKeys.values().next().value
+
+    if (!tourneyName || !maxPlayers || !endDate || !tourneyRuleset.id) {
+      alert('Please fill out all fields')
+      return
     }
 
     const result = await mutateFunction({
       variables: {
         input: {
           name: tourneyName,
-          rules: ['65106775553dac66bcfac032'],
+          ruleset: [tourneyRuleset.id],
           date: endDate,
-          maxPlayers: maxPlayers,
           players: [],
-          admin: session?.user?.id,
+          admin: [session?.user?.id],
+          maxPlayers: maxPlayers,
           invitationOnly: invitationOnly,
         },
       },
@@ -81,18 +98,6 @@ function TourneysNew() {
     router.push(`/tourneys/editTournament?id=${createdTournamentId}&name=${createdTournamentName}`)
   }
 
-  const chooseGameMode = React.useMemo(() => {
-    console.log(selectedKeys)
-    // if selectedkeys has value custom, then make an alert
-    if (selectedKeys.has('Custom')) {
-      setHiddenField('visible')
-    }
-    if (!selectedKeys.has('Custom')) {
-      setHiddenField('hidden')
-    }
-    return selectedKeys
-  }, [selectedKeys])
-
   if (loading) return 'Submitting...'
   if (error) return alert(`Submission error! ${error.message}`)
   return (
@@ -100,25 +105,6 @@ function TourneysNew() {
       <form className="flex flex-col gap-6" onSubmit={newTourney}>
         <h2 className="text-3xl font-bold">Create a new tourney!</h2>
         <Input type="text" label="Tourney Name" placeholder="" />
-        <Dropdown>
-          <DropdownTrigger>
-            <Button className="capitalize">{chooseGameMode}</Button>
-          </DropdownTrigger>
-          <DropdownMenu
-            aria-label="Ruleset"
-            variant="flat"
-            disallowEmptySelection
-            selectionMode="single"
-            selectedKeys={selectedKeys}
-            onSelectionChange={setSelectedKeys}
-          >
-            <DropdownItem key="A">Mode A</DropdownItem>
-            <DropdownItem key="B">Mode B</DropdownItem>
-            <DropdownItem key="C">Mode C</DropdownItem>
-            <DropdownItem key="D">Mode D</DropdownItem>
-            <DropdownItem key="Custom">Custom Mode</DropdownItem>
-          </DropdownMenu>
-        </Dropdown>
 
         <Input className={hiddenField} type="selection" label="Ruleset Name" placeholder="" />
         <Input type="number" min="0" max="64" step="2" label="Max Players" placeholder="" />
@@ -133,7 +119,7 @@ function TourneysNew() {
         <Button type="submit">Submit</Button>
       </form>
       <div className="m-20"></div>
-      <RulesView />
+      <RulesView tourneyRuleset={tourneyRuleset} setTourneyRuleset={setTourneyRuleset} />
     </div>
   )
 }
