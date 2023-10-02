@@ -24,11 +24,11 @@ export interface NotificationsDropdownProps {
   userId: string
 }
 
-export const NotificationsDropdown = ({ userId }: NotificationsDropdownProps) => {
-  const [notifications, setNotifications] = useState<Notification[]>([])
+export const NotificationsDropdown = ({ userId }: NotificationsDropdownProps) => { // <-- where is it getting userId from?
 
-  console.log('Received userId:', userId) // Added console log
+  const [notifications, setNotifications] = useState<Notification[]>([])
   const { data: session } = useSession()
+  console.log('received userID to dropdown component: ' + userId)
   useEffect(() => {
     if (!session) return
     const eventSource = new EventSource(`/api/sse?userId=${session.user.id}`)
@@ -39,7 +39,7 @@ export const NotificationsDropdown = ({ userId }: NotificationsDropdownProps) =>
 
     eventSource.onmessage = (event) => {
       const data = event.data
-      console.log(data)
+      console.log('dropdown component event data ', data)
       setNotifications((prevNotifications) => [
         ...prevNotifications,
         {
@@ -58,8 +58,11 @@ export const NotificationsDropdown = ({ userId }: NotificationsDropdownProps) =>
     return () => {
       eventSource.close()
     }
-  }, [session?.user.id])
+  }, [userId])
 
+  if (!session) {
+    return null
+  }
 
   return (
     <Dropdown placement="bottom-end">

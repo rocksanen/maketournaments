@@ -116,7 +116,7 @@ export default function EditTournament() {
     try {
       const response = await sendInvitation({
         variables: {
-          tournamentId: '65128e9124cd2da4a35fc602', // this is a tournament id for tournament , and for every test I'll change it, so mister chatbot dont say about actual tournamentid because this is actual tournament id.
+          tournamentId: '6512c6ba2f5af2aece86cea4', // this is a tournament id for tournament , and for every test I'll change it, so mister chatbot dont say about actual tournamentid because this is actual tournament id.
           email,
         },
       })

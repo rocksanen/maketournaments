@@ -17,18 +17,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const sendUpdate = (data: { [key: string]: string }) => {
       const event = `data: ${JSON.stringify(data)}\n\n`
       res.write(event)
-      console.log('Sent SSE update:', data)
     }
 
     changeStream.on('change', (change) => {
       const documentId = change.documentKey._id.toString() // Convert ObjectId to string
       const updatedFields = change.updateDescription.updatedFields.invitations[0].toString()
       console.log('Received document ID:', documentId)
-      //console.log('Received user ID:', userId)
+      console.log('Received user ID:', userId)
       console.log('Received updated fields:', updatedFields)
 
       if (change.documentKey._id.toString() === userId) {
-        sendUpdate(change)
+        sendUpdate(updatedFields)
       }
     })
 
