@@ -8,6 +8,7 @@ import {
 } from '@nextui-org/react'
 import React, { useEffect, useState } from 'react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
+import { useSession } from 'next-auth/react'
 
 interface Notification {
   type: string
@@ -29,7 +30,8 @@ export const NotificationsDropdown = () => {
 
     eventSource.onmessage = (event) => {
       const data = JSON.parse(event.data)
-      const id = data.documentKey._id
+      const id = data
+      console.log('notifikaatio komponentti', id)
       setNotificationId(id)
     }
 
@@ -52,7 +54,7 @@ export const NotificationsDropdown = () => {
       </DropdownTrigger>
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
-        <DropdownItem
+          <DropdownItem
             classNames={{
               base: 'py-2',
               title: 'text-base font-semibold',
