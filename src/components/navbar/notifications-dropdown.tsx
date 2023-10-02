@@ -20,9 +20,12 @@ interface Notification {
 
 export const NotificationsDropdown = () => {
   const [notificationId, setNotificationId] = useState<string | null>(null)
+  const { data: session } = useSession()
+  //const id = session?.user?.id // how to send this to sse.ts???
 
   useEffect(() => {
-    const eventSource = new EventSource('/api/sse')
+    console.log(session?.user?.id, 'session user id')
+    const eventSource = new EventSource(`/api/sse?userId=${session?.user?.id}`)
 
     eventSource.onopen = () => {
       console.log('SSE connection opened.')
