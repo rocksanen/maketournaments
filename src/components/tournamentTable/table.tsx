@@ -17,6 +17,7 @@ const GET_TOURNAMENTS_BY_USER = gql`
       }
       name
       date
+      id
     }
   }
 `
