@@ -21,6 +21,7 @@ import { EditIcon } from '@/components/icons/table/edit-icon'
 import { DeleteIcon } from '@/components/icons/table/delete-icon'
 import { HouseIcon } from '@/components/icons/breadcrumb/house-icon'
 import { Tournament } from '@/types/Tournament'
+import UpdateSeriesNameModal from '@/components/series/UpdateSeriesNameModal'
 
 // gets all the series based on the adminId. So gets the current users series
 const FETCH_SERIES = gql`
@@ -63,6 +64,12 @@ const CREATE_SERIES = gql`
   }
 `
 
+const DELETE_SERIES = gql`
+  mutation DeleteSeries($id: ID!) {
+    deleteSeries(id: $id)
+  }
+`
+
 const ADD_TO_TOURNAMENT = gql`
   mutation addTournamentToSeries($seriesId: ID!, $tournamentId: ID!) {
     addTournamentToSeries(seriesId: $seriesId, tournamentId: $tournamentId) {
@@ -86,11 +93,13 @@ function SeriesNew() {
 
   const [seriesName, setSeriesName] = useState('')
   const [inviteModalOpen, setInviteModalOpen] = useState(false)
+  const [changeSeriesNameModalOpen, setChangeSeriesNameModalOpen] = useState(false)
   const [searchTournament, setSearchTournament] = useState('')
   // gets the selected series from the table
   const [selectedSeries, setSelectedSeries] = useState<Series | null>(null)
   const [addTournamentToSeries] = useMutation(ADD_TO_TOURNAMENT)
   const [deleteTournamentFromSeries] = useMutation(DELETE_TOURNAMENT_FROM_SERIES)
+  const [deleteSeries] = useMutation(DELETE_SERIES)
 
   // get series data
   const { data, loading, error } = useQuery(FETCH_SERIES, {
@@ -132,6 +141,28 @@ function SeriesNew() {
       setSeriesName('')
     } catch (err) {
       console.error('Failed to create series', err)
+    }
+  }
+
+  const handleDeleteSeries = async (seriesId: string) => {
+    console.log('seriesId', seriesId)
+    try {
+      const response = await deleteSeries({
+        variables: {
+          id: seriesId,
+        },
+        refetchQueries: [{ query: FETCH_SERIES, variables: { adminId: session?.user?.id } }],
+      })
+
+      const result = response.data.deleteSeries
+      if (result === true) {
+        alert('Series deleted successfully')
+      } else {
+        alert('Series not deleted, try again later')
+      }
+    } catch (error) {
+      console.error('Error deleting series:', error)
+      alert('Error. Please try again later.')
     }
   }
 
@@ -219,6 +250,7 @@ function SeriesNew() {
         </li>
       </ul>
 
+      {/* Add new series form, if user is not logged in, show link to log in */}
       <h3 className="text-xl font-semibold">Add New Series</h3>
       <div className="flex justify-between flex-wrap gap-4 items-center">
         <div className="flex items-center gap-3 flex-wrap md:flex-nowrap">
@@ -243,6 +275,7 @@ function SeriesNew() {
         </div>
       </div>
 
+      {/* Table of all series */}
       <div className="max-w-[95rem] w-1/2">
         <Table aria-label="Series table">
           <TableHeader>
@@ -259,6 +292,15 @@ function SeriesNew() {
                   <button onClick={() => handleInviteClick(series)}>
                     <EditIcon size={20} fill="#979797" />
                   </button>
+                  <button
+                    className="ml-4"
+                    onClick={() => {
+                      if (window.confirm(`Are you sure you want to delete series: ${series.name}?`))
+                        handleDeleteSeries(series.id)
+                    }}
+                  >
+                    <DeleteIcon size={20} fill="hsl(var(--nextui-danger)" />
+                  </button>
                 </TableCell>
               </TableRow>
             ))}
@@ -266,9 +308,16 @@ function SeriesNew() {
         </Table>
       </div>
 
+      {/* Modal for inviting users to tournament and editing series name */}
       <Modal isOpen={inviteModalOpen} onClose={handleInviteClose}>
         <ModalContent>
-          <ModalHeader>Add Tournaments To {selectedSeries?.name}</ModalHeader>
+          <ModalHeader>
+            {selectedSeries?.name}
+            <button className="ml-4" onClick={() => setChangeSeriesNameModalOpen(true)}>
+              <EditIcon size={20} fill="#979797" />
+            </button>
+          </ModalHeader>
+          <ModalHeader>Add Tournaments</ModalHeader>
           <ModalBody>
             <Input
               type="text"
@@ -291,7 +340,16 @@ function SeriesNew() {
                 </div>
               </div>
             )}
-            <ModalHeader>Tournaments In {selectedSeries?.name}</ModalHeader>
+
+            {/* Modal for changing series name */}
+            <ModalHeader>Tournaments</ModalHeader>
+            <UpdateSeriesNameModal
+              selectedSeries={selectedSeries}
+              isOpen={changeSeriesNameModalOpen}
+              onClose={() => setChangeSeriesNameModalOpen(false)}
+            />
+
+            {/* Tournaments in a series table */}
             {tournamentsBySeriesData && tournamentsBySeriesData.tournamentsBySeries && (
               <Table aria-label="Tournaments in series table">
                 <TableHeader>
@@ -303,8 +361,17 @@ function SeriesNew() {
                     <TableRow key={tournament.id}>
                       <TableCell>{tournament.name}</TableCell>
                       <TableCell>
-                        <button onClick={() => handleDeleteTournamentFromSeries(tournament?.id)}>
-                          <DeleteIcon size={20} fill="#979797" />
+                        <button
+                          onClick={() => {
+                            if (
+                              window.confirm(
+                                `Are you sure you want to delete tournament: ${tournament.name}, from series?`,
+                              )
+                            )
+                              handleDeleteTournamentFromSeries(tournament?.id)
+                          }}
+                        >
+                          <DeleteIcon size={20} fill="hsl(var(--nextui-danger)" />
                         </button>
                       </TableCell>
                     </TableRow>
