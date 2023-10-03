@@ -1,50 +1,43 @@
-import { User, Tooltip, Chip } from '@nextui-org/react'
+import { Tooltip, Chip } from '@nextui-org/react'
 import React from 'react'
-import { DeleteIcon } from '../icons/table/delete-icon'
-import { EditIcon } from '../icons/table/edit-icon'
 import { EyeIcon } from '../icons/table/eye-icon'
-import { tournaments } from './data'
+import { EditIcon } from '../icons/table/edit-icon'
 import Link from 'next/link'
 
 interface Props {
-  tournament: (typeof tournaments)[number]
+  tournament: any
   columnKey: string | React.Key
+  userId: string
 }
 
-export const RenderCell = ({ tournament, columnKey }: Props) => {
-  // @ts-ignore
+export const RenderCell = ({ tournament, columnKey, userId }: Props) => {
   const cellValue = tournament[columnKey]
+
+  const isAdmin = tournament.admin.some((admin: any) => admin.id === userId)
+  const isPlayer = tournament.players.some((player: any) => player.id === userId)
+  const role = isAdmin && isPlayer ? 'Admin/Player' : isAdmin ? 'Admin' : 'Player'
+
+  const currentDate = new Date()
+  const tournamentDate = new Date(Number(tournament.date))
+  const status = currentDate < tournamentDate ? 'Active' : 'Finished'
+
   switch (columnKey) {
     case 'name':
       return <div>{cellValue}</div>
     case 'date':
       return (
         <div>
-          <span>{cellValue}</span>
+          <span>{tournamentDate.toDateString()}</span>
         </div>
       )
     case 'role':
-      return (
-        <div>
-          <div>
-            <span>{cellValue}</span>
-          </div>
-          <div>
-            <span>{tournament.team}</span>
-          </div>
-        </div>
-      )
+      return <div>{role}</div>
     case 'status':
       return (
-        <Chip
-          size="sm"
-          variant="flat"
-          color={cellValue === 'active' ? 'success' : cellValue === 'paused' ? 'danger' : 'warning'}
-        >
-          <span className="capitalize text-xs">{cellValue}</span>
+        <Chip size="sm" variant="flat" color={status === 'Active' ? 'success' : 'warning'}>
+          <span className="capitalize text-xs">{status}</span>
         </Chip>
       )
-
     case 'actions':
       return (
         <div className="flex items-center gap-4 ">
@@ -55,25 +48,26 @@ export const RenderCell = ({ tournament, columnKey }: Props) => {
               </button>
             </Tooltip>
           </div>
-          <div>
-            <Tooltip content="Edit tournament" color="secondary">
-              <Link
-                href={{
-                  pathname: '/tourneys/editTournament',
-                  query: { id: tournament.id },
-                }}
-                as={`/edit/${tournament.id}`}
-              >
-                <button>
-                  <EditIcon size={20} fill="#979797" />
-                </button>
-              </Link>
-            </Tooltip>
-          </div>
-          <div></div>
+          {isAdmin && (
+            <div>
+              <Tooltip content="Edit tournament" color="secondary">
+                <Link
+                  href={{
+                    pathname: '/tourneys/editTournament',
+                    query: { id: tournament.id },
+                  }}
+                  as={`/edit/${tournament.id}`}
+                >
+                  <button>
+                    <EditIcon size={20} fill="#979797" />
+                  </button>
+                </Link>
+              </Tooltip>
+            </div>
+          )}
         </div>
       )
     default:
-      return cellValue
+      return <div>{cellValue}</div>
   }
 }

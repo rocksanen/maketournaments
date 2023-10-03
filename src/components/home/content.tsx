@@ -54,7 +54,7 @@ export const Content = () => (
           View All
         </Link>
       </div>
-      <TableWrapper />
+      <TableWrapper count={5} />
     </div>
   </div>
 )
