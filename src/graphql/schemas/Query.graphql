@@ -21,6 +21,7 @@ type Query {
   tournament(id: ID!): Tournament
   allTournaments(limit: Int, offset: Int): [Tournament]
   tournamentByName(name: String!): Tournament
+  tournamentsByUser(userId: ID!): [Tournament]
 
   hello: String
 }
