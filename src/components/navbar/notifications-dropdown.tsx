@@ -17,11 +17,12 @@ interface Notification {
     _data: string
   }
 }
+interface Props {
+  session: any // Add the appropriate type for the session data
+}
 
-export const NotificationsDropdown = () => {
+export const NotificationsDropdown = ({ session }: Props) => {
   const [notificationId, setNotificationId] = useState<string | null>(null)
-  const { data: session } = useSession()
-  //const id = session?.user?.id // how to send this to sse.ts???
 
   useEffect(() => {
     console.log(session?.user?.id, 'session user id')
@@ -46,7 +47,7 @@ export const NotificationsDropdown = () => {
     return () => {
       eventSource.close()
     }
-  }, [notificationId, session?.user?.id])
+  }, [notificationId])
 
   return (
     <Dropdown placement="bottom-end">
