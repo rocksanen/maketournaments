@@ -16,6 +16,16 @@ input SeriesInput {
     seriesEnded: String
 }
 
+type Mutation {
+    addTournamentToSeries(seriesId: ID!, tournamentId: ID!): TournamentToSeriesResponse!
+    deleteTournamentFromSeries(seriesId: ID!, tournamentId: ID!): TournamentToSeriesResponse!
+}
+
+type TournamentToSeriesResponse {
+    success: Boolean!
+    message: String
+}
+
 input UpdateSeriesInput {
     id: ID!
     name: String

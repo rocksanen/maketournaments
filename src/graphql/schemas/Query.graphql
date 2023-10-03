@@ -14,10 +14,13 @@ type Query {
   # Series Queries
   series(id: ID!): Series
   allSeries(limit: Int, offset: Int): [Series]
+  allSeriesByAdmin(adminId: ID): [Series]
+  tournamentsBySeries(seriesId: ID!): [Tournament]
 
   # Tournament Queries
   tournament(id: ID!): Tournament
   allTournaments(limit: Int, offset: Int): [Tournament]
+  tournamentByName(name: String!): Tournament
   tournamentsByUser(userId: ID!): [Tournament]
 
   hello: String

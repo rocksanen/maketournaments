@@ -4,6 +4,8 @@ type User {
   email: String!
   password: String!
   tournaments: [Tournament]
+  friends: [User]
+  invitations: [String]
   userCreated: String!
 }
 
@@ -26,3 +28,13 @@ input UserInput {
     email: String
     password: String
 }
+
+type Mutation {
+  sendInvitation(tournamentId: ID!, email: String!): SendInvitationResponse!
+}
+
+type SendInvitationResponse {
+  success: Boolean!
+  message: String
+}
+

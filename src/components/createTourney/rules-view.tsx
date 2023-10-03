@@ -1,6 +1,5 @@
-import { Ruleset, RulesetInput } from '@/types/Ruleset'
-import { gql, useMutation, useQuery } from '@apollo/client'
-import { getDataFromTree } from '@apollo/client/react/ssr'
+import { RulesetInput } from '@/types/Ruleset'
+import { gql, useQuery } from '@apollo/client'
 import {
   Button,
   Checkbox,
@@ -11,7 +10,6 @@ import {
   DropdownTrigger,
   Input,
 } from '@nextui-org/react'
-import { set } from 'mongoose'
 import React, { useState } from 'react'
 
 const GET_RULES = gql`
@@ -28,27 +26,22 @@ const GET_RULES = gql`
   }
 `
 
-const customRule: RulesetInput = {
-  id: 'custom',
-  rounds: 3,
-  winnerpoints: 3,
-  loserpoints: 0,
-  drawpoints: 1,
-  nightmarepoints: 0,
-  nightmarePointsOn: false,
-}
+function RulesView({
+  tourneyRuleset,
+  setTourneyRuleset,
+}: {
+  tourneyRuleset: RulesetInput
+  setTourneyRuleset: React.Dispatch<React.SetStateAction<RulesetInput>>
+}) {
+  const [rulesets, setRulesets] = useState<RulesetInput[]>([tourneyRuleset])
 
-function RulesView() {
-  const [rulesets, setRulesets] = useState<RulesetInput[]>([customRule])
   const [index, setIndex] = useState<number>(0)
-  const { loading, error, data } = useQuery(GET_RULES, {
+  useQuery(GET_RULES, {
     variables: { limit: 10, offset: 0 },
     onCompleted: (completedData) => {
       setRulesets([...rulesets, ...completedData.allRulesets])
     },
   })
-
-  console.log('rules', rulesets)
 
   const setRuleFormFields = (key: string | number) => {
     // find the index of the ruleset in the rulesets array
@@ -64,6 +57,7 @@ function RulesView() {
     console.log(rulesets[index].loserpoints)
     console.log(rulesets[index].drawpoints)
     console.log(rulesets[index].nightmarePointsOn)
+    setTourneyRuleset(rulesets[index])
   }
 
   return (
@@ -99,7 +93,6 @@ function RulesView() {
             type="number"
             defaultValue={rulesets[0].drawpoints.toString()}
           />
-          {/* // checkbox on click to set nightmarePointsOn to true or false for the first element */}
           <Checkbox
             defaultSelected
             onValueChange={() =>
@@ -122,9 +115,7 @@ function RulesView() {
         <div className="max-w-md">
           <div className="space-y-1">
             <h4 className="text-medium font-medium">Ruleset {rulesets[index].id}</h4>
-            <p className="text-small text-default-400">
-              4 hours later...
-            </p>
+            <p className="text-small text-default-400">4 hours later...</p>
           </div>
           <Divider className="my-4" />
           <div className="h-5 items-center space-y-4 text-small">

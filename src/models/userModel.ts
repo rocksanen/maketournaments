@@ -21,6 +21,18 @@ const userSchema = new mongoose.Schema<User>(
         ref: 'Tournament',
       },
     ],
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    invitations: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Tournament',
+      },
+    ],
     provider: {
       type: String,
       default: 'credentials',
@@ -29,5 +41,5 @@ const userSchema = new mongoose.Schema<User>(
   { timestamps: true },
 )
 
-const User = mongoose.models.User || mongoose.model('User', userSchema)
-export default User
+const UserModel = mongoose.models.User || mongoose.model('User', userSchema)
+export default UserModel
