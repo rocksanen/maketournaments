@@ -55,6 +55,8 @@ export const CardTransactions: React.FC = () => {
     .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5)
 
+  if (tournaments.length === 0) return <StatusMessage message="No tournaments found" />
+
   return (
     <Card className="bg-default-50 rounded-xl shadow-md px-3">
       <CardBody className="py-5 gap-4">
