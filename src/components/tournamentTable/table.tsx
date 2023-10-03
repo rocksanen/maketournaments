@@ -1,4 +1,5 @@
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
+import { FC } from 'react'
 import React from 'react'
 import { columns } from './data'
 import { RenderCell } from './render-cell'
@@ -20,7 +21,11 @@ const GET_TOURNAMENTS_BY_USER = gql`
   }
 `
 
-export const TableWrapper = () => {
+interface TableWrapperProps {
+  count?: number // Add a prop to receive the count
+}
+
+export const TableWrapper: FC<TableWrapperProps> = ({ count = Infinity }) => {
   const session = useSession() // Just get the session without destructuring
   const userId = session.data?.user?.id ?? null // Safely access user id
 
@@ -34,7 +39,7 @@ export const TableWrapper = () => {
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error: {error.message}</p>
 
-  const tournaments = data?.tournamentsByUser ?? []
+  const tournaments = data?.tournamentsByUser.slice(0, count) ?? []
 
   return (
     <div className="w-full flex flex-col gap-4">
