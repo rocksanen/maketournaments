@@ -23,9 +23,9 @@ interface Props {
 
 export const NotificationsDropdown = ({ session }: Props) => {
   const [notificationId, setNotificationId] = useState<string | null>(null)
+  console.log(session?.user?.id, 'session user id')
 
   useEffect(() => {
-    console.log(session?.user?.id, 'session user id')
     const eventSource = new EventSource(`/api/sse?userId=${session?.user?.id}`)
 
     eventSource.onopen = () => {

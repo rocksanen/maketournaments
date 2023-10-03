@@ -113,10 +113,12 @@ export default function EditTournament() {
   //6512832a24cd2da4a35fc5ef
   //6512807e24cd2da4a35fc5e7
   const handleSendInvitation = async () => {
+
+    console.log(id, 'edittournament id')
     try {
       const response = await sendInvitation({
         variables: {
-          tournamentId: '65128e9124cd2da4a35fc602', // this is a tournament id for tournament called kikkeli
+          tournamentId: id, // this is a tournament id for tournament called kikkeli
           email,
         },
       })
