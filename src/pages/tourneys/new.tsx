@@ -13,7 +13,7 @@ import { gql, useMutation } from '@apollo/client'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import RulesView from '@/components/createTourney/rules-view'
-import { RulesetOutput } from '@/types/Ruleset'
+import { RulesetInput, RulesetOutput } from '@/types/Ruleset'
 
 const newTourneyMutation = gql`
   mutation CreateTournament($input: CreateTournamentInput!) {
@@ -44,7 +44,7 @@ const customRule: RulesetOutput = {
 }
 
 function TourneysNew() {
-  const [tourneyRuleset, setTourneyRuleset] = useState<RulesetInput>(customRule)
+  const [tourneyRuleset, setTourneyRuleset] = useState<RulesetOutput>(customRule)
 
   const [mutateFunction, { data, loading, error }] = useMutation(newTourneyMutation)
   const { data: session } = useSession()
@@ -59,7 +59,7 @@ function TourneysNew() {
     const endDate = (form[2] as HTMLInputElement).value
     const invitationOnly = (form[3] as HTMLInputElement).checked
 
-    console.log('tourneyRuleset', tourneyRuleset.name)
+    console.log('tourneyRuleset', tourneyRuleset.id)
     console.log('tourneyName', tourneyName)
     console.log('maxPlayers', maxPlayers)
     console.log('endDate', endDate)
@@ -73,6 +73,10 @@ function TourneysNew() {
 
     if (!tourneyName || !maxPlayers || !endDate || !tourneyRuleset.id) {
       alert('Please fill out all fields')
+      return
+    }
+    if (tourneyRuleset.id == 'custom') {
+      alert('Please select a ruleset')
       return
     }
 

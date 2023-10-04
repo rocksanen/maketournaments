@@ -10,6 +10,7 @@ import {
   DropdownTrigger,
   Input,
 } from '@nextui-org/react'
+import { set } from 'mongoose'
 import React, { useState } from 'react'
 
 const GET_RULES = gql`
@@ -72,17 +73,16 @@ function RulesView({
     // find the index of the ruleset in the rulesets array
     const i = rulesets.findIndex((ruleset) => ruleset.id === key)
     if (i === -1) {
-      setIndex(0)
+      alert('Ruleset not found')
     }
     setIndex(i)
+    console.log('key', key)
+    console.log('i', i)
     console.log('index', index)
 
-    console.log(rulesets[index].rounds)
-    console.log(rulesets[index].winnerpoints)
-    console.log(rulesets[index].loserpoints)
-    console.log(rulesets[index].drawpoints)
-    console.log(rulesets[index].nightmarePointsOn)
-    setTourneyRuleset(rulesets[index])
+    console.log('ruleset id', rulesets[i].id)
+    console.log('ruleset name', rulesets[i].name)
+    setTourneyRuleset(rulesets[i])
   }
 
   const saveRuleset = async (e: React.FormEvent<HTMLFormElement>) => {
