@@ -26,7 +26,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       //console.log('Received user ID:', userId)
       console.log('Received updated fields:', updatedFields)
 
-      if (documentId === userId) { // I want to compare the user ID from the change stream with the user ID from the request
+      if (documentId === userId) {
+        // I want to compare the user ID from the change stream with the user ID from the request
         sendUpdate(updatedFields)
       }
     })

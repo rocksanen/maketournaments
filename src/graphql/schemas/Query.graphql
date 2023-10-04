@@ -23,6 +23,9 @@ type Query {
   tournamentByName(name: String!): Tournament
   tournamentsByUser(userId: ID!): [Tournament]
 
+
+
+
   hello: String
 }
 

@@ -135,6 +135,19 @@ const userResolvers = {
         throw new Error('Error sending invitation')
       }
     },
+    getInvitations: async (_: any, { id }: UserArgs) => {
+      try {
+        const user = await userModel.findById(id)
+        if (user) {
+          return user.invitations
+        } else {
+          throw new Error('User not found')
+        }
+      } catch (error) {
+        console.error('Error fetching invitations:', error)
+        throw new Error('Error fetching invitations')
+      }
+    },
   },
 }
 
