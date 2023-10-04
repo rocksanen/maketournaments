@@ -79,7 +79,7 @@ export default function SignIn(props: SignInProps) {
                 onClick={() => props.setSignInMode(false)}
                 style={{ cursor: 'pointer', color: 'blue' }}
               >
-                <span className="text-blue-400 pl-1">Login</span>
+                <span className="text-blue-400 pl-1">Register</span>
               </span>
             </p>
           </CardFooter>

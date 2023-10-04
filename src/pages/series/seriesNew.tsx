@@ -3,6 +3,15 @@ import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Series } from '@/types/Series'
 import {
+  CREATE_SERIES,
+  DELETE_SERIES,
+  ADD_TO_TOURNAMENT,
+  DELETE_TOURNAMENT_FROM_SERIES,
+  FETCH_SERIES,
+  GET_TOURNAMENTS_BY_SERIES,
+} from '@/graphql/clientQueries/seriesOperations'
+import { GET_TOURNAMENTS_BY_NAME_AND_USER } from '@/graphql/clientQueries/tournamentOperations'
+import {
   Table,
   TableHeader,
   TableColumn,
@@ -22,71 +31,6 @@ import { DeleteIcon } from '@/components/icons/table/delete-icon'
 import { HouseIcon } from '@/components/icons/breadcrumb/house-icon'
 import { Tournament } from '@/types/Tournament'
 import UpdateSeriesNameModal from '@/components/series/UpdateSeriesNameModal'
-
-// gets all the series based on the adminId. So gets the current users series
-const FETCH_SERIES = gql`
-  query GetAllSeries($adminId: ID) {
-    allSeriesByAdmin(adminId: $adminId) {
-      id
-      name
-      tournaments {
-        id
-        name
-      }
-    }
-  }
-`
-
-const GET_TOURNAMENTS_BY_SERIES = gql`
-  query GetTournamentsBySeries($seriesId: ID!) {
-    tournamentsBySeries(seriesId: $seriesId) {
-      id
-      name
-    }
-  }
-`
-
-const GET_TOURNAMENT_QUERY = gql`
-  query GetTournamentByName($name: String!) {
-    tournamentByName(name: $name) {
-      id
-      name
-    }
-  }
-`
-
-const CREATE_SERIES = gql`
-  mutation CreateSeries($input: SeriesInput!) {
-    createSeries(input: $input) {
-      id
-      name
-    }
-  }
-`
-
-const DELETE_SERIES = gql`
-  mutation DeleteSeries($id: ID!) {
-    deleteSeries(id: $id)
-  }
-`
-
-const ADD_TO_TOURNAMENT = gql`
-  mutation addTournamentToSeries($seriesId: ID!, $tournamentId: ID!) {
-    addTournamentToSeries(seriesId: $seriesId, tournamentId: $tournamentId) {
-      success
-      message
-    }
-  }
-`
-
-const DELETE_TOURNAMENT_FROM_SERIES = gql`
-  mutation deleteTournamentFromSeries($seriesId: ID!, $tournamentId: ID!) {
-    deleteTournamentFromSeries(seriesId: $seriesId, tournamentId: $tournamentId) {
-      success
-      message
-    }
-  }
-`
 
 function SeriesNew() {
   const { data: session } = useSession()
@@ -117,8 +61,11 @@ function SeriesNew() {
     data: tournamentData,
     error: tournamentError,
     refetch,
-  } = useQuery(GET_TOURNAMENT_QUERY, {
-    variables: { name: searchTournament },
+  } = useQuery(GET_TOURNAMENTS_BY_NAME_AND_USER, {
+    variables: {
+      name: searchTournament,
+      userId: session?.user?.id,
+    },
   })
 
   // create series mutation, refetch used to update the table after new series is created
@@ -227,7 +174,10 @@ function SeriesNew() {
     setInviteModalOpen(true)
   }
 
-  const handleInviteClose = () => setInviteModalOpen(false)
+  const handleInviteClose = () => {
+    setChangeSeriesNameModalOpen(false)
+    setInviteModalOpen(false)
+  }
 
   // Handles the input change for searching for tournaments. fetches everytime input changes
   const handleSearchTournamentInput = (e: any) => {
@@ -325,15 +275,17 @@ function SeriesNew() {
               onChange={handleSearchTournamentInput}
               placeholder="Search for tournament"
             />
-            {tournamentData && tournamentData.tournamentByName && (
+            {tournamentData && tournamentData.tournamentsByNameAndUser && (
               <div>
                 <p className="text-tiny text-white/60">Tournament name</p>
                 <div className="flex justify-between items-center">
-                  <span>{tournamentData.tournamentByName.name}</span>
+                  <span>{tournamentData.tournamentsByNameAndUser.name}</span>
                   <Button
                     color="primary"
                     size="sm"
-                    onClick={() => handleAddTournamentToSeries(tournamentData.tournamentByName.id)}
+                    onClick={() =>
+                      handleAddTournamentToSeries(tournamentData.tournamentsByNameAndUser.id)
+                    }
                   >
                     Add to Series
                   </Button>
@@ -345,6 +297,7 @@ function SeriesNew() {
             <ModalHeader>Tournaments</ModalHeader>
             <UpdateSeriesNameModal
               selectedSeries={selectedSeries}
+              onUpdate={handleInviteClose}
               isOpen={changeSeriesNameModalOpen}
               onClose={() => setChangeSeriesNameModalOpen(false)}
             />

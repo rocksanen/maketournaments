@@ -5,22 +5,7 @@ import { columns } from './data'
 import { RenderCell } from './render-cell'
 import { useQuery, gql } from '@apollo/client'
 import { useSession } from 'next-auth/react'
-
-const GET_TOURNAMENTS_BY_USER = gql`
-  query GetTournamentsByUser($userId: ID!) {
-    tournamentsByUser(userId: $userId) {
-      admin {
-        id
-      }
-      players {
-        id
-      }
-      name
-      date
-      id
-    }
-  }
-`
+import { GET_TOURNAMENTS_BY_USER} from "@/graphql/clientQueries/tournamentOperations";
 
 interface TableWrapperProps {
   count?: number // Add a prop to receive the count
