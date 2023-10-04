@@ -1,6 +1,8 @@
 import { Document } from 'mongoose'
 
 interface Ruleset extends Document {
+  id: string
+  name: string
   rounds: number
   winnerpoints: number
   loserpoints: number
@@ -10,7 +12,7 @@ interface Ruleset extends Document {
 }
 
 interface RulesetInput {
-  id: string
+  name: string
   rounds: number
   winnerpoints: number
   loserpoints: number
@@ -19,4 +21,15 @@ interface RulesetInput {
   nightmarePointsOn: boolean
 }
 
-export type { Ruleset, RulesetInput }
+interface RulesetOutput {
+  id: string
+  name: string
+  rounds: number
+  winnerpoints: number
+  loserpoints: number
+  drawpoints: number
+  nightmarepoints: number
+  nightmarePointsOn: boolean
+}
+
+export type { Ruleset, RulesetInput, RulesetOutput }

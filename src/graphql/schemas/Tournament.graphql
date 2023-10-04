@@ -1,6 +1,7 @@
 type Tournament {
     id: ID!
     name: String!
+    description: String
     ruleset: [Ruleset!]!
     date: String!
     players: [User]

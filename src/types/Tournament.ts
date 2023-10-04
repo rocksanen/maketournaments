@@ -3,6 +3,7 @@ import { Document } from 'mongoose'
 
 interface Tournament extends Document {
   name: string
+  description: string
   rules: Types.ObjectId[]
   date: Date
   players: Types.ObjectId[]
@@ -14,6 +15,7 @@ interface Tournament extends Document {
 
 interface TournamentInput {
   name: string
+  description: string
   rules: number[]
   date: Date
   players: number[]

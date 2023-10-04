@@ -9,6 +9,7 @@ import { MAX_QUERY_LIMIT } from '@/utils/constants'
 interface CreateTournamentArgs {
   input: {
     name: string
+    description: string
     rules: Ruleset[]
     date: string
     players?: User[]
@@ -23,6 +24,7 @@ interface UpdateTournamentArgs {
   input: {
     id: string
     name?: string
+    description?: string
     rules?: Ruleset[]
     date?: string
     players?: User[]

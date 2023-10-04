@@ -1,5 +1,5 @@
-import { RulesetInput } from '@/types/Ruleset'
-import { gql, useQuery } from '@apollo/client'
+import { RulesetOutput, RulesetInput } from '@/types/Ruleset'
+import { gql, useQuery, useMutation } from '@apollo/client'
 import {
   Button,
   Checkbox,
@@ -16,6 +16,7 @@ const GET_RULES = gql`
   query allTournaments($limit: Int, $offset: Int) {
     allRulesets(limit: $limit, offset: $offset) {
       id
+      name
       rounds
       winnerpoints
       loserpoints
@@ -26,22 +27,46 @@ const GET_RULES = gql`
   }
 `
 
+const SAVE_RULESET = gql`
+  mutation createRuleset($ruleset: RulesetInput!) {
+    createRuleset(input: $ruleset) {
+      name
+      rounds
+      winnerpoints
+      loserpoints
+      drawpoints
+      nightmarepoints
+      nightmarePointsOn
+      id
+    }
+  }
+`
+
+const DELETE_RULESET = gql`
+  mutation deleteRuleset($id: ID!) {
+    deleteRuleset(id: $id)
+  }
+`
+
 function RulesView({
   tourneyRuleset,
   setTourneyRuleset,
 }: {
-  tourneyRuleset: RulesetInput
-  setTourneyRuleset: React.Dispatch<React.SetStateAction<RulesetInput>>
+  tourneyRuleset: RulesetOutput
+  setTourneyRuleset: React.Dispatch<React.SetStateAction<RulesetOutput>>
 }) {
-  const [rulesets, setRulesets] = useState<RulesetInput[]>([tourneyRuleset])
+  const [rulesets, setRulesets] = useState<RulesetOutput[]>([tourneyRuleset])
 
   const [index, setIndex] = useState<number>(0)
   useQuery(GET_RULES, {
-    variables: { limit: 10, offset: 0 },
+    variables: { limit: 50, offset: 0 },
     onCompleted: (completedData) => {
       setRulesets([...rulesets, ...completedData.allRulesets])
+      console.log('rulesets', rulesets)
     },
   })
+  const [mutateFunction] = useMutation(SAVE_RULESET)
+  const [deleteRulesetMutation] = useMutation(DELETE_RULESET)
 
   const setRuleFormFields = (key: string | number) => {
     // find the index of the ruleset in the rulesets array
@@ -60,6 +85,68 @@ function RulesView({
     setTourneyRuleset(rulesets[index])
   }
 
+  const saveRuleset = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    console.log('save ruleset')
+    const form = e.currentTarget
+    const name = (form[0] as HTMLInputElement).value
+    const rounds = parseInt((form[1] as HTMLInputElement).value)
+    const winnerpoints = parseInt((form[2] as HTMLInputElement).value)
+    const loserpoints = parseInt((form[3] as HTMLInputElement).value)
+    const drawpoints = parseInt((form[4] as HTMLInputElement).value)
+    const nightmarePointsOn = (form[5] as HTMLInputElement).checked
+    const nightmarepoints = parseInt((form[6] as HTMLInputElement).value)
+
+    console.log('name', name)
+    console.log('rounds', rounds)
+    console.log('winnerpoints', winnerpoints)
+    console.log('loserpoints', loserpoints)
+    console.log('drawpoints', drawpoints)
+    console.log('nightmarePointsOn', nightmarePointsOn)
+    console.log('nightmarepoints', nightmarepoints)
+
+    const result = await mutateFunction({
+      variables: {
+        ruleset: {
+          name,
+          rounds,
+          winnerpoints,
+          loserpoints,
+          drawpoints,
+          nightmarepoints,
+          nightmarePointsOn,
+        },
+      },
+    })
+
+    if (result && result.data) {
+      console.log('result', result.data)
+      setRulesets([...rulesets, result.data.createRuleset])
+    }
+    if (result && result.errors) {
+      console.log('errors', result.errors)
+    }
+  }
+
+  const deleteSelectedRuleset = async () => {
+    if (window.confirm('Do you really want to delete this ruleset?')) {
+      console.log('delete ruleset')
+      console.log('indexdd', rulesets[index].id)
+      const result = await deleteRulesetMutation({
+        variables: {
+          id: rulesets[index].id,
+        },
+      })
+      if (result && result.data) {
+        console.log('result', result.data)
+        setRulesets([...rulesets.slice(0, index), ...rulesets.slice(index + 1)])
+        alert('Ruleset deleted')
+      } else {
+        console.log('error', result.errors)
+        alert('Ruleset not deleted')
+      }
+    }
+  }
   return (
     <div>
       <h2>Ruleset</h2>
@@ -72,11 +159,13 @@ function RulesView({
           onAction={(key) => setRuleFormFields(key)}
           items={rulesets}
         >
-          {(ruleset) => <DropdownItem key={ruleset.id}>{ruleset.id}</DropdownItem>}
+          {(ruleset) => <DropdownItem key={ruleset.id}>{ruleset.name}</DropdownItem>}
         </DropdownMenu>
       </Dropdown>
       {index == 0 ? (
-        <form>
+        <form onSubmit={saveRuleset}>
+          <h2>Custom ruleset</h2>
+          <Input label="Ruleset name" type="string" defaultValue={rulesets[0].name.toString()} />
           <Input label="Rounds" type="number" defaultValue={rulesets[index].rounds.toString()} />
           <Input
             label="Winner Points"
@@ -110,13 +199,15 @@ function RulesView({
             disabled={!rulesets[0].nightmarePointsOn}
             defaultValue={rulesets[0].nightmarepoints.toString()}
           />
+          <Button type="submit">Save ruleset</Button>
         </form>
       ) : (
         <div className="max-w-md">
           <div className="space-y-1">
-            <h4 className="text-medium font-medium">Ruleset {rulesets[index].id}</h4>
-            <p className="text-small text-default-400">4 hours later...</p>
+            <h4 className="text-medium font-medium">{rulesets[index].name}</h4>
           </div>
+          <Button onClick={deleteSelectedRuleset}>Delete ruleset</Button>
+
           <Divider className="my-4" />
           <div className="h-5 items-center space-y-4 text-small">
             <div>Points gain for win: {rulesets[index].winnerpoints.toString()}</div>

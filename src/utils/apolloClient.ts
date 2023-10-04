@@ -7,6 +7,6 @@ const createApolloClient = () => {
       uri: '/api/graphql/',
     }),
   })
-} 
+}
 
 export default createApolloClient
