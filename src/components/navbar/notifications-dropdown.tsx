@@ -23,18 +23,14 @@ interface Props {
 }
 
 export const NotificationsDropdown = ({ session }: Props) => {
-  const [notificationId, setNotificationId] = useState<string | null>(null)
-  const [trigger, setTrigger] = useState<number>(0)
-
-
-  console.log(session?.user?.id, 'session user id')
+  const [notifications, setNotifications] = useState<Notification[]>([])
 
   useEffect(() => {
     const eventSource = new EventSource(`/api/sse?userId=${session?.user?.id}`)
+
     eventSource.onmessage = (event) => {
       const data: Notification = JSON.parse(event.data)
-      setNotificationId(data._id._data)
-      setTrigger((prev) => prev + 1)
+      setNotifications((prevNotifications) => [...prevNotifications, data])
     }
 
     return () => {
@@ -51,16 +47,19 @@ export const NotificationsDropdown = ({ session }: Props) => {
       </DropdownTrigger>
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
-          <DropdownItem
-            classNames={{
-              base: 'py-2',
-              title: 'text-base font-semibold',
-            }}
-            description={trigger || ''}
-            textValue={trigger.toString() || ''}
-          >
-            {trigger ? 'New Notification' : 'No New Notifications'}
-          </DropdownItem>
+          {notifications.map((notification, index) => (
+            <DropdownItem
+              key={index}
+              classNames={{
+                base: 'py-2',
+                title: 'text-base font-semibold',
+              }}
+              description={'New Invitation to: ' + notification.message}
+              textValue={notification.message}
+            >
+              {notification.type}
+            </DropdownItem>
+          ))}
         </DropdownSection>
       </DropdownMenu>
     </Dropdown>

@@ -15,7 +15,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }, HEARTBEAT_INTERVAL)
 
     const sendUpdate = (data: { [key: string]: string }) => {
-      const event = `data: ${JSON.stringify(data)}\n\n`
+      const event = `event: update\ndata: ${JSON.stringify(data)}\n\n`
       res.write(event)
     }
 
@@ -23,12 +23,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       const documentId = change.documentKey._id.toString() // Convert ObjectId to string
       const updatedFields = change.updateDescription.updatedFields.invitations[0].toString()
       console.log('Received document ID:', documentId)
-      //console.log('Received user ID:', userId)
       console.log('Received updated fields:', updatedFields)
 
       if (documentId === userId) {
-        // I want to compare the user ID from the change stream with the user ID from the request
-        sendUpdate(updatedFields)
+        sendUpdate({ message: 'You have a new invitation' })
       }
     })
 
