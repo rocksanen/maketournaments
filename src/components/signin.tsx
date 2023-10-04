@@ -28,7 +28,7 @@ export default function SignIn(props: SignInProps) {
     })
       .then((response) => {
         console.log(response)
-        router.replace('/profile')
+        router.back()
       })
       .catch((error) => {
         console.log(error)

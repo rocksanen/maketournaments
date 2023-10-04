@@ -37,6 +37,10 @@ interface deleteTournamentFromSeriesArgs {
   tournamentId: string
   seriesId: string
 }
+interface updateSeriesNameArgs {
+  seriesId: string
+  name: string
+}
 
 interface DeleteSeriesArgs {
   id: string
@@ -192,6 +196,22 @@ const seriesResolvers = {
       } catch (error) {
         console.error('Error deleting tournament from series:', error)
         throw new Error('Error deleting tournament from series')
+      }
+    },
+    updateSeriesName: async (_: any, { seriesId, name }: updateSeriesNameArgs) => {
+      try {
+        const series = await seriesModel.findById(seriesId)
+        if (!series) {
+          throw new Error('Series not found')
+        }
+
+        series.name = name
+        await series.save()
+
+        return { success: true, message: 'Series name updated successfully' }
+      } catch (error) {
+        console.error('Error updating series name:', error)
+        throw new Error('Error updating series name')
       }
     },
   },
