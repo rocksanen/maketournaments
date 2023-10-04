@@ -1,5 +1,6 @@
 type Ruleset {
     id: ID!
+    name: String!
     rounds: Int!
     winnerpoints: Int!
     loserpoints: Int!
@@ -9,6 +10,7 @@ type Ruleset {
 }
 
 input RulesetInput {
+    name: String!
     rounds: Int!
     winnerpoints: Int!
     loserpoints: Int!
@@ -19,6 +21,7 @@ input RulesetInput {
 
 input UpdateRulesetInput {
     id: ID!
+    name: String
     rounds: Int
     winnerpoints: Int
     loserpoints: Int
