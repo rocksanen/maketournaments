@@ -144,8 +144,8 @@ const userResolvers = {
           throw new Error('User not found')
         }
       } catch (error) {
-        console.error('Error fetching invitations:', error)
-        throw new Error('Error fetching invitations')
+        console.error('Error getting invitations:', error)
+        throw new Error('Error getting invitations')
       }
     },
   },

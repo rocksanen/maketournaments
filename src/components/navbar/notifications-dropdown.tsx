@@ -47,7 +47,7 @@ export const NotificationsDropdown = ({ session }: Props) => {
     return () => {
       eventSource.close()
     }
-  }, [])
+  }, [notificationId?.toString()])
 
   return (
     <Dropdown placement="bottom-end">
