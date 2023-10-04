@@ -9,6 +9,7 @@ import {
 import React, { useEffect, useState } from 'react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
 import { useSession } from 'next-auth/react'
+import { set } from 'mongoose'
 
 interface Notification {
   type: string
@@ -23,11 +24,12 @@ interface Props {
 
 export const NotificationsDropdown = ({ session }: Props) => {
   const [notificationId, setNotificationId] = useState<string | null>(null)
+  const [trigger, setTrigger] = useState<number>(0)
+  const eventSource = new EventSource(`/api/sse?userId=${session?.user?.id}`)
+
   console.log(session?.user?.id, 'session user id')
 
   useEffect(() => {
-    const eventSource = new EventSource(`/api/sse?userId=${session?.user?.id}`)
-
     eventSource.onopen = () => {
       console.log('SSE connection opened.')
     }
@@ -36,7 +38,9 @@ export const NotificationsDropdown = ({ session }: Props) => {
       const data = JSON.parse(event.data)
       const id = data
       console.log('notifikaatio komponentti', id)
-      setNotificationId(id)
+      //setNotificationId(id)
+      setTrigger((prev) => prev + 1)
+      console.log(trigger, 'dropdowntriggaus')
     }
 
     eventSource.onerror = (error) => {
@@ -47,7 +51,7 @@ export const NotificationsDropdown = ({ session }: Props) => {
     return () => {
       eventSource.close()
     }
-  }, [notificationId?.toString()])
+  }, [eventSource])
 
   return (
     <Dropdown placement="bottom-end">
@@ -63,10 +67,10 @@ export const NotificationsDropdown = ({ session }: Props) => {
               base: 'py-2',
               title: 'text-base font-semibold',
             }}
-            description={notificationId || ''}
-            textValue={notificationId || ''}
+            description={trigger || ''}
+            textValue={trigger.toString() || ''}
           >
-            {notificationId ? 'New Notification' : 'No New Notifications'}
+            {trigger ? 'New Notification' : 'No New Notifications'}
           </DropdownItem>
         </DropdownSection>
       </DropdownMenu>
