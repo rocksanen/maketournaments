@@ -25,33 +25,22 @@ interface Props {
 export const NotificationsDropdown = ({ session }: Props) => {
   const [notificationId, setNotificationId] = useState<string | null>(null)
   const [trigger, setTrigger] = useState<number>(0)
-  const eventSource = new EventSource(`/api/sse?userId=${session?.user?.id}`)
+
 
   console.log(session?.user?.id, 'session user id')
 
   useEffect(() => {
-    eventSource.onopen = () => {
-      console.log('SSE connection opened.')
-    }
-
+    const eventSource = new EventSource(`/api/sse?userId=${session?.user?.id}`)
     eventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      const id = data
-      console.log('notifikaatio komponentti', id)
-      //setNotificationId(id)
+      const data: Notification = JSON.parse(event.data)
+      setNotificationId(data._id._data)
       setTrigger((prev) => prev + 1)
-      console.log(trigger, 'dropdowntriggaus')
-    }
-
-    eventSource.onerror = (error) => {
-      console.error('SSE Error:', error)
-      eventSource.close() // Close the connection on error
     }
 
     return () => {
       eventSource.close()
     }
-  }, [eventSource])
+  }, [session?.user?.id])
 
   return (
     <Dropdown placement="bottom-end">
