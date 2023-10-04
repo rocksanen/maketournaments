@@ -8,6 +8,7 @@ import {
 } from '@nextui-org/react'
 import React, { useEffect, useState } from 'react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
+import { useSession } from 'next-auth/react'
 
 interface Notification {
   type: string
@@ -21,9 +22,10 @@ interface Notification {
 
 export const NotificationsDropdown = () => {
   const [notificationId, setNotificationId] = useState<string | null>(null)
+  const { data: session } = useSession()
 
   useEffect(() => {
-    const eventSource = new EventSource('/api/sse')
+    const eventSource = new EventSource(`/api/sse?userId=${session?.user?.id}`)
 
     eventSource.onopen = () => {
       console.log('SSE connection opened.')
@@ -60,7 +62,7 @@ export const NotificationsDropdown = () => {
               title: 'text-base font-semibold',
             }}
             description={notificationId || ''}
-            textValue={notificationId || ''}
+            textValue={notificationId + 'New Invitation' || ''}
           >
             {notificationId ? 'New Notification' : 'No New Notifications'}
           </DropdownItem>

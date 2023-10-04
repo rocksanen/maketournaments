@@ -50,6 +50,7 @@ export default NextAuth({
         const user = await User.findOne({ email: session.user.email }).select('_id')
         const userid = user._id.toString()
         session.user.id = userid
+        session.user._id = userid
       }
       return session
     },
