@@ -135,6 +135,7 @@ const userResolvers = {
         throw new Error('Error sending invitation')
       }
     },
+    /*
     getInvitations: async (_: any, { id }: UserArgs) => {
       try {
         const user = await userModel.findById(id)
@@ -148,6 +149,7 @@ const userResolvers = {
         throw new Error('Error getting invitations')
       }
     },
+    */
   },
 }
 
