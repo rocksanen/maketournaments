@@ -17,6 +17,8 @@ interface Notification {
   }
 }
 
+//kakkeli
+
 export const NotificationsDropdown = () => {
   const [notificationId, setNotificationId] = useState<string | null>(null)
 
