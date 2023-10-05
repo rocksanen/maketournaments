@@ -32,6 +32,7 @@ export const NotificationsDropdown = () => {
     }
 
     eventSource.onmessage = (event) => {
+      console.log('triggeri tuli notificaatioihin')
       const data = JSON.parse(event.data)
       const id = data.documentKey._id
       setNotificationId(id)
