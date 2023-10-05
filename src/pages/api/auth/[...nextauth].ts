@@ -4,6 +4,7 @@ import User from '@/models/userModel'
 import { isPasswordValid } from '../../../utils/hash'
 import { connectToDatabase } from '@/utils/db'
 import { user } from '@nextui-org/react'
+import { setupChangeStream } from '@/lib/mongoChangeStream'
 
 export default NextAuth({
   pages: {
@@ -50,7 +51,7 @@ export default NextAuth({
         const user = await User.findOne({ email: session.user.email }).select('_id')
         const userid = user._id.toString()
         session.user.id = userid
-        session.user._id = userid
+        setupChangeStream(userid)
       }
       return session
     },

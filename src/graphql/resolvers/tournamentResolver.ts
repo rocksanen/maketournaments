@@ -83,7 +83,10 @@ const tournamentResolvers = {
         throw new Error('Failed to fetch tournaments for user')
       }
     },
-    tournamentsByNameAndUser: async ( _: any, { name, userId }: { name: string, userId: string }) => {
+    tournamentsByNameAndUser: async (
+      _: any,
+      { name, userId }: { name: string; userId: string },
+    ) => {
       try {
         const tournaments = await Tournament.findOne({
           name,
@@ -94,7 +97,7 @@ const tournamentResolvers = {
         console.error('Failed to fetch tournaments for user:', error)
         throw new Error('Failed to fetch tournaments for user')
       }
-    }
+    },
   },
 
   Mutation: {

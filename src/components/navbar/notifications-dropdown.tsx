@@ -23,9 +23,11 @@ interface Notification {
 export const NotificationsDropdown = () => {
   const [notificationId, setNotificationId] = useState<string | null>(null)
   const { data: session } = useSession()
+  console.log(session?.user?.id, 'ennen useeffektiä')
 
   useEffect(() => {
-    const eventSource = new EventSource(`/api/sse?userId=${session?.user?.id}`)
+    const eventSource = new EventSource(`/api/sse?`)
+    //console.log('notifikaatio id: ', session?.user?.id)
 
     eventSource.onopen = () => {
       console.log('SSE connection opened.')
@@ -57,7 +59,7 @@ export const NotificationsDropdown = () => {
       </DropdownTrigger>
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
-        <DropdownItem
+          <DropdownItem
             classNames={{
               base: 'py-2',
               title: 'text-base font-semibold',
