@@ -2,6 +2,7 @@ type Query {
   # User Queries
   user(id: ID!): User
   allUsers(limit: Int, offset: Int): [User]
+  getNotifications(userId: ID!): [Notification]
 
   # Match Queries
   match(id: ID!): Match

@@ -39,6 +39,9 @@ interface SendNotificationArgs {
   sender: string
   message: string
 }
+interface GetNotificationsArgs {
+  userId: string
+}
 const userResolvers = {
   Query: {
     user: async (_: any, { id }: UserArgs) => {
@@ -63,6 +66,20 @@ const userResolvers = {
       } catch (error) {
         console.error('Failed to fetch users:', error)
         throw new Error('Failed to fetch users')
+      }
+    },
+    getNotifications: async (_: any, { userId }: GetNotificationsArgs) => {
+      try {
+        const user = await userModel.findById(userId)
+
+        if (!user) {
+          throw new Error('User not found')
+        }
+
+        return user.notifications
+      } catch (error) {
+        console.error('Error fetching notifications:', error)
+        throw new Error('Error fetching notifications')
       }
     },
   },

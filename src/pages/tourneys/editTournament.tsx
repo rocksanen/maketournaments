@@ -103,8 +103,8 @@ const SEND_INVITATION = gql`
 `
 
 const SEND_NOTIFICATION = gql`
-  mutation SendNotification($userId: ID!, $sender: String!, $message: String!) {
-    sendNotification(input: { userId: $userId, sender: $sender, message: $message }) {
+  mutation SendNotification($email: String!, $sender: String!, $message: String!) {
+    sendNotification(email: $email, sender: $sender, message: $message) {
       success
       message
     }
@@ -146,7 +146,7 @@ export default function EditTournament() {
       const notificationResponse = await sendNotification({
         variables: {
           email,
-          sender: session?.user.email,
+          sender: session?.user.email?.toString(),
           message: 'You have a new invitation from: ',
         },
       })
