@@ -28,7 +28,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     changeStream.on('change', (change) => {
       const documentKey = Object.keys(change.documentKey)[0]
       console.log(documentKey, 'documentKey')
-      if (documentKey === '_id') {
+      if (documentKey === userId) {
         sendUpdate(change)
       }
     })

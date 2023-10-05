@@ -10,17 +10,12 @@ console.log('Setting up change stream')
 const pipeline = [
   {
     $match: {
-      invitations: { $exists: true }, // Match documents where "invitations" field exists
+      $or: [{ operationType: 'update' }],
     },
   },
-  {
-    $project: {
-      invitations: 1, // Only include the 'invitations' field in the output
-    },
-  },
-];
+]
 
-const changeStream = UserModel.watch(pipeline)
+const changeStream = UserModel.watch()
 
 changeStream.on('change', (change) => {
   console.log('Change: ', change)
