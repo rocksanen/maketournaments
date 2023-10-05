@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react'
 import {
   Dropdown,
   DropdownItem,
@@ -6,7 +7,6 @@ import {
   DropdownTrigger,
   NavbarItem,
 } from '@nextui-org/react'
-import React, { useEffect, useState } from 'react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
 import { useSession } from 'next-auth/react'
 
@@ -18,16 +18,11 @@ interface Notification {
   }
 }
 
-//kakkeli
-
 export const NotificationsDropdown = () => {
-  const [notificationId, setNotificationId] = useState<string | null>(null)
-  const { data: session } = useSession()
-  console.log(session?.user?.id, 'ennen useeffektiä')
+  const [notifications, setNotifications] = useState<Notification[]>([])
 
   useEffect(() => {
     const eventSource = new EventSource(`/api/sse?`)
-    //console.log('notifikaatio id: ', session?.user?.id)
 
     eventSource.onopen = () => {
       console.log('SSE connection opened.')
@@ -36,13 +31,12 @@ export const NotificationsDropdown = () => {
     eventSource.onmessage = (event) => {
       console.log('triggeri tuli notificaatioihin')
       const data = JSON.parse(event.data)
-      const id = data.documentKey._id
-      setNotificationId(id)
+      setNotifications((prevNotifications) => [...prevNotifications, data])
     }
 
     eventSource.onerror = (error) => {
       console.error('SSE Error:', error)
-      eventSource.close() // Close the connection on error
+      eventSource.close()
     }
 
     return () => {
@@ -59,16 +53,32 @@ export const NotificationsDropdown = () => {
       </DropdownTrigger>
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
-          <DropdownItem
-            classNames={{
-              base: 'py-2',
-              title: 'text-base font-semibold',
-            }}
-            description={notificationId || ''}
-            textValue={notificationId + 'New Invitation' || ''}
-          >
-            {notificationId ? 'New Notification' : 'No New Notifications'}
-          </DropdownItem>
+          {notifications.length > 0 ? (
+            notifications.map((notification) => (
+              <DropdownItem
+                key={notification._id._data} // Ensure each notification has a unique key
+                classNames={{
+                  base: 'py-2',
+                  title: 'text-base font-semibold',
+                }}
+                description={notification.message}
+                textValue={notification.message}
+              >
+                New Invitation
+              </DropdownItem>
+            ))
+          ) : (
+            <DropdownItem
+              classNames={{
+                base: 'py-2',
+                title: 'text-base font-semibold',
+              }}
+              description="No new notifications"
+              textValue="No new notifications"
+            >
+              No New Notifications
+            </DropdownItem>
+          )}
         </DropdownSection>
       </DropdownMenu>
     </Dropdown>
