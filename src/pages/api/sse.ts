@@ -30,7 +30,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       const documentKey = JSON.parse(documentKeyString)
 
       const documentId = documentKey._id
-      console.log(documentId, 'documentId kikkelii')
 
       if (documentId === userId) {
         sendUpdate(change)

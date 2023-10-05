@@ -1,3 +1,9 @@
+type Notification {
+  sender: String!
+  message: String!
+  date: String!
+}
+
 type User {
   id: ID!
   name: String!
@@ -7,26 +13,27 @@ type User {
   friends: [User]
   invitations: [String]
   userCreated: String!
+  notifications: [Notification]
 }
 
 input CreateUserInput {
-    name: String!
-    email: String!
-    password: String!
+  name: String!
+  email: String!
+  password: String!
 }
 
 input UpdateUserInput {
-    id: ID!
-    name: String
-    email: String
-    password: String
+  id: ID!
+  name: String
+  email: String
+  password: String
 }
 
 input UserInput {
-    id: ID
-    name: String
-    email: String
-    password: String
+  id: ID
+  name: String
+  email: String
+  password: String
 }
 
 type Mutation {
@@ -37,4 +44,15 @@ type SendInvitationResponse {
   success: Boolean!
   message: String
 }
+
+type Mutation {
+  sendNotification(email: String!, sender: String!, message: String!): SendNotificationResponse!
+}
+
+type SendNotificationResponse {
+  success: Boolean!
+  message: String
+}
+
+
 

@@ -37,6 +37,22 @@ const userSchema = new mongoose.Schema<User>(
       type: String,
       default: 'credentials',
     },
+    notifications: [
+      {
+        sender: {
+          type: String,
+          required: true,
+        },
+        message: {
+          type: String,
+          required: true,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true },
 )

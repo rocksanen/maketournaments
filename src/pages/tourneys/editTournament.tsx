@@ -16,6 +16,7 @@ import { Input } from '@nextui-org/react'
 import { TableWrapper } from '@/components/invitePlayers/invitationTable'
 import { Dropdown, DropdownItem } from '@nextui-org/react'
 import { gql, useMutation } from '@apollo/client'
+import { useSession } from 'next-auth/react'
 
 const tournamentData = [
   {
@@ -101,17 +102,28 @@ const SEND_INVITATION = gql`
   }
 `
 
+const SEND_NOTIFICATION = gql`
+  mutation SendNotification($userId: ID!, $sender: String!, $message: String!) {
+    sendNotification(input: { userId: $userId, sender: $sender, message: $message }) {
+      success
+      message
+    }
+  }
+`
+
 export default function EditTournament() {
   const router = useRouter()
   const { id, name } = router.query
   const [email, setEmail] = useState('')
   const [sendInvitation] = useMutation(SEND_INVITATION)
+  const [sendNotification] = useMutation(SEND_NOTIFICATION)
+  const { data: session } = useSession()
 
   const handleSendInvitation = async () => {
     try {
       const response = await sendInvitation({
         variables: {
-          tournamentId: id, // this is a tournament id for tournament called kikkeli
+          tournamentId: id,
           email,
         },
       })
@@ -120,6 +132,23 @@ export default function EditTournament() {
 
       if (success) {
         alert('Invitation sent successfully!')
+
+        const notificationResponse = await sendNotification({
+          variables: {
+            email,
+            sender: session?.user.email,
+            message: 'You have a new invitation from: ',
+          },
+        })
+
+        const { success: notificationSuccess, message: notificationMessage } =
+          notificationResponse.data.sendNotification
+
+        if (notificationSuccess) {
+          console.log('Notification sent successfully')
+        } else {
+          console.error(`Error sending notification: ${notificationMessage}`)
+        }
       } else {
         alert(`Error sending invitation: ${message}`)
       }

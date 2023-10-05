@@ -34,7 +34,11 @@ interface SendInvitationArgs {
   tournamentId: string
   email: string
 }
-
+interface SendNotificationArgs {
+  email: string
+  sender: string
+  message: string
+}
 const userResolvers = {
   Query: {
     user: async (_: any, { id }: UserArgs) => {
@@ -133,6 +137,38 @@ const userResolvers = {
       } catch (error) {
         console.error('Error sending invitation:', error)
         throw new Error('Error sending invitation')
+      }
+    },
+    sendNotification: async (_: any, { email, sender, message }: SendNotificationArgs) => {
+      try {
+        const user = await userModel.findOne({ email })
+
+        if (!user) {
+          throw new Error('User not found')
+        }
+
+        const updatedUser = await userModel.findByIdAndUpdate(
+          user._id,
+          {
+            $push: {
+              notifications: {
+                sender,
+                message,
+                date: new Date(),
+              },
+            },
+          },
+          { new: true },
+        )
+
+        if (!updatedUser) {
+          throw new Error('User not found')
+        }
+
+        return { success: true, message: 'Notification sent successfully' }
+      } catch (error) {
+        console.error('Error sending notification:', error)
+        throw new Error('Error sending notification')
       }
     },
   },
