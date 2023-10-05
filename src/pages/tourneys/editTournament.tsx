@@ -132,29 +132,45 @@ export default function EditTournament() {
 
       if (success) {
         alert('Invitation sent successfully!')
-
-        const notificationResponse = await sendNotification({
-          variables: {
-            email,
-            sender: session?.user.email,
-            message: 'You have a new invitation from: ',
-          },
-        })
-
-        const { success: notificationSuccess, message: notificationMessage } =
-          notificationResponse.data.sendNotification
-
-        if (notificationSuccess) {
-          console.log('Notification sent successfully')
-        } else {
-          console.error(`Error sending notification: ${notificationMessage}`)
-        }
       } else {
         alert(`Error sending invitation: ${message}`)
       }
     } catch (error) {
       console.error('Error sending invitation:', error)
       alert('Error sending invitation. Please try again later.')
+    }
+  }
+
+  const handleSendNotification = async () => {
+    try {
+      const notificationResponse = await sendNotification({
+        variables: {
+          email,
+          sender: session?.user.email,
+          message: 'You have a new invitation from: ',
+        },
+      })
+
+      const { success: notificationSuccess, message: notificationMessage } =
+        notificationResponse.data.sendNotification
+
+      if (notificationSuccess) {
+        console.log('Notification sent successfully')
+      } else {
+        console.error(`Error sending notification: ${notificationMessage}`)
+      }
+    } catch (error) {
+      console.error('Error sending notification:', error)
+      alert('Error sending notification. Please try again later.')
+    }
+  }
+  const handleSendBoth = async () => {
+    try {
+      await handleSendInvitation()
+      await handleSendNotification()
+    } catch (error) {
+      console.error('Error sending both:', error)
+      alert('Error sending both. Please try again later.')
     }
   }
 
@@ -214,7 +230,7 @@ export default function EditTournament() {
             <DropdownItem value="player">Player</DropdownItem>
             <DropdownItem value="admin">Admin</DropdownItem>
           </Dropdown>
-          <Button color="primary" className="w-20 h-full" onClick={handleSendInvitation}>
+          <Button color="primary" className="w-20 h-full" onClick={handleSendBoth}>
             Send
           </Button>
         </CardHeader>
