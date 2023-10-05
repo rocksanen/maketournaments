@@ -32,14 +32,15 @@ export const CardBalance1 = () => {
 
   let content
 
-  if (loading || !session) {
+  if (loading) {
     content = <span className="text-white">Loading...</span>
+  } else if (!session) {
+    content = <span className="text-white">Not Logged In</span>
   } else if (error) {
     content = <span className="text-white">Error: {error.message}</span>
   } else if (!userId) {
     content = <span className="text-white">Not Logged In</span>
   } else {
-    // ... (rest of the code remains the same)
     let gamesPlayed = 0
     let gamesWon = 0
 
