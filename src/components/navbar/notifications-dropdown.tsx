@@ -8,8 +8,6 @@ import {
   NavbarItem,
 } from '@nextui-org/react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
-import { gql, useQuery } from '@apollo/client'
-import { useSession } from 'next-auth/react'
 
 interface Notification {
   type: string
@@ -19,24 +17,8 @@ interface Notification {
   }
 }
 
-const GET_NOTIFICATIONS = gql`
-  query GetNotifications($userId: ID!) {
-    getNotifications(userId: $userId) {
-      sender
-      message
-      date
-    }
-  }
-`
-
 export const NotificationsDropdown = () => {
-  const { data: session } = useSession()
-  const { loading, error, data } = useQuery(GET_NOTIFICATIONS, {
-    variables: { userId: session?.user._id },
-  })
-
-  const gqlNotifications = data?.getNotifications || [] // If data is not available yet, default to an empty array
-  const [notifications, setNotifications] = useState<any[]>(gqlNotifications)
+  const [notifications, setNotifications] = useState<Notification[]>([])
 
   useEffect(() => {
     const eventSource = new EventSource(`/api/sse?`)
@@ -47,8 +29,8 @@ export const NotificationsDropdown = () => {
 
     eventSource.onmessage = (event) => {
       console.log('triggeri tuli notificaatioihin')
-      const newData = JSON.parse(event.data)
-      setNotifications((prevNotifications) => [newData, ...prevNotifications])
+      const data = JSON.parse(event.data)
+      setNotifications((prevNotifications) => [...prevNotifications, data])
     }
 
     eventSource.onerror = (error) => {
@@ -61,9 +43,6 @@ export const NotificationsDropdown = () => {
     }
   }, [])
 
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error :(</p>
-
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
@@ -74,9 +53,9 @@ export const NotificationsDropdown = () => {
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
           {notifications.length > 0 ? (
-            notifications.map((notification, index) => (
+            notifications.map((notification) => (
               <DropdownItem
-                key={index}
+                key={notification._id._data} // Ensure each notification has a unique key
                 classNames={{
                   base: 'py-2',
                   title: 'text-base font-semibold',
