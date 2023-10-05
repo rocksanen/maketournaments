@@ -8,7 +8,6 @@ import {
   NavbarItem,
 } from '@nextui-org/react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
-import { useSession } from 'next-auth/react'
 
 interface Notification {
   type: string

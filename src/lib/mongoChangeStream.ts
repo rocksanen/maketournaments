@@ -1,29 +1,24 @@
 import mongoose from 'mongoose'
 import UserModel from '@/models/userModel'
 
-let userId: string
-let pipeline: any
+const uri = process.env.MONGO_URI || ''
 
-function setupChangeStream(id: string) {
-  const uri = process.env.MONGO_URI || ''
-  userId = id
-  console.log(userId, 'Setting up change stream user id')
-  mongoose.connect(uri)
+mongoose.connect(uri)
 
-  console.log('Setting up change stream')
-  pipeline = [
-    {
-      $match: {
-        'documentKey._id': new mongoose.Types.ObjectId(userId),
-      },
+console.log('Setting up change stream')
+
+const pipeline = [
+  {
+    $match: {
+      invitations: { $exists: true }, // Match documents where "invitations" field exists
     },
-    {
-      $project: {
-        invitations: 1, // Only include the 'invitations' field in the output
-      },
+  },
+  {
+    $project: {
+      invitations: 1, // Only include the 'invitations' field in the output
     },
-  ]
-}
+  },
+];
 
 const changeStream = UserModel.watch(pipeline)
 
@@ -35,4 +30,4 @@ changeStream.on('error', (error) => {
   console.error('Error: ', error)
 })
 
-export { setupChangeStream, changeStream }
+export { changeStream }

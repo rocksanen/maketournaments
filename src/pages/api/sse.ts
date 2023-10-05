@@ -1,6 +1,13 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { changeStream } from '@/lib/mongoChangeStream'
 
+let userId: string
+
+export const setupUserId = (id: string) => {
+  userId = id
+  console.log(userId, 'Setting up user id in sse.ts')
+}
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.headers.accept && req.headers.accept === 'text/event-stream') {
     res.setHeader('Content-Type', 'text/event-stream')
@@ -19,7 +26,11 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     changeStream.on('change', (change) => {
-      sendUpdate(change)
+      const documentKey = Object.keys(change.documentKey)[0]
+      console.log(documentKey, 'documentKey')
+      if (documentKey === '_id') {
+        sendUpdate(change)
+      }
     })
 
     req.socket.on('close', () => {
