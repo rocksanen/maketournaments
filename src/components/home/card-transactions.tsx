@@ -25,7 +25,7 @@ const StatusMessage: React.FC<{ message: string }> = ({ message }) => (
     <CardBody className="py-5 gap-4">
       <div className="flex gap-2.5 justify-center">
         <div className="flex flex-col border-dashed border-2 border-divider py-2 px-6 rounded-xl">
-          <span className="text-default-900 text-xl font-semibold">Status</span>
+          <span className="text-default-900 text-xl font-semibold">Latest Tournaments</span>
         </div>
       </div>
       <div className="flex flex-col gap-6">
@@ -72,7 +72,7 @@ export const CardTransactions: React.FC = () => {
                 <Avatar
                   isBordered
                   color="secondary"
-                  src="https://i.pravatar.cc/150?u=a042581f4e29026024d" // Placeholder, replace with actual image URL or logic
+                  src="https://i.pravatar.cc/150?u=a042581f4e29026024d"
                 />
               </div>
               <span className="text-default-900 font-semibold">{tournament.name}</span>
