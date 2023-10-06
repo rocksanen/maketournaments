@@ -36,6 +36,12 @@ const GET_RULESET_BY_ID = gql`
   }
 `
 
+const DELETE_RULESET = gql`
+  mutation Mutation($deleteRulesetId: ID!) {
+    deleteRuleset(id: $deleteRulesetId)
+  }
+`
+
 const mock_ruleset_params = {
   name: 'jesttest',
   rounds: 3,
@@ -45,11 +51,6 @@ const mock_ruleset_params = {
   nightmarepoints: 0,
   nightmarePointsOn: false,
 }
-const DELETE_RULESET = gql`
-  mutation Mutation($deleteRulesetId: ID!) {
-    deleteRuleset(id: $deleteRulesetId)
-  }
-`
 
 describe('graphql api: rulesets', () => {
   let createdRulesetId: String
