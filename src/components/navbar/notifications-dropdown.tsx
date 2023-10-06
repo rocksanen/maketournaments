@@ -8,17 +8,25 @@ import {
   NavbarItem,
 } from '@nextui-org/react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
+import { GET_NOTIFICATIONS_BY_USER } from '@/graphql/clientQueries/notificationOperations'
+import { useSession } from 'next-auth/react'
+import { useQuery } from '@apollo/client'
 
 interface Notification {
-  type: string
+  sender: string
   message: string
-  _id: {
-    _data: string
-  }
+  date: string
 }
 
 export const NotificationsDropdown = () => {
   const [notifications, setNotifications] = useState<Notification[]>([])
+  const { data: session } = useSession()
+  const userId = session?.user?.id ?? null
+
+  const { loading, error, data } = useQuery(GET_NOTIFICATIONS_BY_USER, {
+    variables: { userId },
+    skip: !userId,
+  })
 
   useEffect(() => {
     const eventSource = new EventSource(`/api/sse?`)
@@ -29,8 +37,8 @@ export const NotificationsDropdown = () => {
 
     eventSource.onmessage = (event) => {
       console.log('triggeri tuli notificaatioihin')
-      const data = JSON.parse(event.data)
-      setNotifications((prevNotifications) => [...prevNotifications, data])
+      const eventData = JSON.parse(event.data)
+      setNotifications((prevNotifications) => [...prevNotifications, eventData])
     }
 
     eventSource.onerror = (error) => {
@@ -43,6 +51,17 @@ export const NotificationsDropdown = () => {
     }
   }, [])
 
+  /*
+  useEffect(() => {
+    if (data) {
+      setNotifications(data.notificationsByUser)
+    }
+  }, [data])
+
+  if (loading) return <p>Loading...</p>
+  if (error) return <p>Error: {error.message}</p>
+
+  */
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
@@ -53,9 +72,9 @@ export const NotificationsDropdown = () => {
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
           {notifications.length > 0 ? (
-            notifications.map((notification) => (
+            notifications.map((notification, index) => (
               <DropdownItem
-                key={notification._id._data} // Ensure each notification has a unique key
+                key={index}
                 classNames={{
                   base: 'py-2',
                   title: 'text-base font-semibold',

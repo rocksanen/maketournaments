@@ -38,6 +38,7 @@ input UserInput {
 
 type Mutation {
   sendInvitation(tournamentId: ID!, email: String!): SendInvitationResponse!
+  sendNotification(email: String!, sender: String!, message: String!): SendNotificationResponse!
 }
 
 type SendInvitationResponse {
@@ -45,14 +46,11 @@ type SendInvitationResponse {
   message: String
 }
 
-type Mutation {
-  sendNotification(email: String!, sender: String!, message: String!): SendNotificationResponse!
-}
-
 type SendNotificationResponse {
   success: Boolean!
   message: String
 }
+
 
 
 

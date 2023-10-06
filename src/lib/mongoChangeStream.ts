@@ -7,15 +7,18 @@ mongoose.connect(uri)
 
 console.log('Setting up change stream')
 
-const pipeline = [
+const changeStream = UserModel.watch([
   {
     $match: {
-      $or: [{ operationType: 'update' }],
+      $and: [
+        { operationType: 'update' },
+        {
+          'updateDescription.updatedFields.invitations': { $exists: true },
+        },
+      ],
     },
   },
-]
-
-const changeStream = UserModel.watch()
+])
 
 changeStream.on('change', (change) => {
   console.log('Change: ', change)
