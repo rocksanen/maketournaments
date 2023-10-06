@@ -1,0 +1,20 @@
+type Notification {
+  id: ID!
+  receiverEmail: String!
+  senderEmail: String!
+  message: String!
+  date: String!
+}
+
+input NotificationInput {
+  receiverEmail: String!
+  senderEmail: String!
+  message: String!
+  date: String!
+}
+
+type Mutation {
+  createNotification(input: NotificationInput!): Notification
+  updateNotification(id: ID!, input: NotificationInput!): Notification
+  deleteNotification(id: ID!): Notification
+}

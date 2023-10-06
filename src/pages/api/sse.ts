@@ -19,19 +19,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       res.write(': heartbeat\n\n')
     }, HEARTBEAT_INTERVAL)
 
-    const sendUpdate = (data: { [key: string]: string }) => {
-      const event = `data: ${JSON.stringify({ ...data })}\n\n`
-      res.write(event)
-      console.log('Sent SSE update:', data)
+    const sendUpdate = () => {
+      res.write('data: update\n\n')
+      console.log('Sent SSE update')
     }
 
     changeStream.on('change', (change) => {
       const documentKeyString = JSON.stringify(change.documentKey)
       const documentKey = JSON.parse(documentKeyString)
-      console.log(userId,'pilulululululll')
+      console.log(userId, 'pilulululululll')
       const documentId = documentKey._id
       if (documentId === userId) {
-        sendUpdate(change)
+        sendUpdate()
       }
     })
 

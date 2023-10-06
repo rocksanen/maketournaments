@@ -7,21 +7,10 @@ mongoose.connect(uri)
 
 console.log('Setting up change stream')
 
-const changeStream = UserModel.watch([
-  {
-    $match: {
-      $and: [
-        { operationType: 'update' },
-        {
-          'updateDescription.updatedFields.invitations': { $exists: true },
-        },
-      ],
-    },
-  },
-])
+const changeStream = UserModel.watch()
 
 changeStream.on('change', (change) => {
-  console.log('Change: ', change)
+  //console.log('Change: ', change)
 })
 
 changeStream.on('error', (error) => {

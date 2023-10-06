@@ -2,7 +2,6 @@ type Query {
   # User Queries
   user(id: ID!): User
   allUsers(limit: Int, offset: Int): [User]
-  getNotifications(userId: ID!): [Notification]
 
   # Match Queries
   match(id: ID!): Match
@@ -25,6 +24,12 @@ type Query {
   tournamentsByUser(userId: ID!): [Tournament]
   tournamentsByNameAndUser(name: String!, userId: ID!): Tournament
   hello: String
+
+  # Notification Queries
+  getNotificationByReceiverEmail(receiverEmail: String!): Notification
+  getAllNotifications: [Notification]
+  getAllNotificationsByReceiverEmail(receiverEmail: String!): [Notification]
+
 }
 
 type Mutation {
@@ -52,4 +57,10 @@ type Mutation {
   createSeries(input: SeriesInput!): Series!
   updateSeries(input: UpdateSeriesInput!): Series
   deleteSeries(id: ID!): Boolean
+
+  # Notification Mutations
+  createNotification(input: NotificationInput!): Notification
+  updateNotification(id: ID!, input: NotificationInput!): Notification
+  deleteNotification(id: ID!): Notification
+
 }

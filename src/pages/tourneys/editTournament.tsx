@@ -103,10 +103,20 @@ const SEND_INVITATION = gql`
 `
 
 const SEND_NOTIFICATION = gql`
-  mutation SendNotification($email: String!, $sender: String!, $message: String!) {
-    sendNotification(email: $email, sender: $sender, message: $message) {
-      success
+  mutation SendNotification(
+    $receiverEmail: String!
+    $sender: String!
+    $message: String!
+    $date: String!
+  ) {
+    createNotification(
+      input: { receiverEmail: $receiverEmail, senderEmail: $sender, message: $message, date: $date }
+    ) {
+      id
+      receiverEmail
+      senderEmail
       message
+      date
     }
   }
 `
@@ -142,17 +152,20 @@ export default function EditTournament() {
   }
 
   const handleSendNotification = async () => {
+    console.log(session && session.user.email, 'lähettäjän sähäköposti')
+    console.log(email, 'vastaanottajan sähköposti')
     try {
       const notificationResponse = await sendNotification({
         variables: {
-          email,
-          sender: session?.user.email?.toString(),
+          receiverEmail: email,
+          sender: session && session.user.email,
           message: 'You have a new invitation from: ',
+          date: new Date().toISOString(),
         },
       })
 
       const { success: notificationSuccess, message: notificationMessage } =
-        notificationResponse.data.sendNotification
+        notificationResponse.data.sendNotification || {}
 
       if (notificationSuccess) {
         console.log('Notification sent successfully')

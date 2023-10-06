@@ -1,14 +1,13 @@
 import { gql } from '@apollo/client'
 
 const GET_NOTIFICATIONS_BY_USER = gql`
-  query GetNotificationsByUser($userId: ID!) {
-    notificationsByUser(userId: $userId) {
-      sender
+  query GetNotificationsByUser($receiverEmail: String!) {
+    notificationsByUser(receiverEmail: $receiverEmail) {
+      receiverEmail
       message
-      user {
-        id
-      }
+      date
     }
   }
 `
+
 export { GET_NOTIFICATIONS_BY_USER }

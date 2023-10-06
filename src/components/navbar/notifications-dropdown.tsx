@@ -12,33 +12,42 @@ import { GET_NOTIFICATIONS_BY_USER } from '@/graphql/clientQueries/notificationO
 import { useSession } from 'next-auth/react'
 import { useQuery } from '@apollo/client'
 
-interface Notification {
+interface Notificationz {
   sender: string
   message: string
   date: string
 }
 
 export const NotificationsDropdown = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([])
   const { data: session } = useSession()
-  const userId = session?.user?.id ?? null
+  const userEmail = session?.user?.email || ''
+  const [notifications, setNotifications] = useState<Notificationz[]>([])
 
-  const { loading, error, data } = useQuery(GET_NOTIFICATIONS_BY_USER, {
-    variables: { userId },
-    skip: !userId,
+  const { data: initialData } = useQuery(GET_NOTIFICATIONS_BY_USER, {
+    variables: { userId: userEmail },
+    skip: !userEmail,
   })
 
   useEffect(() => {
-    const eventSource = new EventSource(`/api/sse?`)
+    if (initialData && initialData.notificationsByUser) {
+      setNotifications(initialData.notificationsByUser)
+    }
+  }, [initialData])
+
+  useEffect(() => {
+    const eventSource = new EventSource(`/api/sse`)
 
     eventSource.onopen = () => {
       console.log('SSE connection opened.')
     }
 
     eventSource.onmessage = (event) => {
-      console.log('triggeri tuli notificaatioihin')
-      const eventData = JSON.parse(event.data)
-      setNotifications((prevNotifications) => [...prevNotifications, eventData])
+      // Assuming event.data contains the notification
+      const newNotification = JSON.parse(event.data)
+
+      if (newNotification.receiverEmail === userEmail) {
+        setNotifications((prevNotifications) => [newNotification, ...prevNotifications])
+      }
     }
 
     eventSource.onerror = (error) => {
@@ -49,19 +58,8 @@ export const NotificationsDropdown = () => {
     return () => {
       eventSource.close()
     }
-  }, [])
+  }, [userEmail])
 
-  /*
-  useEffect(() => {
-    if (data) {
-      setNotifications(data.notificationsByUser)
-    }
-  }, [data])
-
-  if (loading) return <p>Loading...</p>
-  if (error) return <p>Error: {error.message}</p>
-
-  */
   return (
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
