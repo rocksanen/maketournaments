@@ -23,10 +23,8 @@ const SAVE_RULESET = gql`
 `
 
 const DELETE_RULESET = gql`
-  mutation deleteRuleset($id: String!) {
-    deleteRuleset(id: $id) {
-      id
-    }
+  mutation Mutation($deleteRulesetId: ID!) {
+    deleteRuleset(id: $deleteRulesetId)
   }
 `
 
@@ -60,14 +58,9 @@ describe('graphql api: rulesets', () => {
     createdRulesetId = data.createRuleset.id
   })
   test('Delete ruleset', async () => {
-    console.log('createdrulesetid', createdRulesetId)
     const data = await client.request(DELETE_RULESET, {
-      id: 'test',
+      deleteRulesetId: createdRulesetId,
     })
-    expect(data).toEqual({
-      deleteRuleset: {
-        id: createdRulesetId,
-      },
-    })
+    expect(data.deleteRuleset).toEqual(true)
   })
 })
