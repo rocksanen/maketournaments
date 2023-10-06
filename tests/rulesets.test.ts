@@ -21,7 +21,30 @@ const SAVE_RULESET = gql`
     }
   }
 `
+const GET_RULESET_BY_ID = gql`
+  query Query($getRulesetByIdId: ID!) {
+    ruleset(id: $getRulesetByIdId) {
+      name
+      rounds
+      winnerpoints
+      loserpoints
+      drawpoints
+      nightmarepoints
+      nightmarePointsOn
+      id
+    }
+  }
+`
 
+const mock_ruleset_params = {
+  name: 'jesttest',
+  rounds: 3,
+  winnerpoints: 3,
+  loserpoints: 0,
+  drawpoints: 1,
+  nightmarepoints: 0,
+  nightmarePointsOn: false,
+}
 const DELETE_RULESET = gql`
   mutation Mutation($deleteRulesetId: ID!) {
     deleteRuleset(id: $deleteRulesetId)
@@ -34,29 +57,27 @@ describe('graphql api: rulesets', () => {
   test('Create ruleset', async () => {
     const data = await client.request(SAVE_RULESET, {
       ruleset: {
-        name: 'test',
-        rounds: 3,
-        winnerpoints: 3,
-        loserpoints: 0,
-        drawpoints: 1,
-        nightmarepoints: 0,
-        nightmarePointsOn: false,
+        ...mock_ruleset_params,
       },
     })
     expect(data).toEqual({
       createRuleset: {
-        name: 'test',
-        rounds: 3,
-        winnerpoints: 3,
-        loserpoints: 0,
-        drawpoints: 1,
-        nightmarepoints: 0,
-        nightmarePointsOn: false,
+        ...mock_ruleset_params,
         id: expect.any(String),
       },
     })
     createdRulesetId = data.createRuleset.id
   })
+  test('Get ruleset by id', async () => {
+    const data = await client.request(GET_RULESET_BY_ID, {
+      getRulesetByIdId: createdRulesetId,
+    })
+    expect(data.ruleset).toEqual({
+      ...mock_ruleset_params,
+      id: createdRulesetId,
+    })
+  })
+
   test('Delete ruleset', async () => {
     const data = await client.request(DELETE_RULESET, {
       deleteRulesetId: createdRulesetId,

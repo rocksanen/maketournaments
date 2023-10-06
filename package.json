@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --fix",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "testserver": "cross-env ENV=test next dev"
   },
   "dependencies": {
     "@apollo/client": "^3.8.4",
@@ -46,6 +47,7 @@
     "@types/react": "18.0.20",
     "@types/react-dom": "18.0.6",
     "autoprefixer": "^10.4.15",
+    "cross-env": "^7.0.3",
     "eslint": "^8.23.1",
     "eslint-config-next": "13.4.16",
     "eslint-config-prettier": "^9.0.0",
