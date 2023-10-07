@@ -65,6 +65,7 @@ export const NotificationsDropdown = () => {
     }
 
     eventSource.onmessage = (event) => {
+      console.log('SSE message received in notification dropdown:', event)
       client
         .query({
           query: GET_NEWEST_NOTIFICATION,
