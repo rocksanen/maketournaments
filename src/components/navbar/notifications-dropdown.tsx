@@ -21,12 +21,14 @@ interface Notificationz {
   senderEmail: string
   message: string
   date: string
+  isRead: boolean
 }
 
 export const NotificationsDropdown = () => {
   const { data: session } = useSession()
   const userEmail = session?.user?.email || ''
   const [notifications, setNotifications] = useState<Notificationz[]>([])
+  const [unreadCount, setUnreadCount] = useState(0)
 
   const { data: initialData } = useQuery(GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL, {
     variables: { receiverEmail: userEmail },
@@ -43,7 +45,12 @@ export const NotificationsDropdown = () => {
   useEffect(() => {
     console.log(initialData)
     if (initialData && initialData.getAllNotificationsByReceiverEmail) {
+      const unreadNotifications = initialData.getAllNotificationsByReceiverEmail.filter(
+        (notification: Notificationz) => !notification.isRead,
+      )
       setNotifications(initialData.getAllNotificationsByReceiverEmail)
+      setUnreadCount(unreadNotifications.length)
+      console.log('Unread notifications count:', unreadNotifications.length)
     }
   }, [initialData])
 
@@ -89,7 +96,7 @@ export const NotificationsDropdown = () => {
     <Dropdown placement="bottom-end">
       <DropdownTrigger>
         <NavbarItem>
-          <NotificationIcon />
+          <NotificationIcon unreadCount={unreadCount} />
         </NavbarItem>
       </DropdownTrigger>
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
