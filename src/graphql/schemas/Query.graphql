@@ -48,7 +48,15 @@ type Mutation {
   deleteMatch(id: ID!): Boolean
 
   # Series Mutations
-  createSeries(input: SeriesInput!): Series!
+  createSeries(input: SeriesInput!): CreateSeriesResponse!
   updateSeries(input: UpdateSeriesInput!): Series
   deleteSeries(id: ID!): Boolean
+}
+
+# Series Response
+type CreateSeriesResponse {
+  success: Boolean!
+  series: Series
+  message: String
+  id: ID!
 }

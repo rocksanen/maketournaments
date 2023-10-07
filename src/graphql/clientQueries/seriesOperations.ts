@@ -3,8 +3,16 @@ import { gql } from '@apollo/client'
 const CREATE_SERIES = gql`
   mutation CreateSeries($input: SeriesInput!) {
     createSeries(input: $input) {
-      id
-      name
+      success
+      message
+      series {
+        id
+        name
+        tournaments {
+          id
+          name
+        }
+      }
     }
   }
 `

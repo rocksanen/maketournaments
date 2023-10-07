@@ -25,7 +25,7 @@ export const SidebarWrapper = () => {
   const { collapsed, setCollapsed } = useSidebarContext()
 
   return (
-    <aside className="h-screen z-[202] sticky top-0">
+    <aside className="h-screen z-[50] sticky top-0">
       {collapsed ? <div className={Sidebar.Overlay()} onClick={setCollapsed} /> : null}
       <div
         className={Sidebar({
@@ -51,21 +51,22 @@ export const SidebarWrapper = () => {
                 href="/accounts"
               />
               <SidebarItem
-                isActive={router.pathname === '/payments'}
+                isActive={router.pathname === '/series/all'}
                 title="Your Series"
                 icon={<PaymentsIcon />}
+                href="/series/all"
               />
               <SidebarItem
-                isActive={router.pathname === '/customers'}
+                isActive={router.pathname === '/tourneys/new'}
                 title="Create Tournament"
                 icon={<CustomersIcon />}
                 href="/tourneys/new"
               />
               <SidebarItem
-                isActive={router.pathname === '/reports'}
+                isActive={router.pathname === '/series/new'}
                 title="Create Series"
                 icon={<ReportsIcon />}
-                href="/series/seriesNew"
+                href="/series/new"
               />
               <SidebarItem
                 isActive={router.pathname === '/reports'}

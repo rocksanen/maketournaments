@@ -102,12 +102,28 @@ const seriesResolvers = {
   Mutation: {
     createSeries: async (_: any, { input }: CreateSeriesArgs) => {
       try {
+        const existingSeries = await seriesModel.findOne({ name: input.name })
+        if (existingSeries) {
+          return {
+            success: false,
+            message: 'Series with that name already exists',
+          }
+        }
+
         const newSeries = new seriesModel(input)
         const result = await newSeries.save()
-        return result
+
+        return {
+          success: true,
+          series: result,
+          message: 'Series created successfully',
+        }
       } catch (error) {
         console.error('Failed to create series:', error)
-        throw new Error('Failed to create series')
+        return {
+          success: false,
+          message: 'Failed to create series due to an unexpected error.',
+        }
       }
     },
 
@@ -200,6 +216,13 @@ const seriesResolvers = {
     },
     updateSeriesName: async (_: any, { seriesId, name }: updateSeriesNameArgs) => {
       try {
+        const existingSeries = await seriesModel.findOne({ name: name })
+        if (existingSeries) {
+          return {
+            success: false,
+            message: 'Series with that name already exists',
+          }
+        }
         const series = await seriesModel.findById(seriesId)
         if (!series) {
           throw new Error('Series not found')

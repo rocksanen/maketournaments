@@ -24,7 +24,7 @@ const UpdateSeriesNameModal = ({ selectedSeries, isOpen, onClose, onUpdate }: Pr
   const handleUpdateSeriesName = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     try {
-      await updateSeriesName({
+      const response = await updateSeriesName({
         variables: {
           seriesId: selectedSeries?.id,
           name: newSeriesName,
@@ -34,8 +34,13 @@ const UpdateSeriesNameModal = ({ selectedSeries, isOpen, onClose, onUpdate }: Pr
           { query: GET_TOURNAMENTS_BY_SERIES, variables: { seriesId: selectedSeries?.id } },
         ],
       })
-      alert('Series name updated successfully')
-      onUpdate()
+      const result = response.data.updateSeriesName.success
+      if (result === true) {
+        alert('Series name changed successfully')
+        onUpdate()
+      } else {
+        alert(response.data.updateSeriesName.message)
+      }
     } catch (error) {
       alert('Error updating series name, please try again later')
       console.log(error)
