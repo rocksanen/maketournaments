@@ -18,6 +18,10 @@ const notificationSchema = new mongoose.Schema<Note>({
     type: Date,
     required: true,
   },
+  isRead: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const Notification =

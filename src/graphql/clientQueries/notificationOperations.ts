@@ -1,13 +1,22 @@
 import { gql } from '@apollo/client'
 
-const GET_NOTIFICATIONS_BY_USER = gql`
-  query GetNotificationsByUser($receiverEmail: String!) {
-    notificationsByUser(receiverEmail: $receiverEmail) {
-      receiverEmail
+const GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL = gql`
+  query GetAllNotificationsByReceiverEmail($receiverEmail: String!) {
+    getAllNotificationsByReceiverEmail(receiverEmail: $receiverEmail) {
+      id
       message
-      date
+      senderEmail
     }
   }
 `
 
-export { GET_NOTIFICATIONS_BY_USER }
+const MARK_NOTIFICATION_AS_READ = gql`
+  mutation MarkNotificationAsRead($id: ID!) {
+    updateNotification(id: $id) {
+      id
+      isRead
+    }
+  }
+`
+
+export { GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL, MARK_NOTIFICATION_AS_READ }

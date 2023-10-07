@@ -8,12 +8,16 @@ import {
   NavbarItem,
 } from '@nextui-org/react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
-import { GET_NOTIFICATIONS_BY_USER } from '@/graphql/clientQueries/notificationOperations'
+import {
+  GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
+  MARK_NOTIFICATION_AS_READ,
+} from '@/graphql/clientQueries/notificationOperations'
 import { useSession } from 'next-auth/react'
-import { useQuery } from '@apollo/client'
+import { useQuery, useMutation } from '@apollo/client'
 
 interface Notificationz {
-  sender: string
+  id: string
+  senderEmail: string
   message: string
   date: string
 }
@@ -23,16 +27,28 @@ export const NotificationsDropdown = () => {
   const userEmail = session?.user?.email || ''
   const [notifications, setNotifications] = useState<Notificationz[]>([])
 
-  const { data: initialData } = useQuery(GET_NOTIFICATIONS_BY_USER, {
-    variables: { userId: userEmail },
+  const { data: initialData } = useQuery(GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL, {
+    variables: { receiverEmail: userEmail },
     skip: !userEmail,
   })
+  const [markNotificationAsRead] = useMutation(MARK_NOTIFICATION_AS_READ)
 
   useEffect(() => {
-    if (initialData && initialData.notificationsByUser) {
-      setNotifications(initialData.notificationsByUser)
+    console.log(initialData)
+    if (initialData && initialData.getAllNotificationsByReceiverEmail) {
+      setNotifications(initialData.getAllNotificationsByReceiverEmail)
     }
   }, [initialData])
+
+  const handleNotificationClick = async (notificationId: string) => {
+    try {
+      await markNotificationAsRead({
+        variables: { id: notificationId },
+      })
+    } catch (error) {
+      console.error('Failed to update notification:', error)
+    }
+  }
 
   useEffect(() => {
     const eventSource = new EventSource(`/api/sse`)
@@ -70,15 +86,16 @@ export const NotificationsDropdown = () => {
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
           {notifications.length > 0 ? (
-            notifications.map((notification, index) => (
+            notifications.map((notification) => (
               <DropdownItem
-                key={index}
+                key={notification.id}
                 classNames={{
                   base: 'py-2',
                   title: 'text-base font-semibold',
                 }}
-                description={notification.message}
+                description={`${notification.message} ${notification.senderEmail}`}
                 textValue={notification.message}
+                onClick={() => handleNotificationClick(notification.id)}
               >
                 New Invitation
               </DropdownItem>

@@ -5,6 +5,7 @@ interface Note extends Document {
   senderEmail: string
   message: string
   date: Date
+  isRead: boolean
 }
 
 interface NoteInput {
@@ -12,6 +13,7 @@ interface NoteInput {
   senderEmail: string
   message: string
   date: Date
+  isRead: boolean
 }
 
 export type { Note, NoteInput }

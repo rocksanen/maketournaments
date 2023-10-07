@@ -12,7 +12,12 @@ interface CreateNotificationArgs {
     senderEmail: string
     message: string
     date: string // Assuming date is a string in ISO8601 format
+    isRead: boolean // Add isRead to the input
   }
+}
+
+interface UpdateNotificationArgs {
+  id: string
 }
 
 interface DeleteNotificationArgs {
@@ -47,11 +52,11 @@ const notificationResolvers = {
       { receiverEmail }: { receiverEmail: string },
     ) => {
       try {
-        const notification = await Notification.findOne({ receiverEmail })
-        return notification
+        const notifications = await Notification.find({ receiverEmail })
+        return notifications
       } catch (error) {
-        console.error('Failed to fetch notification:', error)
-        throw new Error('Failed to fetch notification')
+        console.error('Failed to fetch notifications:', error)
+        throw new Error('Failed to fetch notifications')
       }
     },
   },
@@ -78,6 +83,24 @@ const notificationResolvers = {
       } catch (error) {
         console.error('Failed to delete notification:', error)
         throw new Error('Failed to delete notification')
+      }
+    },
+    updateNotification: async (_: any, { id }: UpdateNotificationArgs) => {
+      try {
+        const updatedNotification = await Notification.findByIdAndUpdate(
+          id,
+          { $set: { isRead: true } }, // Hardcoded to set isRead to true
+          { new: true },
+        )
+
+        if (!updatedNotification) {
+          throw new Error('Notification not found')
+        }
+
+        return updatedNotification
+      } catch (error) {
+        console.error('Failed to update notification:', error)
+        throw new Error('Failed to update notification')
       }
     },
   },
