@@ -15,7 +15,6 @@ import {
 } from '@/graphql/clientQueries/notificationOperations'
 import { useSession } from 'next-auth/react'
 import { useQuery, useMutation } from '@apollo/client'
-import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 interface Notificationz {
   id: string
@@ -23,11 +22,6 @@ interface Notificationz {
   message: string
   date: string
 }
-
-const client = new ApolloClient({
-  uri: '/api/graphql/',
-  cache: new InMemoryCache(),
-})
 
 export const NotificationsDropdown = () => {
   const { data: session } = useSession()
@@ -38,6 +32,12 @@ export const NotificationsDropdown = () => {
     variables: { receiverEmail: userEmail },
     skip: !userEmail,
   })
+
+  const { data: newestNotification } = useQuery(GET_NEWEST_NOTIFICATION, {
+    variables: { receiverEmail: userEmail },
+    skip: !userEmail,
+  })
+
   const [markNotificationAsRead] = useMutation(MARK_NOTIFICATION_AS_READ)
 
   useEffect(() => {
@@ -64,22 +64,15 @@ export const NotificationsDropdown = () => {
       console.log('SSE connection opened.')
     }
 
-    eventSource.onmessage = (event) => {
-      console.log('SSE message received in notification dropdown:', event)
-      client
-        .query({
-          query: GET_NEWEST_NOTIFICATION,
-          variables: { receiverEmail: userEmail },
+    eventSource.onmessage = async () => {
+      console.log('SSE message received in notification dropdown:')
+      try {
+        setNotifications((prevNotifications) => {
+          return [...prevNotifications, newestNotification.getNewestNotification]
         })
-        .then((result) => {
-          const newestNotification = result.data.getNewestNotification
-
-          // Update the notifications state
-          setNotifications((prevNotifications) => [newestNotification, ...prevNotifications])
-        })
-        .catch((error) => {
-          console.error('Failed to fetch newest notification:', error)
-        })
+      } catch (error) {
+        console.error('Error refetching notifications:', error)
+      }
     }
 
     eventSource.onerror = (error) => {
@@ -90,7 +83,7 @@ export const NotificationsDropdown = () => {
     return () => {
       eventSource.close()
     }
-  }, [])
+  }, [newestNotification])
 
   return (
     <Dropdown placement="bottom-end">
@@ -102,20 +95,22 @@ export const NotificationsDropdown = () => {
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
           {notifications.length > 0 ? (
-            notifications.map((notification) => (
-              <DropdownItem
-                key={notification.id}
-                classNames={{
-                  base: 'py-2',
-                  title: 'text-base font-semibold',
-                }}
-                description={`${notification.message} ${notification.senderEmail}`}
-                textValue={notification.message}
-                onClick={() => handleNotificationClick(notification.id)}
-              >
-                New Invitation
-              </DropdownItem>
-            ))
+            notifications.map((notification, index) => {
+              return (
+                <DropdownItem
+                  key={index}
+                  classNames={{
+                    base: 'py-2',
+                    title: 'text-base font-semibold',
+                  }}
+                  description={`${notification.message} ${notification.senderEmail} ${notification.id}`}
+                  textValue={notification.message}
+                  onClick={() => handleNotificationClick(notification.id)}
+                >
+                  New Invitation
+                </DropdownItem>
+              )
+            })
           ) : (
             <DropdownItem
               classNames={{
