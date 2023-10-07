@@ -35,7 +35,18 @@ const notificationResolvers = {
         throw new Error('Failed to fetch notification')
       }
     },
+    getNewestNotification: async (_: any, { receiverEmail }: GetNotificationArgs) => {
+      try {
+        const newestNotification = await Notification.findOne({ receiverEmail })
+          .sort({ date: -1 }) // Sort by date in descending order to get the newest notification
+          .limit(1)
 
+        return newestNotification
+      } catch (error) {
+        console.error('Failed to fetch newest notification:', error)
+        throw new Error('Failed to fetch newest notification')
+      }
+    },
     getAllNotifications: async (_: any, { limit, offset }: paginationArgs) => {
       try {
         const notifications = await Notification.find()
@@ -64,7 +75,14 @@ const notificationResolvers = {
   Mutation: {
     createNotification: async (_: any, { input }: CreateNotificationArgs) => {
       try {
-        const newNotification = new Notification(input)
+        const { receiverEmail, senderEmail, message, date, isRead } = input
+        const newNotification = new Notification({
+          receiverEmail,
+          senderEmail,
+          message,
+          date,
+          isRead,
+        })
         const result = await newNotification.save()
         return result
       } catch (error) {

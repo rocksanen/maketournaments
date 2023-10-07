@@ -19,4 +19,21 @@ const MARK_NOTIFICATION_AS_READ = gql`
   }
 `
 
-export { GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL, MARK_NOTIFICATION_AS_READ }
+const GET_NEWEST_NOTIFICATION = gql`
+  query GetNewestNotification($receiverEmail: String!) {
+    getNewestNotification(receiverEmail: $receiverEmail) {
+      id
+      receiverEmail
+      senderEmail
+      message
+      date
+      isRead
+    }
+  }
+`
+
+export {
+  GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
+  MARK_NOTIFICATION_AS_READ,
+  GET_NEWEST_NOTIFICATION,
+}

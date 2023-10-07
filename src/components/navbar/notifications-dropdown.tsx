@@ -11,9 +11,11 @@ import { NotificationIcon } from '../icons/navbar/notificationicon'
 import {
   GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
   MARK_NOTIFICATION_AS_READ,
+  GET_NEWEST_NOTIFICATION,
 } from '@/graphql/clientQueries/notificationOperations'
 import { useSession } from 'next-auth/react'
 import { useQuery, useMutation } from '@apollo/client'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
 
 interface Notificationz {
   id: string
@@ -21,6 +23,11 @@ interface Notificationz {
   message: string
   date: string
 }
+
+const client = new ApolloClient({
+  uri: '/api/graphql/',
+  cache: new InMemoryCache(),
+})
 
 export const NotificationsDropdown = () => {
   const { data: session } = useSession()
@@ -58,12 +65,20 @@ export const NotificationsDropdown = () => {
     }
 
     eventSource.onmessage = (event) => {
-      // Assuming event.data contains the notification
-      const newNotification = JSON.parse(event.data)
+      client
+        .query({
+          query: GET_NEWEST_NOTIFICATION,
+          variables: { receiverEmail: userEmail },
+        })
+        .then((result) => {
+          const newestNotification = result.data.getNewestNotification
 
-      if (newNotification.receiverEmail === userEmail) {
-        setNotifications((prevNotifications) => [newNotification, ...prevNotifications])
-      }
+          // Update the notifications state
+          setNotifications((prevNotifications) => [newestNotification, ...prevNotifications])
+        })
+        .catch((error) => {
+          console.error('Failed to fetch newest notification:', error)
+        })
     }
 
     eventSource.onerror = (error) => {
@@ -74,7 +89,7 @@ export const NotificationsDropdown = () => {
     return () => {
       eventSource.close()
     }
-  }, [userEmail])
+  }, [])
 
   return (
     <Dropdown placement="bottom-end">

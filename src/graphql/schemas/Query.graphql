@@ -29,6 +29,7 @@ type Query {
   getNotificationByReceiverEmail(receiverEmail: String!): Notification
   getAllNotifications: [Notification]
   getAllNotificationsByReceiverEmail(receiverEmail: String!): [Notification]
+  getNewestNotification(receiverEmail: String!): Notification
 
 }
 

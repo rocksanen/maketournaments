@@ -108,15 +108,23 @@ const SEND_NOTIFICATION = gql`
     $sender: String!
     $message: String!
     $date: String!
+    $isRead: Boolean!
   ) {
     createNotification(
-      input: { receiverEmail: $receiverEmail, senderEmail: $sender, message: $message, date: $date }
+      input: {
+        receiverEmail: $receiverEmail
+        senderEmail: $sender
+        message: $message
+        date: $date
+        isRead: $isRead
+      }
     ) {
       id
       receiverEmail
       senderEmail
       message
       date
+      isRead
     }
   }
 `
@@ -161,6 +169,7 @@ export default function EditTournament() {
           sender: session && session.user.email,
           message: 'You have a new invitation from: ',
           date: new Date().toISOString(),
+          isRead: false,
         },
       })
 
