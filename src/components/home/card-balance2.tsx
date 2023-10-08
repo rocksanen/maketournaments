@@ -1,9 +1,11 @@
-import { Card, CardBody } from '@nextui-org/react'
 import React from 'react'
+import { Card, CardBody } from '@nextui-org/react'
 import { useQuery, gql } from '@apollo/client'
 import { useSession } from 'next-auth/react'
 import { Community } from '../icons/community'
+import { parseDate } from '../../utils/dateParse'
 
+// GraphQL query
 const GET_USER_TOURNAMENTS = gql`
   query TournamentsByUser($userId: ID!) {
     tournamentsByUser(userId: $userId) {
@@ -15,11 +17,26 @@ const GET_USER_TOURNAMENTS = gql`
   }
 `
 
-export const CardBalance2 = () => {
+// Types for GraphQL response
+interface Admin {
+  id: string
+}
+
+interface Tournament {
+  admin: Admin[]
+  date: string
+}
+
+interface QueryData {
+  tournamentsByUser: Tournament[]
+}
+
+export const CardBalance2: React.FC = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id ?? null
 
-  const { loading, error, data } = useQuery(GET_USER_TOURNAMENTS, {
+  // Fetching data
+  const { loading, error, data } = useQuery<QueryData>(GET_USER_TOURNAMENTS, {
     variables: { userId },
     skip: !userId,
   })
@@ -30,13 +47,18 @@ export const CardBalance2 = () => {
     content = <span className="text-default-900">Loading...</span>
   } else if (error) {
     content = <span className="text-default-900">Error: {error.message}</span>
-  } else if (!userId) {
+  } else if (!userId || !data) {
     content = <span className="text-default-900">Not Logged In</span>
   } else {
-    const ongoingTournaments = data.tournamentsByUser.filter(
-      (tournament) => tournament.admin.id === userId && new Date(tournament.date) > new Date(),
-    ).length
+    // Filtering ongoing tournaments
+    const ongoingTournaments = data.tournamentsByUser.filter((tournament) => {
+      const tournamentDate = parseDate(tournament.date)
+      const currentDate = new Date()
 
+      return tournament.admin.some((admin) => admin.id === userId) && tournamentDate > currentDate
+    }).length
+
+    // Rendering content
     content = (
       <>
         <div className="flex gap-2.5">
@@ -53,6 +75,7 @@ export const CardBalance2 = () => {
     )
   }
 
+  // Rendering the card
   return (
     <Card className="xl:max-w-sm bg-default-50 rounded-xl shadow-md px-3 w-full">
       <CardBody className="py-5">{content}</CardBody>

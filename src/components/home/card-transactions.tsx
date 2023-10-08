@@ -1,7 +1,31 @@
-import { Avatar, Card, CardBody } from '@nextui-org/react'
 import React from 'react'
+import { Card, CardBody, Avatar } from '@nextui-org/react'
 import { useQuery, gql } from '@apollo/client'
 import { useSession } from 'next-auth/react'
+import { parseDate } from '../../utils/dateParse' // Make sure the path is correct
+
+interface Player {
+  id: string
+}
+
+interface Match {
+  winner: Player | null
+}
+
+interface Tournament {
+  matches: Match[]
+  date: string
+  name: string
+  players: Player[]
+}
+
+interface TournamentsByUserResponse {
+  tournamentsByUser: Tournament[]
+}
+
+interface StatusMessageProps {
+  message: string
+}
 
 const TOURNAMENTS_BY_USER = gql`
   query Query($userId: ID!) {
@@ -20,7 +44,7 @@ const TOURNAMENTS_BY_USER = gql`
   }
 `
 
-const StatusMessage: React.FC<{ message: string }> = ({ message }) => (
+const StatusMessage: React.FC<StatusMessageProps> = ({ message }) => (
   <Card className="bg-default-50 rounded-xl shadow-md px-3">
     <CardBody className="py-5 gap-4">
       <div className="flex gap-2.5 justify-center">
@@ -35,11 +59,11 @@ const StatusMessage: React.FC<{ message: string }> = ({ message }) => (
   </Card>
 )
 
-export const CardTransactions: React.FC = () => {
+const CardTransactions: React.FC = () => {
   const { data: sessionData } = useSession()
   const userId = sessionData?.user?.id
 
-  const { data, loading, error } = useQuery(TOURNAMENTS_BY_USER, {
+  const { data, loading, error } = useQuery<TournamentsByUserResponse>(TOURNAMENTS_BY_USER, {
     variables: { userId },
     skip: !userId,
   })
@@ -48,14 +72,15 @@ export const CardTransactions: React.FC = () => {
   if (loading) return <StatusMessage message="Loading..." />
   if (error) return <StatusMessage message={`Error: ${error.message}`} />
 
-  const tournaments = data.tournamentsByUser
-    .filter((tournament: any) => {
-      return tournament.players.some((player: any) => player.id === userId)
-    })
-    .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 5)
+  const currentDate = new Date()
 
-  if (tournaments.length === 0) return <StatusMessage message="No tournaments found" />
+  const tournaments = data!.tournamentsByUser
+    .filter((tournament) => {
+      return tournament.players.some((player) => player.id === userId)
+    })
+    .filter((tournament) => parseDate(tournament.date) <= currentDate)
+    .sort((a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime())
+    .slice(0, 5)
 
   return (
     <Card className="bg-default-50 rounded-xl shadow-md px-3">
@@ -66,7 +91,7 @@ export const CardTransactions: React.FC = () => {
           </div>
         </div>
         <div className="flex flex-col gap-6">
-          {tournaments.map((tournament: any, index: number) => (
+          {tournaments.map((tournament, index) => (
             <div key={`${tournament.name}-${index}`} className="grid grid-cols-4 w-full">
               <div className="w-full">
                 <Avatar
@@ -78,12 +103,15 @@ export const CardTransactions: React.FC = () => {
               <span className="text-default-900 font-semibold">{tournament.name}</span>
               <div>
                 <span className="text-success text-xs">
-                  {tournament.matches.filter((match: any) => match.winner.id === userId).length}
+                  {
+                    tournament.matches.filter((match) => match.winner && match.winner.id === userId)
+                      .length
+                  }
                 </span>
               </div>
               <div>
                 <span className="text-default-500 text-xs">
-                  {new Date(Number(tournament.date)).toLocaleDateString()}
+                  {parseDate(tournament.date).toLocaleDateString()}
                 </span>
               </div>
             </div>
@@ -93,3 +121,5 @@ export const CardTransactions: React.FC = () => {
     </Card>
   )
 }
+
+export default CardTransactions

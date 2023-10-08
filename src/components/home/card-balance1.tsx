@@ -2,9 +2,24 @@ import React from 'react'
 import { Card, CardBody } from '@nextui-org/react'
 import { useQuery, gql } from '@apollo/client'
 import { useSession } from 'next-auth/react'
+import { Community } from '../icons/community' // Check this import as well
 
-// Double-check this path and export
-import { Community } from '../icons/community'
+interface Player {
+  id: string
+}
+
+interface Match {
+  winner: Player | null
+}
+
+interface Tournament {
+  matches: Match[]
+  players: Player[]
+}
+
+interface GetUserStatsResponse {
+  tournamentsByUser: Tournament[]
+}
 
 const GET_USER_STATS = gql`
   query Query($userId: ID!) {
@@ -21,11 +36,11 @@ const GET_USER_STATS = gql`
   }
 `
 
-export const CardBalance1 = () => {
+export const CardBalance1: React.FC = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id ?? null
 
-  const { loading, error, data } = useQuery(GET_USER_STATS, {
+  const { loading, error, data } = useQuery<GetUserStatsResponse>(GET_USER_STATS, {
     variables: { userId },
     skip: !userId,
   })
@@ -34,20 +49,18 @@ export const CardBalance1 = () => {
 
   if (loading) {
     content = <span className="text-white">Loading...</span>
-  } else if (!session) {
-    content = <span className="text-white">Not Logged In</span>
-  } else if (error) {
-    content = <span className="text-white">Error: {error.message}</span>
-  } else if (!userId) {
-    content = <span className="text-white">Not Logged In</span>
+  } else if (error || !session || !userId || !data) {
+    content = <span className="text-white">Error or not logged in</span>
   } else {
     let gamesPlayed = 0
     let gamesWon = 0
 
     data.tournamentsByUser.forEach((tournament) => {
+      const validMatches = tournament.matches.filter((match) => match.winner?.id)
+
       if (tournament.players.some((player) => player.id === userId)) {
-        gamesPlayed += tournament.matches.length
-        gamesWon += tournament.matches.filter((match) => match.winner.id === userId).length
+        gamesPlayed += validMatches.length
+        gamesWon += validMatches.filter((match) => match.winner!.id === userId).length
       }
     })
 
@@ -71,9 +84,10 @@ export const CardBalance1 = () => {
   }
 
   return (
-    // Make sure Card and CardBody are correctly imported from '@nextui-org/react'
     <Card className="xl:max-w-sm bg-primary rounded-xl shadow-md px-3 w-full">
       <CardBody className="py-5">{content}</CardBody>
     </Card>
   )
 }
+
+export default CardBalance1

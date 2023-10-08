@@ -3,6 +3,7 @@ import React from 'react'
 import { EyeIcon } from '../icons/table/eye-icon'
 import { EditIcon } from '../icons/table/edit-icon'
 import Link from 'next/link'
+import { parseDate } from '../../utils/dateParse'
 
 interface Props {
   tournament: any
@@ -18,18 +19,20 @@ export const RenderCell = ({ tournament, columnKey, userId }: Props) => {
   const role = isAdmin && isPlayer ? 'Admin/Player' : isAdmin ? 'Admin' : 'Player'
 
   const currentDate = new Date()
-  const tournamentDate = new Date(Number(tournament.date))
+  const tournamentDate = new Date(tournament.date)
   const status = currentDate < tournamentDate ? 'Active' : 'Finished'
 
   switch (columnKey) {
     case 'name':
       return <div>{cellValue}</div>
-    case 'date':
+    case 'date': {
+      const parsedDate = parseDate(tournament.date)
       return (
         <div>
-          <span>{tournamentDate.toDateString()}</span>
+          <span>{parsedDate.toDateString()}</span>
         </div>
       )
+    }
     case 'role':
       return <div>{role}</div>
     case 'status':
