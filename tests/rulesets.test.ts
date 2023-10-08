@@ -21,9 +21,32 @@ const SAVE_RULESET = gql`
     }
   }
 `
+const UPDATE_RULESET = gql`
+  mutation createRuleset($updateRuleset: UpdateRulesetInput!) {
+    updateRuleset(input: $updateRuleset) {
+      name
+      id
+    }
+  }
+`
+
 const GET_RULESET_BY_ID = gql`
   query Query($getRulesetByIdId: ID!) {
     ruleset(id: $getRulesetByIdId) {
+      name
+      rounds
+      winnerpoints
+      loserpoints
+      drawpoints
+      nightmarepoints
+      nightmarePointsOn
+      id
+    }
+  }
+`
+const GET_ALL_RULSESETS = gql`
+  query Query($limit: Int, $offset: Int) {
+    allRulesets(limit: $limit, offset: $offset) {
       name
       rounds
       winnerpoints
@@ -43,7 +66,7 @@ const DELETE_RULESET = gql`
 `
 
 const mock_ruleset_params = {
-  name: 'jesttest',
+  name: 'jesttestruleset',
   rounds: 3,
   winnerpoints: 3,
   loserpoints: 0,
@@ -76,6 +99,33 @@ describe('graphql api: rulesets', () => {
     expect(data.ruleset).toEqual({
       ...mock_ruleset_params,
       id: createdRulesetId,
+    })
+  })
+
+  test('Get all rulesets', async () => {
+    const data = await client.request(GET_ALL_RULSESETS, {
+      limit: 1000,
+      offset: 0,
+    })
+    expect(data.allRulesets).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: createdRulesetId,
+        }),
+      ]),
+    )
+  })
+
+  test('Update ruleset', async () => {
+    const data = await client.request(UPDATE_RULESET, {
+      updateRuleset: {
+        id: createdRulesetId,
+        name: 'updatedruleset',
+      },
+    })
+    expect(data.updateRuleset).toEqual({
+      id: createdRulesetId,
+      name: 'updatedruleset',
     })
   })
 

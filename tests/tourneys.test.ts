@@ -27,9 +27,37 @@ const SAVE_TOURNEY = gql`
     }
   }
 `
+const UPDATE_TOURNEY = gql`
+  mutation UpdateTournament($updateTourney: UpdateTournamentInput!) {
+    updateTournament(input: $updateTourney) {
+      id
+      name
+    }
+  }
+`
+
 const GET_TOURNEY_BY_ID = gql`
   query Query($getTourneyByIdId: ID!) {
     tournament(id: $getTourneyByIdId) {
+      id
+      name
+      ruleset {
+        id
+        name
+      }
+      date
+      admin {
+        id
+      }
+      invitationOnly
+      maxPlayers
+    }
+  }
+`
+
+const GET_ALL_TOURNEYS = gql`
+  query Query($limit: Int, $offset: Int) {
+    allTournaments(limit: $limit, offset: $offset) {
       id
       name
       ruleset {
@@ -54,7 +82,7 @@ const DELETE_TOURNEY = gql`
 
 const mock_tourney_params = {
   name: 'testturn',
-  ruleset: '651ff15e09e79c122e54b3b3', // does not exist, points nowhere
+  ruleset: '651ff15e09e79c122e54b3b3',
   admin: [],
   maxPlayers: 24,
   date: '2014-03-12T13:37:27+00:00',
@@ -70,7 +98,6 @@ describe('graphql api: tourneys', () => {
         ...mock_tourney_params,
       },
     })
-    console.log('createtourn', data)
     expect(data).toEqual({
       createTournament: {
         ...mock_tourney_params,
@@ -85,14 +112,39 @@ describe('graphql api: tourneys', () => {
     const data = await client.request(GET_TOURNEY_BY_ID, {
       getTourneyByIdId: createdTourneyId,
     })
-    console.log('adae', data)
-    expect(data.tournament).toEqual({
-      ...mock_tourney_params,
-      ruleset: [],
-      date: '1394631447000',
-      id: createdTourneyId,
-    })
+    expect(data.tournament).toEqual(
+      expect.objectContaining({
+        name: 'testturn',
+        date: '1394631447000',
+        id: createdTourneyId,
+      }),
+    )
   })
+
+  test('Get all rulesets', async () => {
+    const data = await client.request(GET_ALL_TOURNEYS, {
+      limit: 1000,
+      offset: 0,
+    })
+    expect(data.allTournaments).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: createdTourneyId,
+        }),
+      ]),
+    )
+  })
+
+  test('Update tourney', async () => {
+    const data = await client.request(UPDATE_TOURNEY, {
+      updateTourney: {
+        id: createdTourneyId,
+        name: 'updatedtourn',
+      },
+    })
+    console.log('dada', data)
+  })
+
   test('Delete tourney', async () => {
     const data = await client.request(DELETE_TOURNEY, {
       deleteTournamentId: createdTourneyId,

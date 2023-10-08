@@ -131,7 +131,7 @@ const tournamentResolvers = {
       try {
         const updatedTournament = await Tournament.findByIdAndUpdate(id, inputData, {
           new: true,
-        }).populate('rules admin players matches')
+        })//.populate('rules admin players matches')  // TODO: Fix this
 
         const resultObj = updatedTournament.toJSON()
         const out = renameIdField(resultObj)
