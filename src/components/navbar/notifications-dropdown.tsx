@@ -16,6 +16,7 @@ import {
 
 import { useSession } from 'next-auth/react'
 import { useQuery, useMutation } from '@apollo/client'
+import { set } from 'mongoose'
 
 interface Notificationz {
   id: string
@@ -87,6 +88,7 @@ export const NotificationsDropdown = () => {
         setNotifications((prevNotifications) => {
           return [...prevNotifications, newestNotification.getNewestNotification]
         })
+        setUnreadCount((prevCount) => prevCount + 1)
       } catch (error) {
         console.error('Error refetching notifications:', error)
       }

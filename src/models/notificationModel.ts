@@ -16,6 +16,7 @@ const notificationSchema = new mongoose.Schema<Note>({
   },
   date: {
     type: Date,
+    default: Date.now(),
     required: true,
   },
   isRead: {
