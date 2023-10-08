@@ -6,13 +6,25 @@ import { connectToDatabase } from '@/utils/db'
 import { user } from '@nextui-org/react'
 
 export default NextAuth({
-  pages: {
-    signIn: '/',
-  },
+  // pages: {
+  //   signIn: '/',
+  // },
   providers: [
     CredentialsProvider({
       id: 'credentials',
       name: 'Credentials',
+      credentials: {
+        email: {
+          label: 'Email',
+          type: 'email',
+          placeholder: 'email',
+        },
+        password: {
+          label: 'Password',
+          type: 'password',
+          placeholder: 'password',
+        },
+      },
       //@ts-ignore
       async authorize(credentials: any) {
         await connectToDatabase()
