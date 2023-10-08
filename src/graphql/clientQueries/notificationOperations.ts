@@ -6,13 +6,14 @@ const GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL = gql`
       id
       message
       senderEmail
+      isRead
     }
   }
 `
 
-const MARK_NOTIFICATION_AS_READ = gql`
-  mutation MarkNotificationAsRead($id: ID!) {
-    updateNotification(id: $id) {
+const UPDATE_NOTIFICATION = gql`
+  mutation UpdateNotification($id: ID!, $input: UpdateNotificationInput!) {
+    updateNotification(id: $id, input: $input) {
       id
       isRead
     }
@@ -32,8 +33,4 @@ const GET_NEWEST_NOTIFICATION = gql`
   }
 `
 
-export {
-  GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
-  MARK_NOTIFICATION_AS_READ,
-  GET_NEWEST_NOTIFICATION,
-}
+export { GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL, UPDATE_NOTIFICATION, GET_NEWEST_NOTIFICATION }

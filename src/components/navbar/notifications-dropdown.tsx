@@ -10,9 +10,10 @@ import {
 import { NotificationIcon } from '../icons/navbar/notificationicon'
 import {
   GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
-  MARK_NOTIFICATION_AS_READ,
   GET_NEWEST_NOTIFICATION,
-} from '@/graphql/clientQueries/notificationOperations'
+  UPDATE_NOTIFICATION, // Import the mutation
+} from '@/graphql/clientQueries/notificationOperations' // Assuming you have this import
+
 import { useSession } from 'next-auth/react'
 import { useQuery, useMutation } from '@apollo/client'
 
@@ -40,25 +41,34 @@ export const NotificationsDropdown = () => {
     skip: !userEmail,
   })
 
-  const [markNotificationAsRead] = useMutation(MARK_NOTIFICATION_AS_READ)
+  const [updateNotification] = useMutation(UPDATE_NOTIFICATION) // Add this line
+
+  const markNotificationAsRead = async (notificationId: string) => {
+    try {
+      await updateNotification({
+        variables: { id: notificationId, input: { isRead: true } }, // Change updateNotificationId to id
+      })
+    } catch (error) {
+      console.error('Failed to update notification:', error)
+    }
+  }
 
   useEffect(() => {
     console.log(initialData)
     if (initialData && initialData.getAllNotificationsByReceiverEmail) {
-      const unreadNotifications = initialData.getAllNotificationsByReceiverEmail.filter(
+      const allNotifications = initialData.getAllNotificationsByReceiverEmail
+      const unreadNotifications = allNotifications.filter(
         (notification: Notificationz) => !notification.isRead,
       )
-      setNotifications(initialData.getAllNotificationsByReceiverEmail)
-      setUnreadCount(unreadNotifications.length)
+      setNotifications(allNotifications) // Set all notifications first
+      setUnreadCount(unreadNotifications.length) // Then set the unread count
       console.log('Unread notifications count:', unreadNotifications.length)
     }
   }, [initialData])
 
   const handleNotificationClick = async (notificationId: string) => {
     try {
-      await markNotificationAsRead({
-        variables: { id: notificationId },
-      })
+      await markNotificationAsRead(notificationId) // Call the markNotificationAsRead function
     } catch (error) {
       console.error('Failed to update notification:', error)
     }

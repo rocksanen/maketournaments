@@ -18,6 +18,9 @@ interface CreateNotificationArgs {
 
 interface UpdateNotificationArgs {
   id: string
+  input: {
+    isRead: boolean
+  }
 }
 
 interface DeleteNotificationArgs {
@@ -103,11 +106,11 @@ const notificationResolvers = {
         throw new Error('Failed to delete notification')
       }
     },
-    updateNotification: async (_: any, { id }: UpdateNotificationArgs) => {
+    updateNotification: async (_: any, { id, input }: UpdateNotificationArgs) => {
       try {
         const updatedNotification = await Notification.findByIdAndUpdate(
           id,
-          { $set: { isRead: true } }, // Hardcoded to set isRead to true
+          { $set: { isRead: input.isRead } },
           { new: true },
         )
 

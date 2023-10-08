@@ -61,7 +61,7 @@ type Mutation {
 
   # Notification Mutations
   createNotification(input: NotificationInput!): Notification
-  updateNotification(id: ID!, input: NotificationInput!): Notification
+  updateNotification(id: ID!, input: UpdateNotificationInput!): Notification
   deleteNotification(id: ID!): Notification
 
 }
