@@ -64,7 +64,7 @@ export const CardBalance2: React.FC = () => {
         <div className="flex gap-2.5">
           <Community />
           <div className="flex flex-col">
-            <span className="text-default-900">Tournaments Administered</span>
+            <span className="text-default-900">Tournaments Admining</span>
             <span className="text-default-900 text-xs">{ongoingTournaments} Tournaments</span>
           </div>
         </div>
