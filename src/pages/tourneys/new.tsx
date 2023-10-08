@@ -13,7 +13,7 @@ import { gql, useMutation } from '@apollo/client'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import RulesView from '@/components/createTourney/rules-view'
-import { RulesetInput } from '@/types/Ruleset'
+import { RulesetInput, RulesetOutput } from '@/types/Ruleset'
 
 const newTourneyMutation = gql`
   mutation CreateTournament($input: CreateTournamentInput!) {
@@ -21,6 +21,7 @@ const newTourneyMutation = gql`
       name
       ruleset {
         id
+        name
       }
       date
       admin {
@@ -31,9 +32,9 @@ const newTourneyMutation = gql`
     }
   }
 `
-
-const customRule: RulesetInput = {
-  id: '65106775553dac66bcfac032',
+const customRule: RulesetOutput = {
+  id: 'custom',
+  name: 'Create a new ruleset',
   rounds: 3,
   winnerpoints: 3,
   loserpoints: 0,
@@ -43,11 +44,8 @@ const customRule: RulesetInput = {
 }
 
 function TourneysNew() {
-  const [selectedKeys, setSelectedKeys] = React.useState(new Set(['Select Ruleset']))
+  const [tourneyRuleset, setTourneyRuleset] = useState<RulesetOutput>(customRule)
 
-  const [tourneyRuleset, setTourneyRuleset] = useState<RulesetInput>(customRule)
-
-  const [hiddenField, setHiddenField] = useState('hidden')
   const [mutateFunction, { data, loading, error }] = useMutation(newTourneyMutation)
   const { data: session } = useSession()
   const router = useRouter()
@@ -56,10 +54,10 @@ function TourneysNew() {
     e.preventDefault()
     const form = e.currentTarget
     const tourneyName = (form[0] as HTMLInputElement).value
-    const maxPlayers = parseInt((form[2] as HTMLInputElement).value)
+    const maxPlayers = parseInt((form[1] as HTMLInputElement).value)
 
-    const endDate = (form[3] as HTMLInputElement).value
-    const invitationOnly = (form[4] as HTMLInputElement).checked
+    const endDate = (form[2] as HTMLInputElement).value
+    const invitationOnly = (form[3] as HTMLInputElement).checked
 
     console.log('tourneyRuleset', tourneyRuleset.id)
     console.log('tourneyName', tourneyName)
@@ -75,6 +73,10 @@ function TourneysNew() {
 
     if (!tourneyName || !maxPlayers || !endDate || !tourneyRuleset.id) {
       alert('Please fill out all fields')
+      return
+    }
+    if (tourneyRuleset.id == 'custom') {
+      alert('Please select a ruleset')
       return
     }
 
@@ -106,7 +108,6 @@ function TourneysNew() {
         <h2 className="text-3xl font-bold">Create a new tourney!</h2>
         <Input type="text" label="Tourney Name" placeholder="" />
 
-        <Input className={hiddenField} type="selection" label="Ruleset Name" placeholder="" />
         <Input type="number" min="0" max="64" step="2" label="Max Players" placeholder="" />
         <Input
           type="date"
@@ -115,7 +116,9 @@ function TourneysNew() {
           labelPlacement="outside-left"
           placeholder=""
         />
-        <Checkbox>Invitation Only</Checkbox>
+        <Checkbox className="hidden" defaultSelected>
+          Invitation Only
+        </Checkbox>
         <Button type="submit">Submit</Button>
       </form>
       <div className="m-20"></div>

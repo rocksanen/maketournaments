@@ -1,6 +1,13 @@
 import { connect, connection } from 'mongoose'
 
-const MONGO_URI = process.env.MONGO_URI || 'null'
+let MONGO_URI = 'null'
+
+if (process.env.ENV !== 'test') {
+  MONGO_URI = process.env.MONGO_URI || 'null'
+}
+if (process.env.ENV === 'test') {
+  MONGO_URI = process.env.MONGO_URI_TEST || 'null'
+}
 
 const options: any = {
   useUnifiedTopology: true,
@@ -10,7 +17,6 @@ const options: any = {
 
 export const connectToDatabase = async () => {
   if (!connection.readyState) {
-    console.log('Connecting to ', MONGO_URI)
     connect(MONGO_URI, options)
   } else {
     console.log('Already connected to ', MONGO_URI)

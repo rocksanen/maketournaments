@@ -9,6 +9,7 @@ import { MAX_QUERY_LIMIT } from '@/utils/constants'
 interface CreateTournamentArgs {
   input: {
     name: string
+    description: string
     rules: Ruleset[]
     date: string
     players?: User[]
@@ -23,6 +24,7 @@ interface UpdateTournamentArgs {
   input: {
     id: string
     name?: string
+    description?: string
     rules?: Ruleset[]
     date?: string
     players?: User[]
@@ -95,9 +97,23 @@ const tournamentResolvers = {
           return tournament.toObject()
         })
 
-        // Assuming renameIdField() is a function that renames _id to id for all nested objects in the array
         const output = transformedTournaments.map((tournament) => renameIdField(tournament))
         return output
+      } catch (error) {
+        console.error('Failed to fetch tournaments for user:', error)
+        throw new Error('Failed to fetch tournaments for user')
+      }
+    },
+    tournamentsByNameAndUser: async (
+      _: any,
+      { name, userId }: { name: string; userId: string },
+    ) => {
+      try {
+        const tournaments = await Tournament.findOne({
+          name,
+          $or: [{ admin: userId }, { players: userId }],
+        }).populate('ruleset admin players matches')
+        return tournaments
       } catch (error) {
         console.error('Failed to fetch tournaments for user:', error)
         throw new Error('Failed to fetch tournaments for user')

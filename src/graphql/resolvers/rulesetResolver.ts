@@ -4,6 +4,7 @@ import { MAX_QUERY_LIMIT } from '@/utils/constants'
 
 interface CreateRulesetArgs {
   input: {
+    name: string
     rounds: number
     winnerpoints: number
     loserpoints: number
@@ -16,6 +17,7 @@ interface CreateRulesetArgs {
 interface UpdateRulesetArgs {
   input: {
     id: string
+    name?: string
     rounds?: number
     winnerpoints?: number
     loserpoints?: number
@@ -55,6 +57,7 @@ const rulesetResolvers = {
       try {
         const newRuleset = new RulesetModel(input)
         const result = await newRuleset.save()
+        console.log(result)
         return result
       } catch (error) {
         console.error('Failed to create ruleset:', error)

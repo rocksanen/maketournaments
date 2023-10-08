@@ -2,6 +2,10 @@ import mongoose, { Schema, model } from 'mongoose'
 import { Ruleset } from '@/types/Ruleset'
 
 const rulesetSchema = new Schema<Ruleset>({
+  name: {
+    type: String,
+    required: true,
+  },
   rounds: {
     type: Number,
     required: true,

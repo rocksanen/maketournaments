@@ -22,7 +22,7 @@ type Query {
   allTournaments(limit: Int, offset: Int): [Tournament]
   tournamentByName(name: String!): Tournament
   tournamentsByUser(userId: ID!): [Tournament]
-
+  tournamentsByNameAndUser(name: String!, userId: ID!): Tournament
   hello: String
 }
 
@@ -48,7 +48,15 @@ type Mutation {
   deleteMatch(id: ID!): Boolean
 
   # Series Mutations
-  createSeries(input: SeriesInput!): Series!
+  createSeries(input: SeriesInput!): CreateSeriesResponse!
   updateSeries(input: UpdateSeriesInput!): Series
   deleteSeries(id: ID!): Boolean
+}
+
+# Series Response
+type CreateSeriesResponse {
+  success: Boolean!
+  series: Series
+  message: String
+  id: ID!
 }

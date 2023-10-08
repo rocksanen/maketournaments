@@ -1,0 +1,84 @@
+import { gql } from '@apollo/client'
+
+const SEND_INVITATION = gql`
+  mutation SendInvitation($tournamentId: ID!, $email: String!) {
+    sendInvitation(tournamentId: $tournamentId, email: $email) {
+      success
+      message
+    }
+  }
+`
+
+const GET_TOURNAMENT_QUERY = gql`
+  query GetTournamentByName($name: String!) {
+    tournamentByName(name: $name) {
+      id
+      name
+    }
+  }
+`
+
+const GET_TOURNAMENTS_BY_USER = gql`
+  query GetTournamentsByUser($userId: ID!) {
+    tournamentsByUser(userId: $userId) {
+      admin {
+        id
+      }
+      players {
+        id
+      }
+      name
+      date
+      id
+    }
+  }
+`
+
+const GET_TOURNAMENTS_BY_NAME_AND_USER = gql`
+  query GetTournamentsByNameAndUser($name: String!, $userId: ID!) {
+    tournamentsByNameAndUser(name: $name, userId: $userId) {
+      admin {
+        id
+      }
+      players {
+        id
+      }
+      id
+      name
+    }
+  }
+`
+
+const SAVE_TOURNEY = gql`
+  mutation CreateTournament($createTourney: CreateTournamentInput!) {
+    createTournament(input: $createTourney) {
+      id
+      name
+      ruleset {
+        id
+        name
+      }
+      date
+      admin {
+        id
+      }
+      invitationOnly
+      maxPlayers
+    }
+  }
+`
+
+const DELETE_TOURNEY = gql`
+  mutation Mutation($deleteTournamentId: ID!) {
+    deleteTournament(id: $deleteTournamentId)
+  }
+`
+
+export {
+  SEND_INVITATION,
+  GET_TOURNAMENT_QUERY,
+  GET_TOURNAMENTS_BY_USER,
+  GET_TOURNAMENTS_BY_NAME_AND_USER,
+  SAVE_TOURNEY,
+  DELETE_TOURNEY,
+}

@@ -1,26 +1,11 @@
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
 import { FC } from 'react'
-import { useQuery, gql } from '@apollo/client'
-import { useSession } from 'next-auth/react'
-import { RenderCell } from './render-cell'
+import React from 'react'
 import { columns } from './data'
-
-// GraphQL query to get tournaments by user
-const GET_TOURNAMENTS_BY_USER = gql`
-  query GetTournamentsByUser($userId: ID!) {
-    tournamentsByUser(userId: $userId) {
-      admin {
-        id
-      }
-      players {
-        id
-      }
-      name
-      date
-      id
-    }
-  }
-`
+import { RenderCell } from './render-cell'
+import { useQuery } from '@apollo/client'
+import { useSession } from 'next-auth/react'
+import { GET_TOURNAMENTS_BY_USER } from '@/graphql/clientQueries/tournamentOperations'
 
 // Type definitions
 interface Admin {

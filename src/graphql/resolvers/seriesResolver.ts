@@ -37,6 +37,10 @@ interface deleteTournamentFromSeriesArgs {
   tournamentId: string
   seriesId: string
 }
+interface updateSeriesNameArgs {
+  seriesId: string
+  name: string
+}
 
 interface DeleteSeriesArgs {
   id: string
@@ -98,12 +102,28 @@ const seriesResolvers = {
   Mutation: {
     createSeries: async (_: any, { input }: CreateSeriesArgs) => {
       try {
+        const existingSeries = await seriesModel.findOne({ name: input.name })
+        if (existingSeries) {
+          return {
+            success: false,
+            message: 'Series with that name already exists',
+          }
+        }
+
         const newSeries = new seriesModel(input)
         const result = await newSeries.save()
-        return result
+
+        return {
+          success: true,
+          series: result,
+          message: 'Series created successfully',
+        }
       } catch (error) {
         console.error('Failed to create series:', error)
-        throw new Error('Failed to create series')
+        return {
+          success: false,
+          message: 'Failed to create series due to an unexpected error.',
+        }
       }
     },
 
@@ -192,6 +212,29 @@ const seriesResolvers = {
       } catch (error) {
         console.error('Error deleting tournament from series:', error)
         throw new Error('Error deleting tournament from series')
+      }
+    },
+    updateSeriesName: async (_: any, { seriesId, name }: updateSeriesNameArgs) => {
+      try {
+        const existingSeries = await seriesModel.findOne({ name: name })
+        if (existingSeries) {
+          return {
+            success: false,
+            message: 'Series with that name already exists',
+          }
+        }
+        const series = await seriesModel.findById(seriesId)
+        if (!series) {
+          throw new Error('Series not found')
+        }
+
+        series.name = name
+        await series.save()
+
+        return { success: true, message: 'Series name updated successfully' }
+      } catch (error) {
+        console.error('Error updating series name:', error)
+        throw new Error('Error updating series name')
       }
     },
   },
