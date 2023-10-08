@@ -73,17 +73,41 @@ const tournamentResolvers = {
       try {
         const tournaments = await Tournament.find({
           $or: [{ admin: userId }, { players: userId }],
-        }).populate('ruleset admin players matches')
-        if (!tournaments) {
+        })
+          .populate('ruleset admin players')
+          .populate({
+            path: 'matches',
+            populate: [
+              {
+                path: 'winner',
+                model: 'User',
+              },
+              {
+                path: 'players',
+                model: 'User',
+              },
+            ],
+          })
+
+        if (!tournaments || tournaments.length === 0) {
           throw new Error('No tournaments found for this user')
         }
-        return tournaments
+
+        const transformedTournaments = tournaments.map((tournament) => {
+          return tournament.toObject()
+        })
+
+        const output = transformedTournaments.map((tournament) => renameIdField(tournament))
+        return output
       } catch (error) {
         console.error('Failed to fetch tournaments for user:', error)
         throw new Error('Failed to fetch tournaments for user')
       }
     },
-    tournamentsByNameAndUser: async ( _: any, { name, userId }: { name: string, userId: string }) => {
+    tournamentsByNameAndUser: async (
+      _: any,
+      { name, userId }: { name: string; userId: string },
+    ) => {
       try {
         const tournaments = await Tournament.findOne({
           name,
@@ -94,7 +118,7 @@ const tournamentResolvers = {
         console.error('Failed to fetch tournaments for user:', error)
         throw new Error('Failed to fetch tournaments for user')
       }
-    }
+    },
   },
 
   Mutation: {
@@ -131,10 +155,12 @@ const tournamentResolvers = {
       try {
         const updatedTournament = await Tournament.findByIdAndUpdate(id, inputData, {
           new: true,
-        })//.populate('rules admin players matches')  // TODO: Fix this
+        }).populate('ruleset admin players matches')
 
         const resultObj = updatedTournament.toJSON()
         const out = renameIdField(resultObj)
+
+        console.log('Updated tournament:', out)
 
         return out
       } catch (error) {

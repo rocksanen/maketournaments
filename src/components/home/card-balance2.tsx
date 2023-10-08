@@ -1,24 +1,84 @@
-import { Card, CardBody } from '@nextui-org/react'
 import React from 'react'
+import { Card, CardBody } from '@nextui-org/react'
+import { useQuery, gql } from '@apollo/client'
+import { useSession } from 'next-auth/react'
 import { Community } from '../icons/community'
+import { parseDate } from '../../utils/dateParse'
 
-export const CardBalance2 = () => {
-  return (
-    <Card className="xl:max-w-sm bg-default-50 rounded-xl shadow-md px-3 w-full">
-      <CardBody className="py-5">
+// GraphQL query
+const GET_USER_TOURNAMENTS = gql`
+  query TournamentsByUser($userId: ID!) {
+    tournamentsByUser(userId: $userId) {
+      admin {
+        id
+      }
+      date
+    }
+  }
+`
+
+// Types for GraphQL response
+interface Admin {
+  id: string
+}
+
+interface Tournament {
+  admin: Admin[]
+  date: string
+}
+
+interface QueryData {
+  tournamentsByUser: Tournament[]
+}
+
+export const CardBalance2: React.FC = () => {
+  const { data: session } = useSession()
+  const userId = session?.user?.id ?? null
+
+  // Fetching data
+  const { loading, error, data } = useQuery<QueryData>(GET_USER_TOURNAMENTS, {
+    variables: { userId },
+    skip: !userId,
+  })
+
+  let content
+
+  if (loading || !session) {
+    content = <span className="text-default-900">Loading...</span>
+  } else if (error) {
+    content = <span className="text-default-900">Error: {error.message}</span>
+  } else if (!userId || !data) {
+    content = <span className="text-default-900">Not Logged In</span>
+  } else {
+    // Filtering ongoing tournaments
+    const ongoingTournaments = data.tournamentsByUser.filter((tournament) => {
+      const tournamentDate = parseDate(tournament.date)
+      const currentDate = new Date()
+
+      return tournament.admin.some((admin) => admin.id === userId) && tournamentDate > currentDate
+    }).length
+
+    // Rendering content
+    content = (
+      <>
         <div className="flex gap-2.5">
           <Community />
           <div className="flex flex-col">
-            <span className="text-default-900">Average Tournament finish</span>
-            <span className="text-default-900 text-xs">36 tournaments</span>
+            <span className="text-default-900">Tournaments Admining</span>
+            <span className="text-default-900 text-xs">{ongoingTournaments} Tournaments</span>
           </div>
         </div>
         <div className="flex gap-2.5 py-2 items-center">
-          <span className="text-default-900 text-xl font-semibold">2.45</span>
-          <span className="text-danger text-xs">- 4.5%</span>
+          <span className="text-default-900 text-xl font-semibold">{ongoingTournaments}</span>
         </div>
-        <div className="flex items-center gap-6"></div>
-      </CardBody>
+      </>
+    )
+  }
+
+  // Rendering the card
+  return (
+    <Card className="xl:max-w-sm bg-default-50 rounded-xl shadow-md px-3 w-full">
+      <CardBody className="py-5">{content}</CardBody>
     </Card>
   )
 }
