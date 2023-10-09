@@ -90,7 +90,7 @@ const tournamentResolvers = {
           })
 
         if (!tournaments || tournaments.length === 0) {
-          throw new Error('No tournaments found for this user')
+          return []
         }
 
         const transformedTournaments = tournaments.map((tournament) => {
