@@ -1,5 +1,4 @@
 import mongoose from 'mongoose'
-import UserModel from '@/models/userModel'
 import Notification from '@/models/notificationModel'
 
 const uri = process.env.MONGO_URI || ''
@@ -11,7 +10,7 @@ console.log('Setting up change stream')
 const changeStream = Notification.watch()
 
 changeStream.on('change', (change) => {
-  console.log('Change: ', change)
+  //console.log('Change: ', change)
 })
 
 changeStream.on('error', (error) => {

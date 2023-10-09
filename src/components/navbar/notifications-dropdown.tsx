@@ -8,15 +8,12 @@ import {
   NavbarItem,
 } from '@nextui-org/react'
 import { NotificationIcon } from '../icons/navbar/notificationicon'
-import {
-  GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
-  GET_NEWEST_NOTIFICATION,
-  UPDATE_NOTIFICATION, // Import the mutation
-} from '@/graphql/clientQueries/notificationOperations' // Assuming you have this import
-
 import { useSession } from 'next-auth/react'
 import { useQuery, useMutation } from '@apollo/client'
-import { set } from 'mongoose'
+import {
+  GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
+  UPDATE_NOTIFICATION,
+} from '@/graphql/clientQueries/notificationOperations'
 
 interface Notificationz {
   id: string
@@ -38,17 +35,12 @@ export const NotificationsDropdown = () => {
     skip: !userEmail,
   })
 
-  const { data: newestNotification } = useQuery(GET_NEWEST_NOTIFICATION, {
-    variables: { receiverEmail: userEmail },
-    skip: !userEmail,
-  })
-
-  const [updateNotification] = useMutation(UPDATE_NOTIFICATION) // Add this line
+  const [updateNotification] = useMutation(UPDATE_NOTIFICATION)
 
   const markNotificationAsRead = async (notificationId: string) => {
     try {
       await updateNotification({
-        variables: { id: notificationId, input: { isRead: true } }, // Change updateNotificationId to id
+        variables: { id: notificationId, input: { isRead: true } },
       })
     } catch (error) {
       console.error('Failed to update notification:', error)
@@ -56,21 +48,24 @@ export const NotificationsDropdown = () => {
   }
 
   useEffect(() => {
-    console.log('Initial Data:', initialData) // Add this line
+    console.log('Initial Data:', initialData)
     if (initialData && initialData.getAllNotificationsByReceiverEmail) {
       const allNotifications = initialData.getAllNotificationsByReceiverEmail
       const unreadNotifications = allNotifications.filter(
         (notification: Notificationz) => !notification.isRead,
       )
-      setNotifications(allNotifications) // Set all notifications first
-      setUnreadCount(unreadNotifications.length) // Then set the unread count
+      allNotifications.forEach((notification: Notificationz) => {
+        console.log('Notification Object:', notification)
+      })
+      setNotifications(allNotifications)
+      setUnreadCount(unreadNotifications.length)
       console.log('Unread notifications count:', unreadNotifications.length)
     }
   }, [initialData])
 
   const handleNotificationClick = async (notificationId: string) => {
     try {
-      await markNotificationAsRead(notificationId) // Call the markNotificationAsRead function
+      await markNotificationAsRead(notificationId)
     } catch (error) {
       console.error('Failed to update notification:', error)
     }
@@ -83,13 +78,24 @@ export const NotificationsDropdown = () => {
       console.log('SSE connection opened.')
     }
 
-    eventSource.onmessage = async () => {
-      console.log('SSE message received in notification dropdown:')
+    eventSource.onmessage = async (event) => {
+      console.log('SSE message received in notification dropdown:', event.data)
       try {
-        setNotifications((prevNotifications) => {
-          return [...prevNotifications, newestNotification.getNewestNotification]
-        })
-        setUnreadCount((prevCount) => prevCount + 1)
+        const eventData = JSON.parse(event.data)
+        const newNotification = {
+          id: eventData.fullDocument._id,
+          message: eventData.fullDocument.message,
+          senderEmail: eventData.fullDocument.senderEmail,
+          date: eventData.fullDocument.date,
+          isRead: eventData.fullDocument.isRead,
+        }
+
+        console.log('Parsed notification data:', newNotification)
+
+        if (newNotification) {
+          setNotifications((prevNotifications) => [newNotification, ...prevNotifications])
+          setUnreadCount((prevCount) => prevCount + 1)
+        }
       } catch (error) {
         console.error('Error refetching notifications:', error)
       }
@@ -103,7 +109,7 @@ export const NotificationsDropdown = () => {
     return () => {
       eventSource.close()
     }
-  }, [newestNotification])
+  }, [])
 
   return (
     <Dropdown placement="bottom-end">
@@ -115,34 +121,20 @@ export const NotificationsDropdown = () => {
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
           {notifications.length > 0 ? (
-            notifications.map((notification, index) => {
-              return (
-                <DropdownItem
-                  key={index}
-                  classNames={{
-                    base: 'py-2',
-                    title: 'text-base font-semibold',
-                  }}
-                  description={
-                    notification
-                      ? `${notification.message} ${notification.senderEmail} ${notification.id}`
-                      : ''
-                  }
-                  textValue={notification ? notification.message : ''}
-                  onClick={() => {
-                    try {
-                      if (notification) {
-                        handleNotificationClick(notification.id)
-                      }
-                    } catch (error) {
-                      console.error('Error handling notification click:', error)
-                    }
-                  }}
-                >
-                  New Invitation
-                </DropdownItem>
-              )
-            })
+            notifications.map((notification) => (
+              <DropdownItem
+                key={notification.id}
+                classNames={{
+                  base: 'py-2',
+                  title: 'text-base font-semibold',
+                }}
+                description={`${notification.message} ${notification.senderEmail} ${notification.id}`}
+                textValue={notification.message}
+                onClick={() => handleNotificationClick(notification.id)}
+              >
+                New Invitation
+              </DropdownItem>
+            ))
           ) : (
             <DropdownItem
               classNames={{

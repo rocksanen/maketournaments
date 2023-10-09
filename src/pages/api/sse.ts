@@ -3,8 +3,18 @@ import { changeStream } from '@/lib/mongoChangeStream'
 
 let userEmail: string
 
-export const setupUserEmail = (id: string) => {
-  userEmail = id
+type ChangeObject = {
+  fullDocument: {
+    receiverEmail: string
+    senderEmail: string
+    message: string
+    date: string | Date
+    isRead: boolean
+  }
+}
+
+export const setupUserEmail = (email: string) => {
+  userEmail = email
   console.log(userEmail, 'Setting up user email in sse.ts')
 }
 
@@ -19,19 +29,22 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       res.write(': heartbeat\n\n')
     }, HEARTBEAT_INTERVAL)
 
-    const sendUpdate = () => {
-      res.write('data: update\n\n')
+    const sendUpdate = (change: ChangeObject) => {
+      res.write(`data: ${JSON.stringify(change)}\n\n`)
       console.log('Sent SSE update')
     }
 
     changeStream.on('change', (change) => {
-      const { receiverEmail, updateDescription } = change
-      const documentId = change.documentKey._id
+      const { operationType, fullDocument } = change
 
-      console.log(documentId, ' in sse is equal to ', userEmail)
+      if (operationType === 'insert') {
+        const receiverEmail = fullDocument.receiverEmail
 
-      if (receiverEmail === userEmail && !updateDescription.updatedFields.isRead) {
-        sendUpdate()
+        console.log(receiverEmail, ' in sse is equal to ', userEmail)
+
+        if (receiverEmail === userEmail) {
+          sendUpdate(change)
+        }
       }
     })
 
