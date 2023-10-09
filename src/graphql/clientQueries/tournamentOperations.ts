@@ -61,10 +61,37 @@ const GET_TOURNAMENT_BY_ID = gql`
   }
 `
 
+const SAVE_TOURNEY = gql`
+  mutation CreateTournament($createTourney: CreateTournamentInput!) {
+    createTournament(input: $createTourney) {
+      id
+      name
+      ruleset {
+        id
+        name
+      }
+      date
+      admin {
+        id
+      }
+      invitationOnly
+      maxPlayers
+    }
+  }
+`
+
+const DELETE_TOURNEY = gql`
+  mutation Mutation($deleteTournamentId: ID!) {
+    deleteTournament(id: $deleteTournamentId)
+  }
+`
+
 export {
   SEND_INVITATION,
   GET_TOURNAMENT_QUERY,
   GET_TOURNAMENTS_BY_USER,
   GET_TOURNAMENTS_BY_NAME_AND_USER,
   GET_TOURNAMENT_BY_ID,
+  SAVE_TOURNEY,
+  DELETE_TOURNEY,
 }

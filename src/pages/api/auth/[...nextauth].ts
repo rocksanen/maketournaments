@@ -7,13 +7,25 @@ import { user } from '@nextui-org/react'
 import { setupUserEmail } from '@/pages/api/sse'
 
 export default NextAuth({
-  pages: {
-    signIn: '/',
-  },
+  // pages: {
+  //   signIn: '/',
+  // },
   providers: [
     CredentialsProvider({
       id: 'credentials',
       name: 'Credentials',
+      credentials: {
+        email: {
+          label: 'Email',
+          type: 'email',
+          placeholder: 'email',
+        },
+        password: {
+          label: 'Password',
+          type: 'password',
+          placeholder: 'password',
+        },
+      },
       //@ts-ignore
       async authorize(credentials: any) {
         await connectToDatabase()

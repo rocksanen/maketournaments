@@ -102,12 +102,32 @@ const seriesResolvers = {
   Mutation: {
     createSeries: async (_: any, { input }: CreateSeriesArgs) => {
       try {
+        const existingSeries = await seriesModel.findOne({
+          name: input.name,
+          admin: input.admin,
+        })
+
+        if (existingSeries) {
+          return {
+            success: false,
+            message: 'Series with that name already exists',
+          }
+        }
+
         const newSeries = new seriesModel(input)
         const result = await newSeries.save()
-        return result
+
+        return {
+          success: true,
+          series: result,
+          message: 'Series created successfully',
+        }
       } catch (error) {
         console.error('Failed to create series:', error)
-        throw new Error('Failed to create series')
+        return {
+          success: false,
+          message: 'Failed to create series due to an unexpected error.',
+        }
       }
     },
 
@@ -200,13 +220,28 @@ const seriesResolvers = {
     },
     updateSeriesName: async (_: any, { seriesId, name }: updateSeriesNameArgs) => {
       try {
-        const series = await seriesModel.findById(seriesId)
-        if (!series) {
-          throw new Error('Series not found')
+        const seriesToUpdate = await seriesModel.findById(seriesId);
+        if (!seriesToUpdate) {
+          return {
+            success: false,
+            message: 'Series not found',
+          }
         }
 
-        series.name = name
-        await series.save()
+        const existingSeries = await seriesModel.findOne({
+          name: name,
+          admin: seriesToUpdate.admin,
+        })
+
+        if (existingSeries && String(existingSeries._id) !== String(seriesId)) {
+          return {
+            success: false,
+            message: 'Series with that name already exists',
+          }
+        }
+
+        seriesToUpdate.name = name
+        await seriesToUpdate.save()
 
         return { success: true, message: 'Series name updated successfully' }
       } catch (error) {
