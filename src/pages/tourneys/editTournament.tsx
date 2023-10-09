@@ -189,9 +189,7 @@ export default function EditTournament() {
   const handleSendBoth = async () => {
     try {
       await handleSendNotification()
-      setTimeout(async () => {
-        await handleSendInvitation()
-      }, 1000)
+      await handleSendInvitation()
     } catch (error) {
       console.error('Error sending both:', error)
       alert('Error sending both. Please try again later.')

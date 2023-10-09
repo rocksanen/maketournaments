@@ -27,6 +27,7 @@ interface Notificationz {
 }
 
 export const NotificationsDropdown = () => {
+  console.log('NotificationsDropdown component mounted')
   const { data: session } = useSession()
   const userEmail = session?.user?.email || ''
   const [notifications, setNotifications] = useState<Notificationz[]>([])
@@ -55,7 +56,7 @@ export const NotificationsDropdown = () => {
   }
 
   useEffect(() => {
-    console.log(initialData)
+    console.log('Initial Data:', initialData) // Add this line
     if (initialData && initialData.getAllNotificationsByReceiverEmail) {
       const allNotifications = initialData.getAllNotificationsByReceiverEmail
       const unreadNotifications = allNotifications.filter(
@@ -122,9 +123,21 @@ export const NotificationsDropdown = () => {
                     base: 'py-2',
                     title: 'text-base font-semibold',
                   }}
-                  description={`${notification.message} ${notification.senderEmail} ${notification.id}`}
-                  textValue={notification.message}
-                  onClick={() => handleNotificationClick(notification.id)}
+                  description={
+                    notification
+                      ? `${notification.message} ${notification.senderEmail} ${notification.id}`
+                      : ''
+                  }
+                  textValue={notification ? notification.message : ''}
+                  onClick={() => {
+                    try {
+                      if (notification) {
+                        handleNotificationClick(notification.id)
+                      }
+                    } catch (error) {
+                      console.error('Error handling notification click:', error)
+                    }
+                  }}
                 >
                   New Invitation
                 </DropdownItem>

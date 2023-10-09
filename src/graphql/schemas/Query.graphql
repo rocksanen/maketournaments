@@ -23,6 +23,7 @@ type Query {
   tournamentByName(name: String!): Tournament
   tournamentsByUser(userId: ID!): [Tournament]
   tournamentsByNameAndUser(name: String!, userId: ID!): Tournament
+  getTournamentsByIds(ids: [ID!]!): [Tournament]
   hello: String
 
   # Notification Queries

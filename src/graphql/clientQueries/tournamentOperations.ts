@@ -49,9 +49,22 @@ const GET_TOURNAMENTS_BY_NAME_AND_USER = gql`
   }
 `
 
+const GET_TOURNAMENT_BY_ID = gql`
+  query GetTournamentsByIds($ids: [ID!]!) {
+    getTournamentsByIds(ids: $ids) {
+      id
+      name
+      description
+      maxPlayers
+      invitationOnly
+    }
+  }
+`
+
 export {
   SEND_INVITATION,
   GET_TOURNAMENT_QUERY,
   GET_TOURNAMENTS_BY_USER,
   GET_TOURNAMENTS_BY_NAME_AND_USER,
+  GET_TOURNAMENT_BY_ID,
 }

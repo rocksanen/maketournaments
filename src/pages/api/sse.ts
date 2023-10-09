@@ -1,11 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { changeStream } from '@/lib/mongoChangeStream'
 
-let userId: string
+let userEmail: string
 
-export const setupUserId = (id: string) => {
-  userId = id
-  console.log(userId, 'Setting up user id in sse.ts')
+export const setupUserEmail = (id: string) => {
+  userEmail = id
+  console.log(userEmail, 'Setting up user email in sse.ts')
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -25,11 +25,12 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }
 
     changeStream.on('change', (change) => {
-      const documentKeyString = JSON.stringify(change.documentKey)
-      const documentKey = JSON.parse(documentKeyString)
-      const documentId = documentKey._id
-      console.log(documentId, ' in sse is equal to ', userId)
-      if (documentId === userId) {
+      const { receiverEmail, updateDescription } = change
+      const documentId = change.documentKey._id
+
+      console.log(documentId, ' in sse is equal to ', userEmail)
+
+      if (receiverEmail === userEmail && !updateDescription.updatedFields.isRead) {
         sendUpdate()
       }
     })

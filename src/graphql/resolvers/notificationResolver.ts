@@ -43,7 +43,7 @@ const notificationResolvers = {
         const newestNotification = await Notification.findOne({ receiverEmail })
           .sort({ date: -1 }) // Sort by date in descending order to get the newest notification
           .limit(1)
-
+        console.log('Newest notification:', newestNotification)
         return newestNotification
       } catch (error) {
         console.error('Failed to fetch newest notification:', error)
