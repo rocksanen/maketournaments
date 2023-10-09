@@ -30,10 +30,13 @@ export const NotificationsDropdown = () => {
   const [notifications, setNotifications] = useState<Notificationz[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
 
-  const { data: initialData } = useQuery(GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL, {
-    variables: { receiverEmail: userEmail },
-    skip: !userEmail,
-  })
+  const { data: initialData, refetch: refetchNotifications } = useQuery(
+    GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
+    {
+      variables: { receiverEmail: userEmail },
+      skip: !userEmail,
+    },
+  )
 
   const [updateNotification] = useMutation(UPDATE_NOTIFICATION)
 
@@ -66,6 +69,7 @@ export const NotificationsDropdown = () => {
   const handleNotificationClick = async (notificationId: string) => {
     try {
       await markNotificationAsRead(notificationId)
+      await refetchNotifications()
     } catch (error) {
       console.error('Failed to update notification:', error)
     }
@@ -121,20 +125,23 @@ export const NotificationsDropdown = () => {
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
           {notifications.length > 0 ? (
-            notifications.map((notification) => (
-              <DropdownItem
-                key={notification.id}
-                classNames={{
-                  base: 'py-2',
-                  title: 'text-base font-semibold',
-                }}
-                description={`${notification.message} ${notification.senderEmail} ${notification.id}`}
-                textValue={notification.message}
-                onClick={() => handleNotificationClick(notification.id)}
-              >
-                New Invitation
-              </DropdownItem>
-            ))
+            notifications
+              .slice()
+              .reverse()
+              .map((notification) => (
+                <DropdownItem
+                  key={notification.id}
+                  classNames={{
+                    base: 'py-2',
+                    title: 'text-base font-semibold',
+                  }}
+                  description={`${notification.message} ${notification.senderEmail} ${notification.id}`}
+                  textValue={notification.message}
+                  onClick={() => handleNotificationClick(notification.id)}
+                >
+                  New Invitation
+                </DropdownItem>
+              ))
           ) : (
             <DropdownItem
               classNames={{
