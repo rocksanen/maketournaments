@@ -49,6 +49,18 @@ const GET_TOURNAMENTS_BY_NAME_AND_USER = gql`
   }
 `
 
+const GET_TOURNAMENT_BY_ID = gql`
+  query GetTournamentsByIds($ids: [ID!]!) {
+    getTournamentsByIds(ids: $ids) {
+      id
+      name
+      description
+      maxPlayers
+      invitationOnly
+    }
+  }
+`
+
 const SAVE_TOURNEY = gql`
   mutation CreateTournament($createTourney: CreateTournamentInput!) {
     createTournament(input: $createTourney) {
@@ -79,6 +91,7 @@ export {
   GET_TOURNAMENT_QUERY,
   GET_TOURNAMENTS_BY_USER,
   GET_TOURNAMENTS_BY_NAME_AND_USER,
+  GET_TOURNAMENT_BY_ID,
   SAVE_TOURNEY,
   DELETE_TOURNEY,
 }

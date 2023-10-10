@@ -33,6 +33,10 @@ interface UpdateTournamentArgs {
   }
 }
 
+interface GetTournamentsByIdsArgs {
+  ids: string[]
+}
+
 const tournamentResolvers = {
   Query: {
     tournament: async (_: any, { id }: { id: string }) => {
@@ -117,6 +121,17 @@ const tournamentResolvers = {
       } catch (error) {
         console.error('Failed to fetch tournaments for user:', error)
         throw new Error('Failed to fetch tournaments for user')
+      }
+    },
+    getTournamentsByIds: async (_: any, { ids }: GetTournamentsByIdsArgs) => {
+      try {
+        const tournaments = await Tournament.find({ _id: { $in: ids } }).populate(
+          'ruleset admin players matches',
+        )
+        return tournaments
+      } catch (error) {
+        console.error('Failed to fetch tournaments by IDs:', error)
+        throw new Error('Failed to fetch tournaments by IDs')
       }
     },
   },

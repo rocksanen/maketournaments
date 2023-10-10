@@ -4,6 +4,7 @@ import User from '@/models/userModel'
 import { isPasswordValid } from '../../../utils/hash'
 import { connectToDatabase } from '@/utils/db'
 import { user } from '@nextui-org/react'
+import { setupUserEmail } from '@/pages/api/sse'
 
 export default NextAuth({
   // pages: {
@@ -42,7 +43,7 @@ export default NextAuth({
         if (!isPasswordMatch) {
           return null
         }
-
+        setupUserEmail(user.email)
         return {
           name: user.name,
           email: user.email,

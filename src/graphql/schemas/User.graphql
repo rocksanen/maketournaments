@@ -1,3 +1,4 @@
+
 type User {
   id: ID!
   name: String!
@@ -10,23 +11,23 @@ type User {
 }
 
 input CreateUserInput {
-    name: String!
-    email: String!
-    password: String!
+  name: String!
+  email: String!
+  password: String!
 }
 
 input UpdateUserInput {
-    id: ID!
-    name: String
-    email: String
-    password: String
+  id: ID!
+  name: String
+  email: String
+  password: String
 }
 
 input UserInput {
-    id: ID
-    name: String
-    email: String
-    password: String
+  id: ID
+  name: String
+  email: String
+  password: String
 }
 
 type Mutation {
@@ -37,4 +38,8 @@ type SendInvitationResponse {
   success: Boolean!
   message: String
 }
+
+
+
+
 
