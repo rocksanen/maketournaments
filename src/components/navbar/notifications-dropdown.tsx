@@ -86,7 +86,7 @@ export const NotificationsDropdown = () => {
       console.log('SSE message received in notification dropdown:', event.data)
       try {
         const eventData = JSON.parse(event.data)
-        const newNotification = {
+        const newNotification: Notificationz = {
           id: eventData.fullDocument._id,
           message: eventData.fullDocument.message,
           senderEmail: eventData.fullDocument.senderEmail,
