@@ -1,22 +1,18 @@
 import { Tooltip, Chip } from '@nextui-org/react'
 import React from 'react'
 import { EyeIcon } from '../icons/table/eye-icon'
-import { EditIcon } from '../icons/table/edit-icon'
-import Link from 'next/link'
+import { Tournament } from '@/types/Tournament'
 
 interface Props {
-  tournament: any
+  tournament: Tournament
   columnKey: string | React.Key
-  userId: string
+  adminName: string
+  // eslint-disable-next-line no-unused-vars
+  setSelectedTournament: (tournament: Tournament | null) => void
 }
 
-export const RenderCell = ({ tournament, columnKey, userId }: Props) => {
-  const cellValue = tournament[columnKey]
-
-  const isAdmin = tournament.admin.some((admin: any) => admin.id === userId)
-  const isPlayer = tournament.players.some((player: any) => player.id === userId)
-  const role = isAdmin && isPlayer ? 'Admin/Player' : isAdmin ? 'Admin' : 'Player'
-
+export const RenderCell = ({ tournament, columnKey, adminName, setSelectedTournament }: Props) => {
+  const cellValue = tournament[columnKey as keyof Tournament]
   const currentDate = new Date()
   const tournamentDate = new Date(Number(tournament.date))
   const status = currentDate < tournamentDate ? 'Active' : 'Finished'
@@ -30,8 +26,8 @@ export const RenderCell = ({ tournament, columnKey, userId }: Props) => {
           <span>{tournamentDate.toDateString()}</span>
         </div>
       )
-    case 'role':
-      return <div>{role}</div>
+    case 'admin':
+      return <div>{adminName}</div>
     case 'status':
       return (
         <Chip size="sm" variant="flat" color={status === 'Active' ? 'success' : 'warning'}>
@@ -42,29 +38,10 @@ export const RenderCell = ({ tournament, columnKey, userId }: Props) => {
       return (
         <div className="flex items-center gap-4 ">
           <div>
-            <Tooltip content="Details">
-              <button onClick={() => console.log('View user', tournament.id)}>
-                <EyeIcon size={20} fill="#979797" />
-              </button>
-            </Tooltip>
+            <button onClick={() => setSelectedTournament(tournament)}>
+              <EyeIcon size={20} fill="#979797" />
+            </button>
           </div>
-          {isAdmin && (
-            <div>
-              <Tooltip content="Edit tournament" color="secondary">
-                <Link
-                  href={{
-                    pathname: '/tourneys/editTournament',
-                    query: { id: tournament.id },
-                  }}
-                  as={`/edit/${tournament.id}`}
-                >
-                  <button>
-                    <EditIcon size={20} fill="#979797" />
-                  </button>
-                </Link>
-              </Tooltip>
-            </div>
-          )}
         </div>
       )
     default:

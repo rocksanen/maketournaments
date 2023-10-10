@@ -61,6 +61,15 @@ const userResolvers = {
         throw new Error('Failed to fetch users')
       }
     },
+    getUsersByIds: async (_: any, { ids }: { ids: string[] }) => {
+      try {
+        const users = await userModel.find({ _id: { $in: ids } }).select('-password')
+        return users
+      } catch (error) {
+        console.error('Failed to fetch users:', error)
+        throw new Error('Failed to fetch users')
+      }
+    },
   },
 
   Mutation: {

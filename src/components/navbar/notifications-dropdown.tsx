@@ -14,6 +14,7 @@ import {
   GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
   UPDATE_NOTIFICATION,
 } from '@/graphql/clientQueries/notificationOperations'
+import { useRouter } from 'next/router'
 
 interface Notificationz {
   id: string
@@ -24,11 +25,11 @@ interface Notificationz {
 }
 
 export const NotificationsDropdown = () => {
-  console.log('NotificationsDropdown component mounted')
   const { data: session } = useSession()
   const userEmail = session?.user?.email || ''
   const [notifications, setNotifications] = useState<Notificationz[]>([])
   const [unreadCount, setUnreadCount] = useState(0)
+  const router = useRouter()
 
   const { data: initialData, refetch: refetchNotifications } = useQuery(
     GET_ALL_NOTIFICATIONS_BY_RECEIVER_EMAIL,
@@ -51,18 +52,13 @@ export const NotificationsDropdown = () => {
   }
 
   useEffect(() => {
-    console.log('Initial Data:', initialData)
     if (initialData && initialData.getAllNotificationsByReceiverEmail) {
       const allNotifications = initialData.getAllNotificationsByReceiverEmail
       const unreadNotifications = allNotifications.filter(
         (notification: Notificationz) => !notification.isRead,
       )
-      allNotifications.forEach((notification: Notificationz) => {
-        console.log('Notification Object:', notification)
-      })
       setNotifications(allNotifications)
       setUnreadCount(unreadNotifications.length)
-      console.log('Unread notifications count:', unreadNotifications.length)
     }
   }, [initialData])
 
@@ -70,6 +66,7 @@ export const NotificationsDropdown = () => {
     try {
       await markNotificationAsRead(notificationId)
       await refetchNotifications()
+      router.push('/tourneys/invitations')
     } catch (error) {
       console.error('Failed to update notification:', error)
     }
@@ -83,7 +80,6 @@ export const NotificationsDropdown = () => {
     }
 
     eventSource.onmessage = async (event) => {
-      console.log('SSE message received in notification dropdown:', event.data)
       try {
         const eventData = JSON.parse(event.data)
         const newNotification: Notificationz = {
@@ -93,8 +89,6 @@ export const NotificationsDropdown = () => {
           date: eventData.fullDocument.date,
           isRead: eventData.fullDocument.isRead,
         }
-
-        console.log('Parsed notification data:', newNotification)
 
         if (newNotification) {
           setNotifications((prevNotifications) => [newNotification, ...prevNotifications])
@@ -125,23 +119,22 @@ export const NotificationsDropdown = () => {
       <DropdownMenu className="w-80" aria-label="Avatar Actions">
         <DropdownSection title="Notifications">
           {notifications.length > 0 ? (
-            notifications
-              .slice()
-              .reverse()
-              .map((notification) => (
-                <DropdownItem
-                  key={notification.id}
-                  classNames={{
-                    base: 'py-2',
-                    title: 'text-base font-semibold',
-                  }}
-                  description={`${notification.message} ${notification.senderEmail} ${notification.id}`}
-                  textValue={notification.message}
-                  onClick={() => handleNotificationClick(notification.id)}
-                >
-                  New Invitation
-                </DropdownItem>
-              ))
+            notifications.map((notification) => (
+              <DropdownItem
+                key={notification.id}
+                classNames={{
+                  base: `py-2 ${notification.isRead ? 'read-notification' : 'unread-notification'}`,
+                  title: 'text-base font-semibold',
+                }}
+                description={`${notification.message} ${notification.senderEmail} ${
+                  'Notification id: ' + notification.id
+                }`}
+                textValue={notification.message}
+                onClick={() => handleNotificationClick(notification.id)}
+              >
+                New Invitation
+              </DropdownItem>
+            ))
           ) : (
             <DropdownItem
               classNames={{

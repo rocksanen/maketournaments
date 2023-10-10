@@ -2,17 +2,28 @@ import React, { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { useQuery } from '@apollo/client'
 import { GET_TOURNAMENT_BY_ID } from '@/graphql/clientQueries/tournamentOperations'
-import { GET_USER_INVITATIONS_BY_ID } from '@/graphql/clientQueries/userOperations'
+import {
+  GET_USER_INVITATIONS_BY_ID,
+  GET_ADMINS_BY_ID,
+} from '@/graphql/clientQueries/userOperations'
+import { GET_RULESET_BY_ID } from '@/graphql/clientQueries/rulesetOperations'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react'
 import { RenderCell } from '../../components/invitations/renderInvitationCell'
 import { columns } from '../../components/invitations/invitationColumns'
+import { Tournament } from '@/types/Tournament'
+import { User } from '@/types/User'
+import { Ruleset } from '@/types/Ruleset'
+import TournamentDetails from '@/components/invitations/tournamentDetail'
 
 const InvitationsComponent = () => {
   const { data: session } = useSession()
   const userId = session?.user?.id || ''
 
   const [tournamentIds, setTournamentIds] = useState([])
-  const [tournaments, setTournaments] = useState([])
+  const [tournaments, setTournaments] = useState<Tournament[]>([])
+  const [adminNames, setAdminNames] = useState<{ [key: string]: string }>({})
+  const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null)
+  const [selectedRuleset, setSelectedRuleset] = useState<Ruleset | null>(null)
 
   const { data: userData } = useQuery(GET_USER_INVITATIONS_BY_ID, {
     variables: { id: userId },
@@ -20,7 +31,6 @@ const InvitationsComponent = () => {
   })
 
   useEffect(() => {
-    console.log('userData:', userData)
     if (userData?.user?.invitations) {
       setTournamentIds(userData.user.invitations)
     }
@@ -32,11 +42,42 @@ const InvitationsComponent = () => {
   })
 
   useEffect(() => {
-    console.log('tournamentData:', tournamentData)
-    if (tournamentData?.tournaments) {
-      setTournaments(tournamentData.tournaments)
+    if (tournamentData?.getTournamentsByIds) {
+      setTournaments(tournamentData.getTournamentsByIds)
+      console.log(tournamentData.getTournamentsByIds)
     }
   }, [tournamentData])
+
+  const { data: rulesetData, loading: rulesetLoading } = useQuery(GET_RULESET_BY_ID, {
+    variables: { id: selectedTournament?.ruleset[0].id },
+    skip: !selectedTournament,
+  })
+
+  useEffect(() => {
+    if (rulesetData?.ruleset) {
+      setSelectedRuleset(rulesetData.ruleset)
+    }
+  }, [rulesetData])
+
+  const adminIds = tournaments.map((tournament) => tournament.admin[0].id)
+
+  const { data: adminsData } = useQuery<{ getUsersByIds: User[] }>(GET_ADMINS_BY_ID, {
+    variables: { ids: adminIds },
+    skip: !tournaments.length,
+  })
+
+  useEffect(() => {
+    if (adminsData?.getUsersByIds) {
+      const newAdminNames: { [key: string]: string } = adminsData.getUsersByIds.reduce(
+        (acc: { [key: string]: string }, admin: User) => {
+          acc[admin.id.toString()] = admin.name
+          return acc
+        },
+        {},
+      )
+      setAdminNames(newAdminNames)
+    }
+  }, [adminsData])
 
   return (
     <div className="w-full flex flex-col gap-4">
@@ -54,16 +95,28 @@ const InvitationsComponent = () => {
           )}
         >
           {(item) => (
-            <TableRow key={item}>
+            <TableRow key={item.id}>
               {(columnKey) => (
                 <TableCell>
-                  <RenderCell tournament={item} columnKey={columnKey} userId={userId} />
+                  <RenderCell
+                    tournament={item}
+                    columnKey={columnKey}
+                    adminName={adminNames[item.admin[0].id.toString()]}
+                    setSelectedTournament={setSelectedTournament} // Passing the state setter
+                  />
                 </TableCell>
               )}
             </TableRow>
           )}
         </TableBody>
       </Table>
+      {selectedTournament && (
+        <TournamentDetails
+          tournament={selectedTournament}
+          ruleset={selectedRuleset}
+          onDecline={() => setSelectedTournament(null)}
+        />
+      )}
     </div>
   )
 }

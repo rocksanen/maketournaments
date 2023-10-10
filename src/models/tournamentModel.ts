@@ -1,4 +1,4 @@
-import { Tournament } from '@/types/Tournament'
+import { Tournament as Tournament } from '@/types/Tournament'
 import mongoose, { Types } from 'mongoose'
 
 const tournamentSchema = new mongoose.Schema<Tournament>({
