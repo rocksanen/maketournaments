@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth'
+import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import User from '@/models/userModel'
 import { isPasswordValid } from '../../../utils/hash'
@@ -6,7 +6,7 @@ import { connectToDatabase } from '@/utils/db'
 import { user } from '@nextui-org/react'
 import { setupUserEmail } from '@/pages/api/sse'
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   // pages: {
   //   signIn: '/',
   // },
