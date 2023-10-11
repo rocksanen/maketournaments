@@ -4,7 +4,9 @@ Simple overview of use/purpose.
 
 ## Description
 
-An in-depth paragraph about your project and overview of use.
+Maketournaments is Magic the Gathering Tournament tracker. You can use it to create and join tournaments created by yourself or other users. Tournaments can have custom rulesets, and multiple matches between different players. Tournaments can either exist on their own or as a part of a series.
+
+To get started, register an account, create a tournament and invite other people you know to participate!
 
 ## Getting Started
 
@@ -25,19 +27,13 @@ An in-depth paragraph about your project and overview of use.
 ```bash
 git clone https://github.com/rocksanen/maketournaments.git
 npm install
-# set environment variables
+# create .env.local -file & insert environment variables
 npm run dev
 ```
 
 ## Help
 
-Any advise for common problems or issues.
-
-```
-
-command to run if program contains helper info
-
-```
+In case of problems and issues, [you may create a ticket here](https://github.com/rocksanen/maketournaments/issues)
 
 ## Authors
 
@@ -54,10 +50,4 @@ All rights reserved™️
 
 ## Acknowledgments
 
-Inspiration, code snippets, etc.
-
-- [NextJS](https://nextjs.org/)
-- [ApolloGraphQL](https://www.apollographql.com/)
-- [dbader](https://github.com/dbader/readme-template)
-- [zenorocha](https://gist.github.com/zenorocha/4526327)
 - [Hard work and dedication](./images/yougotta.jpg)
