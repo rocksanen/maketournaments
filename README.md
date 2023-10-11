@@ -3,6 +3,7 @@
 Simple overview of use/purpose.
 
 ## Description
+![mainpage](./images/mainpage.png)
 
 Maketournaments is Magic the Gathering Tournament tracker. You can use it to create and join tournaments created by yourself or other users. Tournaments can have custom rulesets, and multiple matches between different players. Tournaments can either exist on their own or as a part of a series.
 
@@ -50,4 +51,4 @@ All rights reserved™️
 
 ## Acknowledgments
 
-- [Hard work and dedication](./images/yougotta.jpg)
+- [Hard work and dedication](https://i.imgur.com/TbHa8vR.jpeg)

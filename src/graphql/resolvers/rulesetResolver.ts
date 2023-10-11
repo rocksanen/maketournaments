@@ -1,6 +1,8 @@
 import RulesetModel from '@/models/rulesetModel'
+import { Context } from '@/types/Context'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
+import mockSessionResolver from '../../lib/sessionResolver'
 
 interface CreateRulesetArgs {
   input: {
@@ -53,7 +55,14 @@ const rulesetResolvers = {
   },
 
   Mutation: {
-    createRuleset: async (_: any, { input }: CreateRulesetArgs) => {
+    createRuleset: async (_: any, { input }: CreateRulesetArgs, context: Context) => {
+      const testSession = await mockSessionResolver(context)
+      if (testSession) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const newRuleset = new RulesetModel(input)
         const result = await newRuleset.save()
@@ -65,7 +74,14 @@ const rulesetResolvers = {
       }
     },
 
-    updateRuleset: async (_: any, { input }: UpdateRulesetArgs) => {
+    updateRuleset: async (_: any, { input }: UpdateRulesetArgs, context: Context) => {
+      const testSession = await mockSessionResolver(context)
+      if (testSession) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       const { id, ...rest } = input
       try {
         const updatedRuleset = await RulesetModel.findByIdAndUpdate(id, rest, {
@@ -78,7 +94,14 @@ const rulesetResolvers = {
       }
     },
 
-    deleteRuleset: async (_: any, { id }: { id: string }) => {
+    deleteRuleset: async (_: any, { id }: { id: string }, context: Context) => {
+      const testSession = await mockSessionResolver(context)
+      if (testSession) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const deletedRuleset = await RulesetModel.findByIdAndRemove(id)
         if (!deletedRuleset) {

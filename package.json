@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint --fix",
-    "test": "jest --watch",
+    "test": "cross-env ENV=test jest --watch",
     "testserver": "cross-env ENV=test next dev"
   },
   "dependencies": {
