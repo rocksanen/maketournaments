@@ -183,6 +183,27 @@ const tournamentResolvers = {
         throw new Error('Failed to update tournament')
       }
     },
+    updateTournamentPlayers: async (_: any, args: { tournamentId: string; playerId: string }) => {
+      const { tournamentId, playerId } = args
+
+      try {
+        const existingTournament = await Tournament.findById(tournamentId)
+        if (!existingTournament.players.includes(playerId)) {
+          existingTournament.players.push(playerId)
+          await existingTournament.save()
+        }
+
+        const resultObj = existingTournament.toJSON()
+        const out = renameIdField(resultObj)
+
+        console.log('Added player to tournament:', out)
+
+        return out
+      } catch (error) {
+        console.error('Failed to add player to tournament:', error)
+        throw new Error('Failed to add player to tournament')
+      }
+    },
 
     deleteTournament: async (_: any, { id }: { id: string }) => {
       try {

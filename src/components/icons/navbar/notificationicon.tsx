@@ -5,7 +5,6 @@ export const NotificationIcon = ({ unreadCount }: { unreadCount: number }) => {
   React.useEffect(() => {
     setUnreadCounts(unreadCount)
   }, [unreadCount])
-  console.log(unreadCounts, 'unreadCount in icon')
   return (
     <svg
       width="28"

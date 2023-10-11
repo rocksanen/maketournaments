@@ -66,7 +66,7 @@ const notificationResolvers = {
       { receiverEmail }: { receiverEmail: string },
     ) => {
       try {
-        const notifications = await Notification.find({ receiverEmail })
+        const notifications = await Notification.find({ receiverEmail }).sort({ date: -1 })
         return notifications
       } catch (error) {
         console.error('Failed to fetch notifications:', error)

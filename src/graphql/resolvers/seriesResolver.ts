@@ -220,7 +220,7 @@ const seriesResolvers = {
     },
     updateSeriesName: async (_: any, { seriesId, name }: updateSeriesNameArgs) => {
       try {
-        const seriesToUpdate = await seriesModel.findById(seriesId);
+        const seriesToUpdate = await seriesModel.findById(seriesId)
         if (!seriesToUpdate) {
           return {
             success: false,

@@ -37,3 +37,11 @@ body {
   margin-bottom: 1rem;
   align-self: flex-end;
 }
+.unread-notification {
+  opacity: 1;
+  font-weight: bold;
+}
+
+.read-notification {
+  opacity: 0.5;
+}

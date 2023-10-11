@@ -2,6 +2,7 @@ type Query {
   # User Queries
   user(id: ID!): User
   allUsers(limit: Int, offset: Int): [User]
+  getUsersByIds(ids: [ID!]!): [User]
 
   # Match Queries
   match(id: ID!): Match

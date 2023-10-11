@@ -56,7 +56,14 @@ const GET_TOURNAMENT_BY_ID = gql`
       name
       description
       maxPlayers
-      invitationOnly
+      date
+      admin {
+        id
+      }
+      ruleset {
+        id
+        name
+      }
     }
   }
 `
@@ -85,6 +92,16 @@ const DELETE_TOURNEY = gql`
     deleteTournament(id: $deleteTournamentId)
   }
 `
+const UPDATE_TOURNAMENT_ADD_PLAYER = gql`
+  mutation UpdateTournamentAddPlayer($tournamentId: ID!, $playerId: ID!) {
+    updateTournamentPlayers(tournamentId: $tournamentId, playerId: $playerId) {
+      id
+      players {
+        id
+      }
+    }
+  }
+`
 
 export {
   SEND_INVITATION,
@@ -94,4 +111,5 @@ export {
   GET_TOURNAMENT_BY_ID,
   SAVE_TOURNEY,
   DELETE_TOURNEY,
+  UPDATE_TOURNAMENT_ADD_PLAYER,
 }
