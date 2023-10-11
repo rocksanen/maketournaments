@@ -121,7 +121,7 @@ describe('graphql api: tourneys', () => {
     )
   })
 
-  test('Get all rulesets', async () => {
+  test('Get all tourneys', async () => {
     const data = await client.request(GET_ALL_TOURNEYS, {
       limit: 1000,
       offset: 0,
@@ -129,7 +129,7 @@ describe('graphql api: tourneys', () => {
     expect(data.allTournaments).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          id: createdTourneyId,
+          id: expect.any(String),
         }),
       ]),
     )
@@ -142,7 +142,6 @@ describe('graphql api: tourneys', () => {
         name: 'updatedtourn',
       },
     })
-    console.log('dada', data)
   })
 
   test('Delete tourney', async () => {

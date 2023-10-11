@@ -19,7 +19,7 @@ import {
 import { SAVE_TOURNEY, DELETE_TOURNEY } from '@/graphql/clientQueries/tournamentOperations'
 
 const mock_series_params = {
-  name: 'jest test series',
+  name: 'jest test series1',
   tournaments: [],
   admin: '651ff15e09e79c122e54b3b3',
   seriesCreated: '2023-6-10',
@@ -27,7 +27,7 @@ const mock_series_params = {
 }
 
 const mock_tournament_params = {
-  name: 'jest test tournament',
+  name: 'jest test tournament1',
   ruleset: '651ff15e09e79c122e54b3b3',
   admin: [],
   date: '2014-03-12T13:37:27+00:00',
