@@ -37,6 +37,13 @@ interface GetTournamentsByIdsArgs {
   ids: string[]
 }
 
+interface UserContext {
+  id: string
+  username: string
+  email: string
+  role: string
+}
+
 const tournamentResolvers = {
   Query: {
     tournament: async (_: any, { id }: { id: string }) => {
@@ -137,7 +144,15 @@ const tournamentResolvers = {
   },
 
   Mutation: {
-    createTournament: async (_: any, { input }: CreateTournamentArgs) => {
+    createTournament: async (
+      _: any,
+      { input }: CreateTournamentArgs,
+      contextValue: UserContext,
+    ) => {
+      if (!contextValue.username) {
+        return new Error('Not authenticated')
+      }
+
       try {
         const newTournament = new Tournament({
           ...input,

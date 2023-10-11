@@ -1,3 +1,4 @@
+import { user } from '@nextui-org/react'
 import { ApolloServer } from '@apollo/server'
 import { startServerAndCreateNextHandler } from '@as-integrations/next'
 import { gql } from 'graphql-tag'
@@ -5,18 +6,9 @@ import { gql } from 'graphql-tag'
 import typeDefs from '@/graphql/schemas/index'
 import resolvers from '@/graphql/resolvers/index'
 import { connectToDatabase } from '@/utils/db'
+import { Session } from '@/types/next-auth'
+import { getSession } from 'next-auth/react'
 
-// const resolvers = {
-//   Query: {
-//     hello: () => 'world',
-//   },
-// }
-
-// const typeDefs = gql`
-//   type Query {
-//     hello: String
-//   }
-// `
 connectToDatabase()
 
 const apolloServer = new ApolloServer({
@@ -26,10 +18,9 @@ const apolloServer = new ApolloServer({
 })
 
 const handler = startServerAndCreateNextHandler(apolloServer, {
-  context: async (req, res) => ({ req, res }),
+  context: async (req, res) => {
+    const session = await getSession({ req })
+    return { req, res, session: session as Session }
+  },
 })
 export default handler
-
-// export default startServerAndCreateNextHandler(server, {
-//     context: async (req, res) => ({ req, res, user: await getLoggedInUser(req) }),
-//   });
