@@ -3,7 +3,7 @@ import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
 import tournamentModel from '@/models/tournamentModel'
 import { Context } from '@/types/Context'
-import mockSessionResolver from '../../lib/sessionResolver'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 
 interface SeriesArgs {
   id: string
@@ -104,14 +104,13 @@ const seriesResolvers = {
   Mutation: {
     // context type has req and res objects
     createSeries: async (_: any, { input }: CreateSeriesArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
-          message: 'Please log in to create a series',
+          message: 'Please log in to access mutations',
         }
       }
-
       try {
         const existingSeries = await seriesModel.findOne({
           name: input.name,
@@ -143,11 +142,11 @@ const seriesResolvers = {
     },
 
     updateSeries: async (_: any, { input }: UpdateSeriesArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
-          message: 'Please log in to update a series',
+          message: 'Please log in to access mutations',
         }
       }
 
@@ -168,11 +167,11 @@ const seriesResolvers = {
       { seriesId, tournamentId }: addTournamentToSeriesArgs,
       context: Context,
     ) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
-          message: 'Please log in to addTournamentToSeries',
+          message: 'Please log in to access mutations',
         }
       }
       try {
@@ -202,11 +201,12 @@ const seriesResolvers = {
     },
 
     deleteSeries: async (_: any, { id }: DeleteSeriesArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      console.log('sessiondelete', session)
+      if (!session) {
         return {
           success: false,
-          message: 'Please log in to delete a series',
+          message: 'Please log in to access mutations',
         }
       }
       try {
@@ -225,11 +225,11 @@ const seriesResolvers = {
       { seriesId, tournamentId }: deleteTournamentFromSeriesArgs,
       context: Context,
     ) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
-          message: 'Please log in to deleteTournamentFromSeries',
+          message: 'Please log in to access mutations',
         }
       }
       try {
@@ -265,14 +265,14 @@ const seriesResolvers = {
       { seriesId, name }: updateSeriesNameArgs,
       context: Context,
     ) => {
-      try {
-        const testSession = await mockSessionResolver(context)
-        if (testSession) {
-          return {
-            success: false,
-            message: 'Please log in to updateSeriesName',
-          }
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
         }
+      }
+      try {
         const seriesToUpdate = await seriesModel.findById(seriesId)
         if (!seriesToUpdate) {
           return {

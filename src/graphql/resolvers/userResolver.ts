@@ -2,7 +2,7 @@ import userModel from '@/models/userModel'
 import bcrypt from 'bcrypt'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
-import mockSessionResolver from '../../lib/sessionResolver'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 import { Context } from '@/types/Context'
 
 interface UserArgs {
@@ -76,8 +76,8 @@ const userResolvers = {
 
   Mutation: {
     createUser: async (_: any, { input }: CreateUserArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -101,8 +101,8 @@ const userResolvers = {
     },
 
     updateUser: async (_: any, { input }: UpdateUserArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -126,8 +126,8 @@ const userResolvers = {
     },
 
     deleteUser: async (_: any, { id }: DeleteUserArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -149,8 +149,8 @@ const userResolvers = {
       { tournamentId, email }: SendInvitationArgs,
       context: Context,
     ) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',

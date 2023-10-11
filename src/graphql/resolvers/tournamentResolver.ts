@@ -6,7 +6,7 @@ import { renameIdField } from '@/utils/idCon'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
 import { Context } from '@/types/Context'
-import mockSessionResolver from '../../lib/sessionResolver'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 
 interface CreateTournamentArgs {
   input: {
@@ -140,8 +140,8 @@ const tournamentResolvers = {
 
   Mutation: {
     createTournament: async (_: any, { input }: CreateTournamentArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -174,8 +174,8 @@ const tournamentResolvers = {
     },
 
     updateTournament: async (_: any, args: UpdateTournamentArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -204,8 +204,8 @@ const tournamentResolvers = {
       args: { tournamentId: string; playerId: string },
       context: Context,
     ) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -234,8 +234,8 @@ const tournamentResolvers = {
     },
 
     deleteTournament: async (_: any, { id }: { id: string }, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',

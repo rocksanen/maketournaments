@@ -2,7 +2,7 @@ import matchModel from '@/models/matchModel'
 import { Context } from '@/types/Context'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
-import mockSessionResolver from '../../lib/sessionResolver'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 
 interface CreateMatchInput {
   players: string[] // Array of User IDs
@@ -64,8 +64,8 @@ const matchResolvers = {
 
   Mutation: {
     createMatch: async (_: any, { input }: CreateMatchArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -85,8 +85,8 @@ const matchResolvers = {
     },
 
     updateMatch: async (_: any, { input }: UpdateMatchArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -107,8 +107,8 @@ const matchResolvers = {
     },
 
     deleteMatch: async (_: any, { id }: DeleteMatchArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',

@@ -2,7 +2,7 @@ import RulesetModel from '@/models/rulesetModel'
 import { Context } from '@/types/Context'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
-import mockSessionResolver from '../../lib/sessionResolver'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 
 interface CreateRulesetArgs {
   input: {
@@ -56,8 +56,8 @@ const rulesetResolvers = {
 
   Mutation: {
     createRuleset: async (_: any, { input }: CreateRulesetArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -75,8 +75,8 @@ const rulesetResolvers = {
     },
 
     updateRuleset: async (_: any, { input }: UpdateRulesetArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -95,8 +95,8 @@ const rulesetResolvers = {
     },
 
     deleteRuleset: async (_: any, { id }: { id: string }, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',

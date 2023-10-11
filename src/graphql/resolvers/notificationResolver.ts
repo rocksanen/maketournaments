@@ -2,7 +2,7 @@ import Notification from '@/models/notificationModel'
 import { Context } from '@/types/Context'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
-import mockSessionResolver from '../../lib/sessionResolver'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 
 interface GetNotificationArgs {
   receiverEmail: string
@@ -79,8 +79,8 @@ const notificationResolvers = {
 
   Mutation: {
     createNotification: async (_: any, { input }: CreateNotificationArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -104,8 +104,8 @@ const notificationResolvers = {
     },
 
     deleteNotification: async (_: any, { id }: DeleteNotificationArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',
@@ -123,8 +123,8 @@ const notificationResolvers = {
       }
     },
     updateNotification: async (_: any, { id, input }: UpdateNotificationArgs, context: Context) => {
-      const testSession = await mockSessionResolver(context)
-      if (testSession) {
+      const session = await mockSessionResolver(context)
+      if (!session) {
         return {
           success: false,
           message: 'Please log in to access mutations',

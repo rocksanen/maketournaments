@@ -1,3 +1,4 @@
+import { test } from '@jest/globals';
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 import { Context } from '@/types/Context'
@@ -9,20 +10,20 @@ const mockSession: Session = {
     email: 'eetu@mail.gov',
     id: 'mockuserid',
     _id: 'mockuserid',
-    role: 'user',
+    role: 'testrole',
     provider: 'mockprovider',
   },
   expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
   token: {
     _id: 'mockuserid',
-    role: 'admin',
+    role: 'testrole',
     provider: 'credentials',
   },
 }
 // return mocksession if env is test and session is null
 export default async function mockSessionResolver(context: Context) {
   const session = await getServerSession(context.req, context.res, authOptions)
-  if (!session && process.env.ENV !== 'test') {
+  if (process.env.ENV === 'test') {
     return mockSession
   }
   return session
