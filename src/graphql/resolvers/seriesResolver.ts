@@ -2,6 +2,8 @@ import seriesModel from '@/models/seriesModel'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
 import tournamentModel from '@/models/tournamentModel'
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/pages/api/auth/[...nextauth]'
 
 interface SeriesArgs {
   id: string
@@ -100,7 +102,17 @@ const seriesResolvers = {
   },
 
   Mutation: {
-    createSeries: async (_: any, { input }: CreateSeriesArgs) => {
+    createSeries: async (_: any, { input }: CreateSeriesArgs, context) => {
+
+      const session = await getServerSession(context.req, context.res, authOptions);
+
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to create a series',
+        }
+      }
+
       try {
         const existingSeries = await seriesModel.findOne({
           name: input.name,

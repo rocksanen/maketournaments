@@ -6,7 +6,7 @@ import { connectToDatabase } from '@/utils/db'
 import { user } from '@nextui-org/react'
 import { setupUserEmail } from '@/pages/api/sse'
 
-export default NextAuth({
+export const authOptions = {
   // pages: {
   //   signIn: '/',
   // },
@@ -51,7 +51,6 @@ export default NextAuth({
       },
     }),
   ],
-
   secret: process.env.SECRET,
   session: {
     strategy: 'jwt',
@@ -67,4 +66,6 @@ export default NextAuth({
       return session
     },
   },
-})
+}
+
+export default NextAuth(authOptions)
