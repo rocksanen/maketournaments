@@ -1,6 +1,6 @@
 import { Button, Input } from '@nextui-org/react'
 import Link from 'next/link'
-import React from 'react'
+import React, { useState } from 'react'
 import { DotsIcon } from '../icons/accounts/dots-icon'
 import { ExportIcon } from '../icons/accounts/export-icon'
 import { InfoIcon } from '../icons/accounts/info-icon'
@@ -10,6 +10,8 @@ import { SettingsIcon } from '../icons/sidebar/settings-icon'
 import { TableWrapper } from '../tournamentTable/table'
 
 export const Accounts = () => {
+  const [searchTerm, setSearchTerm] = useState('')
+
   return (
     <div className="my-14 max-w-[95rem] mx-auto w-full flex flex-col gap-4">
       <ul className="flex">
@@ -31,6 +33,8 @@ export const Accounts = () => {
               mainWrapper: 'w-full',
             }}
             placeholder="Search tournaments"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
           <SettingsIcon />
           <TrashIcon />
@@ -44,7 +48,7 @@ export const Accounts = () => {
         </div>
       </div>
       <div className="max-w-[95rem] mx-auto w-full">
-        <TableWrapper />
+        <TableWrapper search={searchTerm} />
       </div>
     </div>
   )
