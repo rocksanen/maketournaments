@@ -1,6 +1,23 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { changeStream } from '@/lib/mongoChangeStream'
 
+let userEmail: string
+
+type ChangeObject = {
+  fullDocument: {
+    receiverEmail: string
+    senderEmail: string
+    message: string
+    date: string | Date
+    isRead: boolean
+  }
+}
+
+export const setupUserEmail = (email: string) => {
+  userEmail = email
+  console.log(userEmail, 'Setting up user email in sse.ts')
+}
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.headers.accept && req.headers.accept === 'text/event-stream') {
     res.setHeader('Content-Type', 'text/event-stream')
@@ -12,14 +29,23 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       res.write(': heartbeat\n\n')
     }, HEARTBEAT_INTERVAL)
 
-    const sendUpdate = (data: { [key: string]: string }) => {
-      const event = `data: ${JSON.stringify(data)}\n\n`
-      res.write(event)
-      console.log('Sent SSE update:', data)
+    const sendUpdate = (change: ChangeObject) => {
+      res.write(`data: ${JSON.stringify(change)}\n\n`)
+      console.log('Sent SSE update')
     }
 
     changeStream.on('change', (change) => {
-      sendUpdate(change)
+      const { operationType, fullDocument } = change
+
+      if (operationType === 'insert') {
+        const receiverEmail = fullDocument.receiverEmail
+
+        console.log(receiverEmail, ' in sse is equal to ', userEmail)
+
+        if (receiverEmail === userEmail) {
+          sendUpdate(change)
+        }
+      }
     })
 
     req.socket.on('close', () => {

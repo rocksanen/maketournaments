@@ -2,6 +2,8 @@ import seriesModel from '@/models/seriesModel'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
 import tournamentModel from '@/models/tournamentModel'
+import { Context } from '@/types/Context'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 
 interface SeriesArgs {
   id: string
@@ -100,9 +102,21 @@ const seriesResolvers = {
   },
 
   Mutation: {
-    createSeries: async (_: any, { input }: CreateSeriesArgs) => {
+    // context type has req and res objects
+    createSeries: async (_: any, { input }: CreateSeriesArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
-        const existingSeries = await seriesModel.findOne({ name: input.name })
+        const existingSeries = await seriesModel.findOne({
+          name: input.name,
+          admin: input.admin,
+        })
+
         if (existingSeries) {
           return {
             success: false,
@@ -127,7 +141,15 @@ const seriesResolvers = {
       }
     },
 
-    updateSeries: async (_: any, { input }: UpdateSeriesArgs) => {
+    updateSeries: async (_: any, { input }: UpdateSeriesArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
+
       const { id, ...rest } = input
       try {
         const updatedSeries = await seriesModel.findByIdAndUpdate(id, rest, {
@@ -143,7 +165,15 @@ const seriesResolvers = {
     addTournamentToSeries: async (
       _: any,
       { seriesId, tournamentId }: addTournamentToSeriesArgs,
+      context: Context,
     ) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const series = await seriesModel.findById(seriesId)
         if (!series) {
@@ -170,7 +200,15 @@ const seriesResolvers = {
       }
     },
 
-    deleteSeries: async (_: any, { id }: DeleteSeriesArgs) => {
+    deleteSeries: async (_: any, { id }: DeleteSeriesArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      console.log('sessiondelete', session)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const deletedSeries = await seriesModel.findByIdAndRemove(id)
         if (!deletedSeries) {
@@ -185,7 +223,15 @@ const seriesResolvers = {
     deleteTournamentFromSeries: async (
       _: any,
       { seriesId, tournamentId }: deleteTournamentFromSeriesArgs,
+      context: Context,
     ) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const series = await seriesModel.findById(seriesId)
         if (!series) {
@@ -214,22 +260,41 @@ const seriesResolvers = {
         throw new Error('Error deleting tournament from series')
       }
     },
-    updateSeriesName: async (_: any, { seriesId, name }: updateSeriesNameArgs) => {
+    updateSeriesName: async (
+      _: any,
+      { seriesId, name }: updateSeriesNameArgs,
+      context: Context,
+    ) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
-        const existingSeries = await seriesModel.findOne({ name: name })
-        if (existingSeries) {
+        const seriesToUpdate = await seriesModel.findById(seriesId)
+        if (!seriesToUpdate) {
+          return {
+            success: false,
+            message: 'Series not found',
+          }
+        }
+
+        const existingSeries = await seriesModel.findOne({
+          name: name,
+          admin: seriesToUpdate.admin,
+        })
+
+        if (existingSeries && String(existingSeries._id) !== String(seriesId)) {
           return {
             success: false,
             message: 'Series with that name already exists',
           }
         }
-        const series = await seriesModel.findById(seriesId)
-        if (!series) {
-          throw new Error('Series not found')
-        }
 
-        series.name = name
-        await series.save()
+        seriesToUpdate.name = name
+        await seriesToUpdate.save()
 
         return { success: true, message: 'Series name updated successfully' }
       } catch (error) {

@@ -1,4 +1,5 @@
 import { Document, Types } from 'mongoose'
+//add field notifications to user, it has sender, message, date
 
 interface User extends Document {
   name: string

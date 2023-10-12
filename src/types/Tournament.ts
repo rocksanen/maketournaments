@@ -4,7 +4,7 @@ import { Document } from 'mongoose'
 interface Tournament extends Document {
   name: string
   description: string
-  rules: Types.ObjectId[]
+  ruleset: Types.ObjectId[]
   date: Date
   players: Types.ObjectId[]
   admin: Types.ObjectId[]

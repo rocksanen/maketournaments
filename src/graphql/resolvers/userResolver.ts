@@ -2,6 +2,8 @@ import userModel from '@/models/userModel'
 import bcrypt from 'bcrypt'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
+import mockSessionResolver from '../../lib/mockSessionResolver'
+import { Context } from '@/types/Context'
 
 interface UserArgs {
   id: string
@@ -61,10 +63,26 @@ const userResolvers = {
         throw new Error('Failed to fetch users')
       }
     },
+    getUsersByIds: async (_: any, { ids }: { ids: string[] }) => {
+      try {
+        const users = await userModel.find({ _id: { $in: ids } }).select('-password')
+        return users
+      } catch (error) {
+        console.error('Failed to fetch users:', error)
+        throw new Error('Failed to fetch users')
+      }
+    },
   },
 
   Mutation: {
-    createUser: async (_: any, { input }: CreateUserArgs) => {
+    createUser: async (_: any, { input }: CreateUserArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         // Hash the password before saving
         const hashedPassword = await bcrypt.hash(input.password, 10)
@@ -82,7 +100,14 @@ const userResolvers = {
       }
     },
 
-    updateUser: async (_: any, { input }: UpdateUserArgs) => {
+    updateUser: async (_: any, { input }: UpdateUserArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       const { id, ...rest } = input
       try {
         if (rest.password) {
@@ -100,7 +125,14 @@ const userResolvers = {
       }
     },
 
-    deleteUser: async (_: any, { id }: DeleteUserArgs) => {
+    deleteUser: async (_: any, { id }: DeleteUserArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const deletedUser = await userModel.findByIdAndRemove(id)
         if (!deletedUser) {
@@ -112,7 +144,18 @@ const userResolvers = {
         throw new Error('Failed to delete user')
       }
     },
-    sendInvitation: async (_: any, { tournamentId, email }: SendInvitationArgs) => {
+    sendInvitation: async (
+      _: any,
+      { tournamentId, email }: SendInvitationArgs,
+      context: Context,
+    ) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const user = await userModel.findOne({ email })
         if (user) {

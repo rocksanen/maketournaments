@@ -49,6 +49,25 @@ const GET_TOURNAMENTS_BY_NAME_AND_USER = gql`
   }
 `
 
+const GET_TOURNAMENT_BY_ID = gql`
+  query GetTournamentsByIds($ids: [ID!]!) {
+    getTournamentsByIds(ids: $ids) {
+      id
+      name
+      description
+      maxPlayers
+      date
+      admin {
+        id
+      }
+      ruleset {
+        id
+        name
+      }
+    }
+  }
+`
+
 const SAVE_TOURNEY = gql`
   mutation CreateTournament($createTourney: CreateTournamentInput!) {
     createTournament(input: $createTourney) {
@@ -73,12 +92,24 @@ const DELETE_TOURNEY = gql`
     deleteTournament(id: $deleteTournamentId)
   }
 `
+const UPDATE_TOURNAMENT_ADD_PLAYER = gql`
+  mutation UpdateTournamentAddPlayer($tournamentId: ID!, $playerId: ID!) {
+    updateTournamentPlayers(tournamentId: $tournamentId, playerId: $playerId) {
+      id
+      players {
+        id
+      }
+    }
+  }
+`
 
 export {
   SEND_INVITATION,
   GET_TOURNAMENT_QUERY,
   GET_TOURNAMENTS_BY_USER,
   GET_TOURNAMENTS_BY_NAME_AND_USER,
+  GET_TOURNAMENT_BY_ID,
   SAVE_TOURNEY,
   DELETE_TOURNEY,
+  UPDATE_TOURNAMENT_ADD_PLAYER,
 }

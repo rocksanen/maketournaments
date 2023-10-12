@@ -16,6 +16,7 @@ import { Input } from '@nextui-org/react'
 import { TableWrapper } from '@/components/invitePlayers/invitationTable'
 import { Dropdown, DropdownItem } from '@nextui-org/react'
 import { gql, useMutation } from '@apollo/client'
+import { useSession } from 'next-auth/react'
 
 const tournamentData = [
   {
@@ -101,17 +102,46 @@ const SEND_INVITATION = gql`
   }
 `
 
+const SEND_NOTIFICATION = gql`
+  mutation SendNotification(
+    $receiverEmail: String!
+    $sender: String!
+    $message: String!
+    $date: String!
+    $isRead: Boolean!
+  ) {
+    createNotification(
+      input: {
+        receiverEmail: $receiverEmail
+        senderEmail: $sender
+        message: $message
+        date: $date
+        isRead: $isRead
+      }
+    ) {
+      id
+      receiverEmail
+      senderEmail
+      message
+      date
+      isRead
+    }
+  }
+`
+
 export default function EditTournament() {
   const router = useRouter()
   const { id, name } = router.query
   const [email, setEmail] = useState('')
   const [sendInvitation] = useMutation(SEND_INVITATION)
+  const [sendNotification] = useMutation(SEND_NOTIFICATION)
+  const { data: session } = useSession()
 
   const handleSendInvitation = async () => {
     try {
       const response = await sendInvitation({
         variables: {
-          tournamentId: '6512c76c2f5af2aece86ceab', // this is a tournament id for tournament called kikkeli
+          tournamentId: id,
           email,
         },
       })
@@ -126,6 +156,43 @@ export default function EditTournament() {
     } catch (error) {
       console.error('Error sending invitation:', error)
       alert('Error sending invitation. Please try again later.')
+    }
+  }
+
+  const handleSendNotification = async () => {
+    console.log(session && session.user.email, 'lähettäjän sähäköposti')
+    console.log(email, 'vastaanottajan sähköposti')
+    try {
+      const notificationResponse = await sendNotification({
+        variables: {
+          receiverEmail: email,
+          sender: session && session.user.email,
+          message: 'You have a new invitation from: ',
+          date: new Date().toISOString(),
+          isRead: false,
+        },
+      })
+
+      const { success: notificationSuccess, message: notificationMessage } =
+        notificationResponse.data.sendNotification || {}
+
+      if (notificationSuccess) {
+        console.log('Notification sent successfully')
+      } else {
+        console.error(`Error sending notification: ${notificationMessage}`)
+      }
+    } catch (error) {
+      console.error('Error sending notification:', error)
+      alert('Error sending notification. Please try again later.')
+    }
+  }
+  const handleSendBoth = async () => {
+    try {
+      await handleSendNotification()
+      await handleSendInvitation()
+    } catch (error) {
+      console.error('Error sending both:', error)
+      alert('Error sending both. Please try again later.')
     }
   }
 
@@ -185,7 +252,7 @@ export default function EditTournament() {
             <DropdownItem value="player">Player</DropdownItem>
             <DropdownItem value="admin">Admin</DropdownItem>
           </Dropdown>
-          <Button color="primary" className="w-20 h-full" onClick={handleSendInvitation}>
+          <Button color="primary" className="w-20 h-full" onClick={handleSendBoth}>
             Send
           </Button>
         </CardHeader>

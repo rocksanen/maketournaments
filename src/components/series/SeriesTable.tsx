@@ -23,7 +23,7 @@ export default function SeriesTable({
           <TableColumn>No. Tournaments</TableColumn>
           <TableColumn>Actions</TableColumn>
         </TableHeader>
-        <TableBody emptyContent="No rows to display.">
+        <TableBody emptyContent="You haven't created any series yet.">
           {seriesByUser.map((series: Series) => (
             <TableRow key={series.id}>
               <TableCell>{series.name}</TableCell>

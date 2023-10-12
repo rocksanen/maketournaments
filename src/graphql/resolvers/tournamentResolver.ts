@@ -5,6 +5,8 @@ import { Match } from '@/types/Match'
 import { renameIdField } from '@/utils/idCon'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
+import { Context } from '@/types/Context'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 
 interface CreateTournamentArgs {
   input: {
@@ -31,6 +33,10 @@ interface UpdateTournamentArgs {
     admin?: User[]
     matches?: Match[]
   }
+}
+
+interface GetTournamentsByIdsArgs {
+  ids: string[]
 }
 
 const tournamentResolvers = {
@@ -90,7 +96,7 @@ const tournamentResolvers = {
           })
 
         if (!tournaments || tournaments.length === 0) {
-          throw new Error('No tournaments found for this user')
+          return []
         }
 
         const transformedTournaments = tournaments.map((tournament) => {
@@ -119,10 +125,28 @@ const tournamentResolvers = {
         throw new Error('Failed to fetch tournaments for user')
       }
     },
+    getTournamentsByIds: async (_: any, { ids }: GetTournamentsByIdsArgs) => {
+      try {
+        const tournaments = await Tournament.find({ _id: { $in: ids } }).populate(
+          'ruleset admin players matches',
+        )
+        return tournaments
+      } catch (error) {
+        console.error('Failed to fetch tournaments by IDs:', error)
+        throw new Error('Failed to fetch tournaments by IDs')
+      }
+    },
   },
 
   Mutation: {
-    createTournament: async (_: any, { input }: CreateTournamentArgs) => {
+    createTournament: async (_: any, { input }: CreateTournamentArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const newTournament = new Tournament({
           ...input,
@@ -149,7 +173,14 @@ const tournamentResolvers = {
       }
     },
 
-    updateTournament: async (_: any, args: UpdateTournamentArgs) => {
+    updateTournament: async (_: any, args: UpdateTournamentArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       const { id, ...inputData } = args.input
 
       try {
@@ -168,8 +199,48 @@ const tournamentResolvers = {
         throw new Error('Failed to update tournament')
       }
     },
+    updateTournamentPlayers: async (
+      _: any,
+      args: { tournamentId: string; playerId: string },
+      context: Context,
+    ) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
 
-    deleteTournament: async (_: any, { id }: { id: string }) => {
+      const { tournamentId, playerId } = args
+
+      try {
+        const existingTournament = await Tournament.findById(tournamentId)
+        if (!existingTournament.players.includes(playerId)) {
+          existingTournament.players.push(playerId)
+          await existingTournament.save()
+        }
+
+        const resultObj = existingTournament.toJSON()
+        const out = renameIdField(resultObj)
+
+        console.log('Added player to tournament:', out)
+
+        return out
+      } catch (error) {
+        console.error('Failed to add player to tournament:', error)
+        throw new Error('Failed to add player to tournament')
+      }
+    },
+
+    deleteTournament: async (_: any, { id }: { id: string }, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const deletedTournament = await Tournament.findByIdAndRemove(id)
         if (!deletedTournament) {

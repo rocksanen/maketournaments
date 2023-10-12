@@ -30,3 +30,7 @@ input UpdateTournamentInput {
     admin: [ID!]
     matches: [ID!]
 }
+
+type Mutation {
+    updateTournamentPlayers(tournamentId: ID!, playerId: ID!): Tournament
+}
