@@ -153,6 +153,27 @@ const userResolvers = {
         throw new Error('Error sending invitation')
       }
     },
+    removeTournamentInvitation: async (
+      _: any,
+      { userId, tournamentId }: { userId: string; tournamentId: string },
+    ) => {
+      try {
+        const user = await userModel.findByIdAndUpdate(
+          userId,
+          { $pull: { invitations: tournamentId } },
+          { new: true },
+        )
+
+        if (!user) {
+          throw new Error('User not found')
+        }
+
+        return { success: true, message: 'Invitation removed successfully' }
+      } catch (error) {
+        console.error('Error removing invitation:', error)
+        throw new Error('Error removing invitation')
+      }
+    },
   },
 }
 

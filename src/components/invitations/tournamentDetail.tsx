@@ -6,6 +6,7 @@ import { UPDATE_TOURNAMENT_ADD_PLAYER } from '@/graphql/clientQueries/tournament
 import { useMutation } from '@apollo/client'
 import { useRouter } from 'next/router'
 import { useSession } from 'next-auth/react'
+import { REMOVE_TOURNAMENT_INVITATION } from '@/graphql/clientQueries/userOperations'
 
 interface TournamentDetailsProps {
   tournament: Tournament
@@ -22,23 +23,48 @@ const TournamentDetails: React.FC<TournamentDetailsProps> = ({
   const tournamentDate = new Date(Number(tournament.date))
   const isTournamentFinished = currentDate > tournamentDate
   const [updateTournamentAddPlayer] = useMutation(UPDATE_TOURNAMENT_ADD_PLAYER)
+  const [removeTournamentInvitation] = useMutation(REMOVE_TOURNAMENT_INVITATION)
   const router = useRouter()
   const { data: session } = useSession()
 
   const handleAccept = async () => {
-    console.log(session?.user?.id, 'session')
+    console.log('User ID from session:', session?.user?.id)
+
     try {
-      const { data } = await updateTournamentAddPlayer({
+      // Update the tournament to add the player
+      console.log('meni yksi')
+      const updateResponse = await updateTournamentAddPlayer({
         variables: {
           tournamentId: tournament.id,
-          playerId: session?.user?.id, // assuming you have access to the session here. If not, it should be passed as a prop
+          playerId: session?.user?.id,
         },
       })
+      console.log('meni kaksi')
+      console.log('Update tournament response:', updateResponse)
+
+      // If updating the tournament is successful, then try to remove the invitation
+      if (updateResponse.data && updateResponse.data.updateTournamentPlayers) {
+        // NOTE: Replace "someFieldName" with the appropriate field from your GraphQL response
+        const removeResponse = await removeTournamentInvitation({
+          variables: {
+            userId: session?.user?.id,
+            tournamentId: tournament.id,
+          },
+        })
+
+        console.log('Remove invitation response:', removeResponse)
+
+        if (removeResponse.data && !removeResponse.data.removeTournamentInvitation.success) {
+          // NOTE: Replace "someOtherFieldName" with the appropriate field from your GraphQL response
+          console.error('Failed to remove invitation from user:', removeResponse.errors)
+        }
+      } else {
+        console.error('Failed to add player to tournament:', updateResponse.errors)
+      }
 
       router.push('/accounts')
     } catch (error) {
-      console.error('Failed to add player to tournament:', error)
-      router.push('/accounts')
+      console.error('Error during the accept operation:', error)
     }
   }
   return (

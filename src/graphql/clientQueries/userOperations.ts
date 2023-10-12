@@ -26,5 +26,18 @@ const GET_USER_BY_EMAIL = gql`
     }
   }
 `
+const REMOVE_TOURNAMENT_INVITATION = gql`
+  mutation RemoveTournamentInvitation($userId: ID!, $tournamentId: ID!) {
+    removeTournamentInvitation(userId: $userId, tournamentId: $tournamentId) {
+      success
+      message
+    }
+  }
+`
 
-export { GET_USER_INVITATIONS_BY_ID, GET_ADMINS_BY_ID, GET_USER_BY_EMAIL }
+export {
+  GET_USER_INVITATIONS_BY_ID,
+  GET_ADMINS_BY_ID,
+  GET_USER_BY_EMAIL,
+  REMOVE_TOURNAMENT_INVITATION,
+}
