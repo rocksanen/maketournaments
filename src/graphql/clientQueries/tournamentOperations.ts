@@ -64,6 +64,11 @@ const GET_TOURNAMENT_BY_ID = gql`
         id
         name
       }
+      players {
+        id
+        name
+        email
+      }
     }
   }
 `

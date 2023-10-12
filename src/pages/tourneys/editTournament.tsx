@@ -135,6 +135,21 @@ export default function EditTournament() {
       tournamentData.getTournamentsByIds.length > 0
     ) {
       const tournament: Tournament = tournamentData.getTournamentsByIds[0]
+      console.log(tournament, 'tournament in useEffect')
+
+      if (tournament.players && Array.isArray(tournament.players)) {
+        console.log(tournament.players, 'player IDs from tournament')
+
+        // Extract the list of player IDs from the tournament.
+        const playerIds = tournament.players.map((player) => player.id)
+
+        // Filter invitedUsers based on whether their IDs match any in playerIds.
+        const matchingUsers = invitedUsers.filter((user) => playerIds.includes(user.id))
+
+        console.log(matchingUsers, 'matchingUsers from invitedUsers based on player IDs')
+        setAcceptedPlayers(matchingUsers)
+      }
+
       if (tournament.ruleset && tournament.ruleset.length > 0) {
         const rulesetIds = tournament.ruleset[0].id.toString()
         const playersAmount = tournament.maxPlayers
@@ -143,7 +158,7 @@ export default function EditTournament() {
         setRulesetId(rulesetIds)
       }
     }
-  }, [tournamentData])
+  }, [tournamentData, invitedUsers])
 
   useEffect(() => {
     if (rulesetData && rulesetData.ruleset) {
@@ -184,14 +199,13 @@ export default function EditTournament() {
           isRead: false,
         },
       })
+      console.log('Full notificationResponse:', notificationResponse)
 
-      const { success: notificationSuccess, message: notificationMessage } =
-        notificationResponse.data.sendNotification || {}
-
-      if (notificationSuccess) {
+      const notification = notificationResponse.data.createNotification
+      if (notification && notification.id) {
         console.log('Notification sent successfully')
       } else {
-        console.error(`Error sending notification: ${notificationMessage}`)
+        console.error('Error sending notification: No ID returned')
       }
     } catch (error) {
       console.error('Error sending notification:', error)
