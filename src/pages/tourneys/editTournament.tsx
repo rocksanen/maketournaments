@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import {
   Table,
@@ -9,125 +9,46 @@ import {
   TableRow,
   TableCell,
   Button,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Input,
+  Dropdown,
+  DropdownItem,
 } from '@nextui-org/react'
-import { Card, CardHeader, CardBody, CardFooter } from '@nextui-org/react'
 import { ExportIcon } from '@/components/icons/accounts/export-icon'
-import { Input } from '@nextui-org/react'
 import { TableWrapper } from '@/components/invitePlayers/invitationTable'
-import { Dropdown, DropdownItem } from '@nextui-org/react'
-import { gql, useMutation } from '@apollo/client'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import { useSession } from 'next-auth/react'
+import { User } from '@/types/User'
+import { GET_USER_BY_EMAIL } from '@/graphql/clientQueries/userOperations'
+import { GET_TOURNAMENT_BY_ID } from '@/graphql/clientQueries/tournamentOperations'
+import { GET_RULESET_BY_ID } from '@/graphql/clientQueries/rulesetOperations'
+import { SEND_INVITATION } from '@/graphql/clientQueries/invitationOperations'
+import { SEND_NOTIFICATION } from '@/graphql/clientQueries/notificationOperations'
+import { Tournament } from '@/types/Tournament'
+import { Ruleset } from '@/types/Ruleset'
+//import { invited_placeholder } from '@/components/invitePlayers/invitationdata'
 
-const tournamentData = [
-  {
-    position: '1.',
-    name: 'Emil',
-    wins: '8',
-    tie: '0',
-    loss: '1',
-    games: '9',
-    points: '24',
-  },
-  {
-    position: '2.',
-    name: 'Joni',
-    wins: '6',
-    tie: '1',
-    loss: '1',
-    games: '8',
-    points: '19',
-  },
-  {
-    position: '3.',
-    name: 'Eetu',
-    wins: '5',
-    tie: '0',
-    loss: '3',
-    games: '8',
-    points: '15',
-  },
-  {
-    position: '4.',
-    name: 'Otto',
-    wins: '4',
-    tie: '2',
-    loss: '4',
-    games: '10',
-    points: '14',
-  },
-  {
-    position: '5.',
-    name: 'Ilkka',
-    wins: '3',
-    tie: '3',
-    loss: '2',
-    games: '8',
-    points: '12',
-  },
-  {
-    position: '6.',
-    name: 'Simo',
-    wins: '3',
-    tie: '1',
-    loss: '4',
-    games: '8',
-    points: '10',
-  },
-  {
-    position: '7.',
-    name: 'Yrjö',
-    wins: '2',
-    tie: '0',
-    loss: '6',
-    games: '8',
-    points: '6',
-  },
-  {
-    position: '8.',
-    name: 'Surkimus',
-    wins: '0',
-    tie: '0',
-    loss: '8',
-    games: '8',
-    points: '0',
-  },
-]
+const invited_placeholder = {
+  name: 'JORMA',
+  wins: 0,
+  tie: 0,
+  loss: 0,
+  games: 0,
+  points: 0,
+}
 
-const SEND_INVITATION = gql`
-  mutation SendInvitation($tournamentId: ID!, $email: String!) {
-    sendInvitation(tournamentId: $tournamentId, email: $email) {
-      success
-      message
-    }
-  }
-`
+const generatePlaceholders = (maxPlayers: number, acceptedCount: number) => {
+  const placeholdersCount = maxPlayers - acceptedCount
+  return new Array(placeholdersCount).fill(invited_placeholder)
+}
 
-const SEND_NOTIFICATION = gql`
-  mutation SendNotification(
-    $receiverEmail: String!
-    $sender: String!
-    $message: String!
-    $date: String!
-    $isRead: Boolean!
-  ) {
-    createNotification(
-      input: {
-        receiverEmail: $receiverEmail
-        senderEmail: $sender
-        message: $message
-        date: $date
-        isRead: $isRead
-      }
-    ) {
-      id
-      receiverEmail
-      senderEmail
-      message
-      date
-      isRead
-    }
-  }
-`
+const getPositionByPoints = (player, array) => {
+  const sortedArray = [...array].sort((a, b) => b.points - a.points)
+  return sortedArray.findIndex((item) => item.name === player.name) + 1
+}
 
 export default function EditTournament() {
   const router = useRouter()
@@ -135,7 +56,100 @@ export default function EditTournament() {
   const [email, setEmail] = useState('')
   const [sendInvitation] = useMutation(SEND_INVITATION)
   const [sendNotification] = useMutation(SEND_NOTIFICATION)
+  const [ruleset, setRuleset] = useState<Ruleset | null>(null)
+  const [rulesetId, setRulesetId] = useState<string | null>(null)
+  const [maxPlayers, setMaxPlayers] = useState(0)
   const { data: session } = useSession()
+  const [invitedUsers, setInvitedUsers] = useState<User[]>([])
+  const [acceptedPlayers, setAcceptedPlayers] = useState<User[]>([])
+  const placeholders = generatePlaceholders(maxPlayers, acceptedPlayers.length)
+  const combinedPlayers = [...acceptedPlayers, ...placeholders]
+  const [tournamentName, setTournamentName] = useState<string | null>(null)
+  const [shouldFetchUser, setShouldFetchUser] = useState(false)
+
+  const {
+    data,
+    error: userEmailError,
+    loading,
+  } = useQuery(GET_USER_BY_EMAIL, {
+    variables: { email: email },
+    skip: !shouldFetchUser,
+  })
+
+  if (userEmailError) {
+    console.error('Error fetching user by email:', userEmailError)
+  }
+
+  const {
+    data: tournamentData,
+    error: tournamentError,
+    loading: tournamentLoading,
+  } = useQuery(GET_TOURNAMENT_BY_ID, {
+    variables: { ids: [id] },
+    skip: !id,
+  })
+
+  let tournamentId
+  if (
+    tournamentData &&
+    tournamentData.getTournamentsByIds &&
+    tournamentData.getTournamentsByIds.length > 0
+  ) {
+    tournamentId = tournamentData.getTournamentsByIds[0].id
+  }
+
+  const localStorageKey = tournamentId ? `invitedUsers_${tournamentId}` : null
+
+  useEffect(() => {
+    if (localStorageKey) {
+      const storedInvitedUsers = localStorage.getItem(localStorageKey)
+      if (storedInvitedUsers) {
+        setInvitedUsers(JSON.parse(storedInvitedUsers))
+      }
+    }
+  }, [localStorageKey])
+
+  useEffect(() => {
+    if (localStorageKey && invitedUsers.length > 0) {
+      localStorage.setItem(localStorageKey, JSON.stringify(invitedUsers))
+    }
+  }, [invitedUsers, localStorageKey])
+
+  if (tournamentError) {
+    console.error('Error fetching tournament by ID:', tournamentError)
+  }
+
+  const { data: rulesetData, error: rulesetError } = useQuery(GET_RULESET_BY_ID, {
+    variables: { id: rulesetId },
+    skip: !rulesetId,
+  })
+
+  if (rulesetError) {
+    console.error('Error fetching ruleset by ID:', rulesetError)
+  }
+
+  useEffect(() => {
+    if (
+      tournamentData &&
+      tournamentData.getTournamentsByIds &&
+      tournamentData.getTournamentsByIds.length > 0
+    ) {
+      const tournament: Tournament = tournamentData.getTournamentsByIds[0]
+      if (tournament.ruleset && tournament.ruleset.length > 0) {
+        const rulesetIds = tournament.ruleset[0].id.toString()
+        const playersAmount = tournament.maxPlayers
+        setTournamentName(tournament.name)
+        setMaxPlayers(playersAmount)
+        setRulesetId(rulesetIds)
+      }
+    }
+  }, [tournamentData])
+
+  useEffect(() => {
+    if (rulesetData && rulesetData.ruleset) {
+      setRuleset(rulesetData.ruleset)
+    }
+  }, [rulesetData])
 
   const handleSendInvitation = async () => {
     try {
@@ -160,8 +174,6 @@ export default function EditTournament() {
   }
 
   const handleSendNotification = async () => {
-    console.log(session && session.user.email, 'lähettäjän sähäköposti')
-    console.log(email, 'vastaanottajan sähköposti')
     try {
       const notificationResponse = await sendNotification({
         variables: {
@@ -186,20 +198,30 @@ export default function EditTournament() {
       alert('Error sending notification. Please try again later.')
     }
   }
+
   const handleSendBoth = async () => {
     try {
+      setShouldFetchUser(true)
       await handleSendNotification()
       await handleSendInvitation()
+      setShouldFetchUser(false)
     } catch (error) {
       console.error('Error sending both:', error)
       alert('Error sending both. Please try again later.')
     }
   }
 
+  useEffect(() => {
+    if (data && data.getUserByEmail) {
+      const user: User = { ...data.getUserByEmail, status: 'pending' }
+      setInvitedUsers((prevInvitedUsers) => [...prevInvitedUsers, user])
+    }
+  }, [data])
+
   return (
     <div className="flex flex-col items-center justify-top w-full h-full">
       <header className="flex flex-col items-center justify-center w-full h-1/6">
-        <h1 className="text-4xl font-bold text-white">{name ? name : 'The Great Tournament'}</h1>
+        <h1 className="text-4xl font-bold text-white">{tournamentName ? tournamentName : ''}</h1>
       </header>
       <Table aria-label="Example static collection table">
         <TableHeader>
@@ -212,21 +234,24 @@ export default function EditTournament() {
           <TableColumn>POINTS</TableColumn>
         </TableHeader>
         <TableBody>
-          {tournamentData.map((data, index) => (
-            <TableRow key={index} className={`table-row ${index === 2 ? 'third-row' : ''}`}>
+          {combinedPlayers.map((player, index) => (
+            <TableRow
+              key={player.name + '-' + index}
+              className={`table-row ${index === 2 ? 'third-row' : ''}`}
+            >
               <TableCell
                 className={
                   index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''
                 }
               >
-                {data.position}
+                {getPositionByPoints(player, combinedPlayers)}
               </TableCell>
-              <TableCell>{data.name}</TableCell>
-              <TableCell>{data.wins}</TableCell>
-              <TableCell>{data.tie}</TableCell>
-              <TableCell>{data.loss}</TableCell>
-              <TableCell>{data.games}</TableCell>
-              <TableCell>{data.points}</TableCell>
+              <TableCell>{player.name}</TableCell>
+              <TableCell>{player.wins}</TableCell>
+              <TableCell>{player.tie}</TableCell>
+              <TableCell>{player.loss}</TableCell>
+              <TableCell>{player.games}</TableCell>
+              <TableCell>{player.points}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -257,7 +282,7 @@ export default function EditTournament() {
           </Button>
         </CardHeader>
       </Card>
-      <TableWrapper />
+      <TableWrapper invitedUsers={invitedUsers} />
     </div>
   )
 }

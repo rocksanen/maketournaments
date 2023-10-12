@@ -38,8 +38,3 @@ type SendInvitationResponse {
   success: Boolean!
   message: String
 }
-
-
-
-
-

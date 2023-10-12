@@ -17,5 +17,14 @@ const GET_ADMINS_BY_ID = gql`
     }
   }
 `
+const GET_USER_BY_EMAIL = gql`
+  query GetUserByEmail($email: String!) {
+    getUserByEmail(email: $email) {
+      email
+      id
+      name
+    }
+  }
+`
 
-export { GET_USER_INVITATIONS_BY_ID, GET_ADMINS_BY_ID }
+export { GET_USER_INVITATIONS_BY_ID, GET_ADMINS_BY_ID, GET_USER_BY_EMAIL }

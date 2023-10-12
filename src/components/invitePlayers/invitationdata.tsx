@@ -1,63 +1,15 @@
 export const columns = [
   { name: 'NAME', uid: 'name' },
-  { name: 'ROLE', uid: 'role' },
+  { name: 'EMAIL', uid: 'email' },
   { name: 'STATUS', uid: 'status' },
 ]
-export const invited_players = [
+export const invited_placeholder = [
   {
-    id: 3,
-    name: 'Emil',
-    role: 'Admin/Player',
-    team: '',
-    status: 'joined',
-  },
-  {
-    id: 1,
-    name: 'Joni',
-    role: 'Player',
-    team: '',
-    status: 'joined',
-  },
-  {
-    id: 2,
-    name: 'Eetu',
-    role: 'Player',
-    team: '',
-    status: 'joined',
-  },
-  {
-    id: 4,
-    name: 'Otto',
-    role: 'Player',
-    team: '',
-    status: 'joined',
-  },
-  {
-    id: 5,
-    name: 'Ilkka',
-    role: 'Player',
-    team: '',
-    status: 'joined',
-  },
-  {
-    id: 6,
-    name: 'Simo',
-    role: 'Player',
-    team: '',
-    status: 'joined',
-  },
-  {
-    id: 7,
-    name: 'Yrjö',
-    role: 'Player',
-    team: '',
-    status: 'joined',
-  },
-  {
-    id: 8,
-    name: 'Surkimus',
-    role: 'Player',
-    team: '',
-    status: 'pending',
+    name: 'JORMA',
+    wins: 0,
+    tie: 0,
+    loss: 0,
+    games: 0,
+    points: 0,
   },
 ]

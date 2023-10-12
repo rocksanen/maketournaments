@@ -70,6 +70,15 @@ const userResolvers = {
         throw new Error('Failed to fetch users')
       }
     },
+    getUserByEmail: async (_: any, { email }: { email: string }) => {
+      try {
+        const user = await userModel.findOne({ email }).select('-password')
+        return user
+      } catch (error) {
+        console.error('Failed to fetch user:', error)
+        throw new Error('Failed to fetch user')
+      }
+    },
   },
 
   Mutation: {

@@ -1,19 +1,18 @@
-import { Chip } from '@nextui-org/react'
+import { Chip, Spinner } from '@nextui-org/react'
 import React from 'react'
 import { invited_players } from './invitationdata'
 
-interface Props {
-  tournament: (typeof invited_players)[number]
-  columnKey: string | React.Key
+interface RenderCellProps {
+  item: any
+  columnKey: string
 }
 
-export const RenderCell = ({ tournament, columnKey }: Props) => {
-  // @ts-ignore
-  const cellValue = tournament[columnKey]
+export const RenderCell: React.FC<RenderCellProps> = ({ item, columnKey }) => {
+  const cellValue = item[columnKey]
   switch (columnKey) {
     case 'name':
       return <div>{cellValue}</div>
-    case 'role':
+    case 'email':
       return (
         <div>
           <div>
@@ -23,15 +22,20 @@ export const RenderCell = ({ tournament, columnKey }: Props) => {
       )
     case 'status':
       return (
-        <Chip
-          size="sm"
-          variant="flat"
-          color={cellValue === 'joined' ? 'success' : cellValue === 'paused' ? 'danger' : 'warning'}
-        >
-          <span className="capitalize text-xs">{cellValue}</span>
-        </Chip>
+        <div className="flex items-center gap-2">
+          <Chip
+            size="sm"
+            variant="flat"
+            color={
+              cellValue === 'joined' ? 'success' : cellValue === 'paused' ? 'danger' : 'warning'
+            }
+          >
+            <span className="capitalize text-xs">{cellValue}</span>
+          </Chip>
+          {cellValue === 'pending' && <Spinner color="warning" size="sm" />}
+        </div>
       )
     default:
-      return cellValue
+      return <div>{cellValue}</div>
   }
 }
