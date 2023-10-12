@@ -1,6 +1,8 @@
 import Notification from '@/models/notificationModel'
+import { Context } from '@/types/Context'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 
 interface GetNotificationArgs {
   receiverEmail: string
@@ -76,7 +78,14 @@ const notificationResolvers = {
   },
 
   Mutation: {
-    createNotification: async (_: any, { input }: CreateNotificationArgs) => {
+    createNotification: async (_: any, { input }: CreateNotificationArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const { receiverEmail, senderEmail, message, date, isRead } = input
         const newNotification = new Notification({
@@ -94,7 +103,14 @@ const notificationResolvers = {
       }
     },
 
-    deleteNotification: async (_: any, { id }: DeleteNotificationArgs) => {
+    deleteNotification: async (_: any, { id }: DeleteNotificationArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const deletedNotification = await Notification.findByIdAndRemove(id)
         if (!deletedNotification) {
@@ -106,7 +122,14 @@ const notificationResolvers = {
         throw new Error('Failed to delete notification')
       }
     },
-    updateNotification: async (_: any, { id, input }: UpdateNotificationArgs) => {
+    updateNotification: async (_: any, { id, input }: UpdateNotificationArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const updatedNotification = await Notification.findByIdAndUpdate(
           id,

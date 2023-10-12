@@ -5,6 +5,8 @@ import { Match } from '@/types/Match'
 import { renameIdField } from '@/utils/idCon'
 import { paginationArgs } from '@/types/paginationArgs'
 import { MAX_QUERY_LIMIT } from '@/utils/constants'
+import { Context } from '@/types/Context'
+import mockSessionResolver from '../../lib/mockSessionResolver'
 
 interface CreateTournamentArgs {
   input: {
@@ -137,7 +139,14 @@ const tournamentResolvers = {
   },
 
   Mutation: {
-    createTournament: async (_: any, { input }: CreateTournamentArgs) => {
+    createTournament: async (_: any, { input }: CreateTournamentArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const newTournament = new Tournament({
           ...input,
@@ -164,7 +173,14 @@ const tournamentResolvers = {
       }
     },
 
-    updateTournament: async (_: any, args: UpdateTournamentArgs) => {
+    updateTournament: async (_: any, args: UpdateTournamentArgs, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       const { id, ...inputData } = args.input
 
       try {
@@ -183,7 +199,19 @@ const tournamentResolvers = {
         throw new Error('Failed to update tournament')
       }
     },
-    updateTournamentPlayers: async (_: any, args: { tournamentId: string; playerId: string }) => {
+    updateTournamentPlayers: async (
+      _: any,
+      args: { tournamentId: string; playerId: string },
+      context: Context,
+    ) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
+
       const { tournamentId, playerId } = args
 
       try {
@@ -220,7 +248,14 @@ const tournamentResolvers = {
       }
     },
 
-    deleteTournament: async (_: any, { id }: { id: string }) => {
+    deleteTournament: async (_: any, { id }: { id: string }, context: Context) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
       try {
         const deletedTournament = await Tournament.findByIdAndRemove(id)
         if (!deletedTournament) {

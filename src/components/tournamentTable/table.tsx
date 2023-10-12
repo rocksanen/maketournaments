@@ -5,6 +5,7 @@ import { columns } from './data'
 import { RenderCell } from './render-cell'
 import { useQuery } from '@apollo/client'
 import { useSession } from 'next-auth/react'
+import { parseDate } from '../../utils/dateParse'
 import { GET_TOURNAMENTS_BY_USER } from '@/graphql/clientQueries/tournamentOperations'
 
 // Type definitions
@@ -26,10 +27,11 @@ interface Tournament {
 
 interface TableWrapperProps {
   count?: number
+  search?: string
 }
 
 // TableWrapper component
-export const TableWrapper: FC<TableWrapperProps> = ({ count = Infinity }) => {
+export const TableWrapper: FC<TableWrapperProps> = ({ count = Infinity, search = '' }) => {
   const session = useSession()
   const userId = session.data?.user?.id ?? null
 
@@ -46,7 +48,10 @@ export const TableWrapper: FC<TableWrapperProps> = ({ count = Infinity }) => {
   if (loading) return <p>Loading...</p>
   if (error) return <p>Error: {error.message}</p>
 
-  const tournaments = data?.tournamentsByUser.slice(0, count) ?? []
+  const tournaments = (data?.tournamentsByUser ?? [])
+    .filter((tournament) => tournament.name.toLowerCase().includes(search.toLowerCase()))
+    .slice(0, count)
+    .sort((a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime())
 
   return (
     <div className="w-full flex flex-col gap-4">
