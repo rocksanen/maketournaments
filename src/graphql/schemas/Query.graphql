@@ -3,6 +3,7 @@ type Query {
   user(id: ID!): User
   allUsers(limit: Int, offset: Int): [User]
   getUsersByIds(ids: [ID!]!): [User]
+  getUserByEmail(email: String!): User
 
   # Match Queries
   match(id: ID!): Match
