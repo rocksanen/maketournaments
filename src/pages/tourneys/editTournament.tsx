@@ -1,25 +1,10 @@
 'use client'
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import {
-  Table,
-  TableHeader,
-  TableColumn,
-  TableBody,
-  TableRow,
-  TableCell,
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  Input,
-  Dropdown,
-  DropdownItem,
-} from '@nextui-org/react'
+import { Button } from '@nextui-org/react'
 import { ExportIcon } from '@/components/icons/accounts/export-icon'
-import { TableWrapper } from '@/components/invitePlayers/invitationTable'
-import { gql, useMutation, useQuery } from '@apollo/client'
+import { TableWrapper } from '@/components/tournamentEditor/invitePlayers/invitationTable'
+import { useMutation, useQuery } from '@apollo/client'
 import { useSession } from 'next-auth/react'
 import { User } from '@/types/User'
 import { GET_USER_BY_EMAIL } from '@/graphql/clientQueries/userOperations'
@@ -29,7 +14,9 @@ import { SEND_INVITATION } from '@/graphql/clientQueries/invitationOperations'
 import { SEND_NOTIFICATION } from '@/graphql/clientQueries/notificationOperations'
 import { Tournament } from '@/types/Tournament'
 import { Ruleset } from '@/types/Ruleset'
-//import { invited_placeholder } from '@/components/invitePlayers/invitationdata'
+import InvitationCard from '@/components/tournamentEditor/invitePlayers/InvitationCard'
+import PlayerTable from '@/components/tournamentEditor/scoreTable/PlayerTable'
+import SelectWrapper from '@/components/tournamentEditor/challengePlayer/playerSelect'
 
 const invited_placeholder = {
   name: 'JORMA',
@@ -43,11 +30,6 @@ const invited_placeholder = {
 const generatePlaceholders = (maxPlayers: number, acceptedCount: number) => {
   const placeholdersCount = maxPlayers - acceptedCount
   return new Array(placeholdersCount).fill(invited_placeholder)
-}
-
-const getPositionByPoints = (player, array) => {
-  const sortedArray = [...array].sort((a, b) => b.points - a.points)
-  return sortedArray.findIndex((item) => item.name === player.name) + 1
 }
 
 export default function EditTournament() {
@@ -250,66 +232,19 @@ export default function EditTournament() {
       <header className="flex flex-col items-center justify-center w-full h-1/6">
         <h1 className="text-4xl font-bold text-white">{tournamentName ? tournamentName : ''}</h1>
       </header>
-      <Table aria-label="Example static collection table">
-        <TableHeader>
-          <TableColumn>POSITION</TableColumn>
-          <TableColumn>NAME</TableColumn>
-          <TableColumn>WINS</TableColumn>
-          <TableColumn>TIE</TableColumn>
-          <TableColumn>LOSS</TableColumn>
-          <TableColumn>GAMES</TableColumn>
-          <TableColumn>POINTS</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {combinedPlayers.map((player, index) => (
-            <TableRow
-              key={player.name + '-' + index}
-              className={`table-row ${index === 2 ? 'third-row' : ''}`}
-            >
-              <TableCell
-                className={
-                  index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : ''
-                }
-              >
-                {getPositionByPoints(player, combinedPlayers)}
-              </TableCell>
-              <TableCell>{player.name}</TableCell>
-              <TableCell>{player.wins}</TableCell>
-              <TableCell>{player.tie}</TableCell>
-              <TableCell>{player.loss}</TableCell>
-              <TableCell>{player.games}</TableCell>
-              <TableCell>{player.points}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <PlayerTable combinedPlayers={combinedPlayers} />
       <div className="export-csv">
         <Button color="primary" startContent={<ExportIcon />}>
           Export to CSV
         </Button>
       </div>
-      <Card className="w-full h-1/4 flex flex-col gap-1 items-start justify-center">
-        <CardHeader className="flex items-center justify-between w-full">
-          <Input
-            type="text"
-            label="Invite player"
-            placeholder="Enter email address"
-            className="w-full"
-            labelPlacement="outside-left"
-            style={{ marginRight: '1rem' }}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Dropdown placeholder="Select role" className="w-1/4">
-            <DropdownItem value="player">Player</DropdownItem>
-            <DropdownItem value="admin">Admin</DropdownItem>
-          </Dropdown>
-          <Button color="primary" className="w-20 h-full" onClick={handleSendBoth}>
-            Send
-          </Button>
-        </CardHeader>
-      </Card>
-      <TableWrapper invitedUsers={invitedUsers} />
+      {acceptedPlayers.length < maxPlayers && (
+        <>
+          <InvitationCard email={email} setEmail={setEmail} handleSendBoth={handleSendBoth} />
+          <TableWrapper invitedUsers={invitedUsers} />
+        </>
+      )}
+      <SelectWrapper acceptedPlayers={acceptedPlayers} />
     </div>
   )
 }

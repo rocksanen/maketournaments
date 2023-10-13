@@ -1,4 +1,4 @@
-import { invited_placeholder } from './../src/components/invitePlayers/invitationdata'
+import { invited_placeholder } from '../src/components/tournamentEditor/invitePlayers/invitationdata'
 // Assuming you have installed 'graphql-request' package
 import { GraphQLClient, gql } from 'graphql-request'
 import { test, expect, describe } from '@jest/globals'

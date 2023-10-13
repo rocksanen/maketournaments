@@ -1,4 +1,4 @@
-import { test } from '@jest/globals';
+import { test } from '@jest/globals'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
 import { getServerSession } from 'next-auth/next'
 import { Context } from '@/types/Context'
