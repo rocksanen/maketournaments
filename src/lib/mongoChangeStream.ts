@@ -1,7 +1,14 @@
 import mongoose from 'mongoose'
 import Notification from '@/models/notificationModel'
 
-const uri = process.env.MONGO_URI || ''
+let uri = 'null'
+
+if (process.env.ENV !== 'test') {
+  uri = process.env.MONGO_URI || 'null'
+}
+if (process.env.ENV === 'test') {
+  uri = process.env.MONGO_URI_TEST || 'null'
+}
 
 mongoose.connect(uri)
 
