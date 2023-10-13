@@ -143,10 +143,23 @@ export default function EditTournament() {
         // Extract the list of player IDs from the tournament.
         const playerIds = tournament.players.map((player) => player.id)
 
+        const updatedInvitedUsers = invitedUsers.map((user): User => {
+          if (playerIds.includes(user.id)) {
+            return {
+              ...user,
+              status: 'joined', // Update the status to "joined"
+            } as unknown as User // Explicitly cast the object as User
+          }
+          return user // Assuming user is already of type User
+        })
+
         // Filter invitedUsers based on whether their IDs match any in playerIds.
         const matchingUsers = invitedUsers.filter((user) => playerIds.includes(user.id))
 
         console.log(matchingUsers, 'matchingUsers from invitedUsers based on player IDs')
+        if (JSON.stringify(updatedInvitedUsers) !== JSON.stringify(invitedUsers)) {
+          setInvitedUsers(updatedInvitedUsers) // Only update if there's a change
+        }
         setAcceptedPlayers(matchingUsers)
       }
 
