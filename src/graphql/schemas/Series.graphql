@@ -16,6 +16,12 @@ input SeriesInput {
     seriesEnded: String
 }
 
+type Mutation {
+    addTournamentToSeries(seriesId: ID!, tournamentId: ID!): TournamentToSeriesResponse!
+    deleteTournamentFromSeries(seriesId: ID!, tournamentId: ID!): TournamentToSeriesResponse!
+    updateSeriesName(seriesId: ID!, name: String!): TournamentToSeriesResponse!
+}
+
 type TournamentToSeriesResponse {
     success: Boolean!
     message: String
@@ -28,30 +34,4 @@ input UpdateSeriesInput {
     admin: ID
     seriesCreated: String
     seriesEnded: String
-}
-
-# Series Response
-type CreateSeriesResponse {
-  success: Boolean!
-  series: Series
-  message: String
-  id: ID!
-}
-
-type Mutation {
-    # Series Mutations
-    createSeries(input: SeriesInput!): CreateSeriesResponse!
-    updateSeries(input: UpdateSeriesInput!): Series
-    deleteSeries(id: ID!): Boolean
-    addTournamentToSeries(seriesId: ID!, tournamentId: ID!): TournamentToSeriesResponse!
-    deleteTournamentFromSeries(seriesId: ID!, tournamentId: ID!): TournamentToSeriesResponse!
-    updateSeriesName(seriesId: ID!, name: String!): TournamentToSeriesResponse!
-}
-
-type Query {
-    # Series Queries
-    series(id: ID!): Series
-    allSeries(limit: Int, offset: Int): [Series]
-    allSeriesByAdmin(adminId: ID): [Series]
-    tournamentsBySeries(seriesId: ID!): [Tournament]
 }

@@ -30,24 +30,13 @@ input UserInput {
   password: String
 }
 
+type Mutation {
+  sendInvitation(tournamentId: ID!, email: String!): SendInvitationResponse!
+}
+
 type SendInvitationResponse {
   success: Boolean!
   message: String
-}
-
-type Query {
-  # User Queries
-  user(id: ID!): User
-  allUsers(limit: Int, offset: Int): [User]
-  getUsersByIds(ids: [ID!]!): [User]
-}
-
-type Mutation {
-  # User Mutations
-  createUser(input: CreateUserInput!): User!
-  updateUser(input: UpdateUserInput!): User
-  deleteUser(id: ID!): Boolean
-  sendInvitation(tournamentId: ID!, email: String!): SendInvitationResponse!
 }
 
 

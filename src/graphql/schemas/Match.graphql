@@ -32,16 +32,3 @@ input UpdateMatchInput {
 input DeleteMatchInput {
     id: ID!
 }
-
-type Query {
-    # Match Queries
-    match(id: ID!): Match
-    allMatches(limit: Int, offset: Int): [Match]
-}
-
-type Mutation {
-    # Match Mutations
-    createMatch(input: CreateMatchInput!): Match!
-    updateMatch(input: UpdateMatchInput!): Match
-    deleteMatch(id: ID!): Boolean
-}
