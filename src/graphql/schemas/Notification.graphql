@@ -1,27 +1,35 @@
 type Notification {
-  id: ID!
-  receiverEmail: String!
-  senderEmail: String!
-  message: String!
-  date: String!
-  isRead: Boolean!
+    id: ID!
+    receiverEmail: String!
+    senderEmail: String!
+    message: String!
+    date: String!
+    isRead: Boolean!
 }
 
 input NotificationInput {
-  receiverEmail: String!
-  senderEmail: String!
-  message: String!
-  date: String!
-  isRead: Boolean!
+    receiverEmail: String!
+    senderEmail: String!
+    message: String!
+    date: String!
+    isRead: Boolean!
 }
 
 input UpdateNotificationInput {
-  isRead: Boolean!
+    isRead: Boolean!
+}
+
+type Query {
+     # Notification Queries
+    getNotificationByReceiverEmail(receiverEmail: String!): Notification
+    getAllNotifications: [Notification]
+    getAllNotificationsByReceiverEmail(receiverEmail: String!): [Notification]
+    getNewestNotification(receiverEmail: String!): Notification
 }
 
 type Mutation {
-  createNotification(input: NotificationInput!): Notification
-  updateNotification(id: ID!, input: UpdateNotificationInput!): Notification
-  deleteNotification(id: ID!): Notification
+    createNotification(input: NotificationInput!): Notification
+    updateNotification(id: ID!, input: UpdateNotificationInput!): Notification
+    deleteNotification(id: ID!): Notification
 }
 
