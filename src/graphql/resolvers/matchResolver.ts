@@ -72,9 +72,7 @@ const matchResolvers = {
         }
       }
       try {
-        const newMatch = new matchModel({
-          ...input,
-        })
+        const newMatch = new matchModel(input)
 
         const result = await newMatch.save()
         return result
