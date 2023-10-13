@@ -29,3 +29,16 @@ input UpdateRulesetInput {
     nightmarepoints: Int
     nightmarePointsOn: Boolean
 }
+
+type Query {
+    # Ruleset Queries
+    ruleset(id: ID!): Ruleset
+    allRulesets(limit: Int, offset: Int): [Ruleset]
+}
+
+type Mutation {
+    # Ruleset Mutations
+    createRuleset(input: RulesetInput!): Ruleset!
+    updateRuleset(input: UpdateRulesetInput!): Ruleset
+    deleteRuleset(id: ID!): Boolean
+}

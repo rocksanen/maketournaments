@@ -1,46 +1,59 @@
 
 type User {
-  id: ID!
-  name: String!
-  email: String!
-  password: String!
-  tournaments: [Tournament]
-  friends: [User]
-  invitations: [String]
-  userCreated: String!
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+    tournaments: [Tournament]
+    friends: [User]
+    invitations: [String]
+    userCreated: String!
 }
 
 input CreateUserInput {
-  name: String!
-  email: String!
-  password: String!
+    name: String!
+    email: String!
+    password: String!
 }
 
 input UpdateUserInput {
-  id: ID!
-  name: String
-  email: String
-  password: String
+    id: ID!
+    name: String
+    email: String
+    password: String
 }
 
 input UserInput {
-  id: ID
-  name: String
-  email: String
-  password: String
-}
-
-type Mutation {
-  sendInvitation(tournamentId: ID!, email: String!): SendInvitationResponse!
-  removeTournamentInvitation(userId: ID!, tournamentId: ID!): RemoveTournamentInvitationResponse!
+    id: ID
+    name: String
+    email: String
+    password: String
 }
 
 type SendInvitationResponse {
-  success: Boolean!
-  message: String
+    success: Boolean!
+    message: String
 }
 
 type RemoveTournamentInvitationResponse {
-  success: Boolean!
-  message: String
+    success: Boolean!
+    message: String
 }
+
+type Query {
+    # User Queries
+    user(id: ID!): User
+    allUsers(limit: Int, offset: Int): [User]
+    getUsersByIds(ids: [ID!]!): [User]
+    getUserByEmail(email: String!): User
+}
+
+type Mutation {
+    # User Mutations
+    createUser(input: CreateUserInput!): User!
+    updateUser(input: UpdateUserInput!): User
+    deleteUser(id: ID!): Boolean
+    sendInvitation(tournamentId: ID!, email: String!): SendInvitationResponse!
+    removeTournamentInvitation(userId: ID!, tournamentId: ID!): RemoveTournamentInvitationResponse!
+}
+
