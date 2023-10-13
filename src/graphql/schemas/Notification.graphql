@@ -19,6 +19,14 @@ input UpdateNotificationInput {
   isRead: Boolean!
 }
 
+type Query {
+  # Notification Queries
+  getNotificationByReceiverEmail(receiverEmail: String!): Notification
+  getAllNotifications: [Notification]
+  getAllNotificationsByReceiverEmail(receiverEmail: String!): [Notification]
+  getNewestNotification(receiverEmail: String!): Notification
+}
+
 type Mutation {
   createNotification(input: NotificationInput!): Notification
   updateNotification(id: ID!, input: UpdateNotificationInput!): Notification

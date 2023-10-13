@@ -31,6 +31,20 @@ input UpdateTournamentInput {
     matches: [ID!]
 }
 
+type Query {
+    # Tournament Queries
+    tournament(id: ID!): Tournament
+    allTournaments(limit: Int, offset: Int): [Tournament]
+    tournamentByName(name: String!): Tournament
+    tournamentsByUser(userId: ID!): [Tournament]
+    tournamentsByNameAndUser(name: String!, userId: ID!): Tournament
+    getTournamentsByIds(ids: [ID!]!): [Tournament]
+}
+
 type Mutation {
+    # Tournament Mutations
+    createTournament(input: CreateTournamentInput!): Tournament!
+    updateTournament(input: UpdateTournamentInput!): Tournament
+    deleteTournament(id: ID!): Boolean
     updateTournamentPlayers(tournamentId: ID!, playerId: ID!): Tournament
 }
