@@ -19,6 +19,7 @@ const newTourneyMutation = gql`
   mutation CreateTournament($input: CreateTournamentInput!) {
     createTournament(input: $input) {
       name
+      id
       ruleset {
         id
         name
