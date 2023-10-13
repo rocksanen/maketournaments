@@ -32,6 +32,7 @@ input UserInput {
 
 type Mutation {
   sendInvitation(tournamentId: ID!, email: String!): SendInvitationResponse!
+  removeTournamentInvitation(userId: ID!, tournamentId: ID!): RemoveTournamentInvitationResponse!
 }
 
 type SendInvitationResponse {
@@ -39,7 +40,7 @@ type SendInvitationResponse {
   message: String
 }
 
-
-
-
-
+type RemoveTournamentInvitationResponse {
+  success: Boolean!
+  message: String
+}

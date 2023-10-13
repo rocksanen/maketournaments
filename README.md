@@ -1,6 +1,6 @@
-# Project Title
+# Maketournaments
 
-Simple overview of use/purpose.
+Create and join Magic tournaments across the world!
 
 ## Description
 ![mainpage](./images/mainpage.png)

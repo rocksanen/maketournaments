@@ -13,7 +13,7 @@ function NewSeries() {
   const { data: session } = useSession()
 
   const handleCreateSeries = async () => {
-    if (seriesName.length < 3) {
+    if (seriesName.length < 3 || seriesName.length > 20) {
       setIsInvalid(true)
       return
     }
@@ -55,28 +55,27 @@ function NewSeries() {
 
         {/* Add new series form, if user is not logged in, show link to log in */}
         <h3 className="text-xl font-semibold">Add New Series</h3>
-        <div className="flex justify-between flex-wrap gap-4 items-center">
-          <div className="flex items-center gap-3 flex-wrap md:flex-nowrap">
-            <Card className="p-6">
-              <Input
-                type="text"
-                label="Series Name"
-                variant="bordered"
-                value={seriesName}
-                isInvalid={isInvalid}
-                color={isInvalid ? 'danger' : 'default'}
-                errorMessage={isInvalid && 'Series Name should be at least 3 characters.'}
-                onChange={(e) => {
-                  setIsInvalid(false)
-                  setSeriesName(e.target.value)
-                }}
-              />
-              <Button className="mt-5" color="primary" onClick={handleCreateSeries}>
-                Create Series
-              </Button>
-            </Card>
-          </div>
-        </div>
+        <Card className="p-6 sm:w-1/2 md:w-1/2 lg:w-1/3">
+          <Input
+            type="text"
+            label="Series Name"
+            variant="bordered"
+            value={seriesName}
+            isInvalid={isInvalid}
+            color={isInvalid ? 'danger' : 'default'}
+            errorMessage={
+              isInvalid &&
+              'Series Name should be at least 3 characters and at most 20 characters long'
+            }
+            onChange={(e) => {
+              setIsInvalid(false)
+              setSeriesName(e.target.value)
+            }}
+          />
+          <Button className="mt-5" color="primary" onClick={handleCreateSeries}>
+            Create Series
+          </Button>
+        </Card>
       </div>
     </div>
   )

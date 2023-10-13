@@ -216,17 +216,32 @@ const tournamentResolvers = {
 
       try {
         const existingTournament = await Tournament.findById(tournamentId)
+
+        if (!existingTournament) {
+          throw new Error('Tournament not found')
+        }
+
+        // Ensure players is initialized to an array if it's null or undefined
+        if (!existingTournament.players) {
+          existingTournament.players = []
+        }
+
+        // Check if the playerId already exists in the players array
         if (!existingTournament.players.includes(playerId)) {
           existingTournament.players.push(playerId)
           await existingTournament.save()
+
+          // Fetch the updated tournament document to ensure you're returning the latest version
+          const updatedTournament = await Tournament.findById(tournamentId).populate(
+            'ruleset admin players matches',
+          )
+          const resultObj = updatedTournament.toJSON()
+          const out = renameIdField(resultObj)
+          console.log('Added player to tournament:', out)
+          return out
+        } else {
+          throw new Error('Player already added to tournament')
         }
-
-        const resultObj = existingTournament.toJSON()
-        const out = renameIdField(resultObj)
-
-        console.log('Added player to tournament:', out)
-
-        return out
       } catch (error) {
         console.error('Failed to add player to tournament:', error)
         throw new Error('Failed to add player to tournament')

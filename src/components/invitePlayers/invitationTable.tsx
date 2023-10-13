@@ -8,10 +8,15 @@ import {
   TableRow,
 } from '@nextui-org/react'
 import React from 'react'
-import { columns, invited_players } from './invitationdata'
+import { columns } from './invitationdata'
 import { RenderCell } from './render-invitationCell'
+import { User } from '@/types/User'
 
-export const TableWrapper = () => {
+type TableWrapperProps = {
+  invitedUsers: User[]
+}
+
+export const TableWrapper: React.FC<TableWrapperProps> = ({ invitedUsers }) => {
   return (
     <div className=" w-full flex flex-col gap-4">
       <Table aria-label="Example table with custom cells">
@@ -22,11 +27,15 @@ export const TableWrapper = () => {
             </TableColumn>
           )}
         </TableHeader>
-        <TableBody items={invited_players}>
+        <TableBody items={invitedUsers}>
           {(item) => (
             <TableRow>
               {(columnKey) => (
-                <TableCell>{RenderCell({ tournament: item, columnKey: columnKey })}</TableCell>
+                <TableCell>
+                  {columnKey === 'name' ? item.name : ''}
+                  {columnKey === 'email' ? item.email : ''}
+                  {columnKey === 'status' ? <RenderCell item={item} columnKey={columnKey} /> : ''}
+                </TableCell>
               )}
             </TableRow>
           )}

@@ -72,6 +72,15 @@ const userResolvers = {
         throw new Error('Failed to fetch users')
       }
     },
+    getUserByEmail: async (_: any, { email }: { email: string }) => {
+      try {
+        const user = await userModel.findOne({ email }).select('-password')
+        return user
+      } catch (error) {
+        console.error('Failed to fetch user:', error)
+        throw new Error('Failed to fetch user')
+      }
+    },
   },
 
   Mutation: {
@@ -176,6 +185,27 @@ const userResolvers = {
       } catch (error) {
         console.error('Error sending invitation:', error)
         throw new Error('Error sending invitation')
+      }
+    },
+    removeTournamentInvitation: async (
+      _: any,
+      { userId, tournamentId }: { userId: string; tournamentId: string },
+    ) => {
+      try {
+        const user = await userModel.findByIdAndUpdate(
+          userId,
+          { $pull: { invitations: tournamentId } },
+          { new: true },
+        )
+
+        if (!user) {
+          throw new Error('User not found')
+        }
+
+        return { success: true, message: 'Invitation removed successfully' }
+      } catch (error) {
+        console.error('Error removing invitation:', error)
+        throw new Error('Error removing invitation')
       }
     },
   },

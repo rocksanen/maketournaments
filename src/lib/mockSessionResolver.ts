@@ -20,7 +20,7 @@ const mockSession: Session = {
     provider: 'credentials',
   },
 }
-// return mocksession if env is test and session is null
+// return mocksession if env is test
 export default async function mockSessionResolver(context: Context) {
   const session = await getServerSession(context.req, context.res, authOptions)
   if (process.env.ENV === 'test') {
