@@ -148,7 +148,7 @@ function RulesView({
     }
   }
   return (
-    <div>
+    <div className="space-y-4">
       <h2>Ruleset</h2>
       <Dropdown>
         <DropdownTrigger>
@@ -163,7 +163,7 @@ function RulesView({
         </DropdownMenu>
       </Dropdown>
       {index == 0 ? (
-        <form onSubmit={saveRuleset}>
+        <form onSubmit={saveRuleset} className="space-y-4">
           <h2>Custom ruleset</h2>
           <Input label="Ruleset name" type="string" defaultValue={rulesets[0].name.toString()} />
           <Input label="Rounds" type="number" defaultValue={rulesets[index].rounds.toString()} />
@@ -199,14 +199,14 @@ function RulesView({
             disabled={!rulesets[0].nightmarePointsOn}
             defaultValue={rulesets[0].nightmarepoints.toString()}
           />
-          <Button type="submit">Save ruleset</Button>
+          <Button type="submit" color="primary">Save ruleset</Button>
         </form>
       ) : (
         <div className="max-w-md">
           <div className="space-y-1">
             <h4 className="text-medium font-medium">{rulesets[index].name}</h4>
           </div>
-          <Button onClick={deleteSelectedRuleset}>Delete ruleset</Button>
+          <Button onClick={deleteSelectedRuleset} color="danger">Delete ruleset</Button>
 
           <Divider className="my-4" />
           <div className="h-5 items-center space-y-4 text-small">
