@@ -4,7 +4,7 @@ let MONGO_URI: string
 
 if (process.env.ENV !== 'test') {
   if (!process.env.MONGO_URI) {
-    throw new Error('MONGO_URI environment variable is not set!!')
+    throw new Error('MONGO_URI environment variable is not set!!!')
   }
   MONGO_URI = process.env.MONGO_URI
 }
