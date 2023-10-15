@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
-import { Select, SelectItem, Card, Button, Tooltip, Spinner } from '@nextui-org/react'
 import { User } from '@/types/User'
+import { Button, Card, Spinner } from '@nextui-org/react'
+import React, { useEffect, useState } from 'react'
 
 interface matchPlayersProps {
   matchPlayers: User[]

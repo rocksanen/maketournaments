@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { useSession } from 'next-auth/react'
-import { useQuery } from '@apollo/client'
+import TournamentDetails from '@/components/invitations/tournamentDetail'
+import { GET_RULESET_BY_ID } from '@/graphql/clientQueries/rulesetOperations'
 import { GET_TOURNAMENT_BY_ID } from '@/graphql/clientQueries/tournamentOperations'
 import {
-  GET_USER_INVITATIONS_BY_ID,
   GET_ADMINS_BY_ID,
+  GET_USER_INVITATIONS_BY_ID,
 } from '@/graphql/clientQueries/userOperations'
-import { GET_RULESET_BY_ID } from '@/graphql/clientQueries/rulesetOperations'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from '@nextui-org/react'
-import { RenderCell } from '../../components/invitations/renderInvitationCell'
-import { columns } from '../../components/invitations/invitationColumns'
+import { Ruleset } from '@/types/Ruleset'
 import { Tournament } from '@/types/Tournament'
 import { User } from '@/types/User'
-import { Ruleset } from '@/types/Ruleset'
-import TournamentDetails from '@/components/invitations/tournamentDetail'
+import { useQuery } from '@apollo/client'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
+import { useSession } from 'next-auth/react'
+import { useEffect, useState } from 'react'
+import { columns } from '../../components/invitations/invitationColumns'
+import { RenderCell } from '../../components/invitations/renderInvitationCell'
 
 const InvitationsComponent = () => {
   const { data: session } = useSession()

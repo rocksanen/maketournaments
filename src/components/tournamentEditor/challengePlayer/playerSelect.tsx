@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Select, SelectItem, Card, Button, Tooltip } from '@nextui-org/react'
-import { User } from '@/types/User'
 import MatchPlayers from '@/components/tournamentEditor/challengePlayer/match'
+import { User } from '@/types/User'
+import { Button, Select, SelectItem, Tooltip } from '@nextui-org/react'
+import React, { useEffect, useState } from 'react'
 
 interface SelectWrapperProps {
   acceptedPlayers: User[]

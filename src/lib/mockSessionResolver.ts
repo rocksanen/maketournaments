@@ -1,8 +1,7 @@
-import { test } from '@jest/globals'
 import { authOptions } from '@/pages/api/auth/[...nextauth]'
-import { getServerSession } from 'next-auth/next'
 import { Context } from '@/types/Context'
 import { Session } from 'next-auth'
+import { getServerSession } from 'next-auth/next'
 
 const mockSession: Session = {
   user: {

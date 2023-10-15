@@ -1,5 +1,5 @@
-import mongoose, { Schema, model } from 'mongoose'
 import { Ruleset } from '@/types/Ruleset'
+import mongoose, { Schema } from 'mongoose'
 
 const rulesetSchema = new Schema<Ruleset>({
   name: {
@@ -32,5 +32,5 @@ const rulesetSchema = new Schema<Ruleset>({
   },
 })
 
-const Ruleset = mongoose.models.Ruleset || mongoose.model('Ruleset', rulesetSchema)
-export default Ruleset
+const RulesetModel = mongoose.models.Ruleset || mongoose.model('Ruleset', rulesetSchema)
+export default RulesetModel

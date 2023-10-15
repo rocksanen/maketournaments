@@ -1,5 +1,5 @@
-import { RulesetOutput, RulesetInput } from '@/types/Ruleset'
-import { gql, useQuery, useMutation } from '@apollo/client'
+import { RulesetOutput } from '@/types/Ruleset'
+import { gql, useMutation, useQuery } from '@apollo/client'
 import {
   Button,
   Checkbox,
@@ -10,9 +10,7 @@ import {
   DropdownTrigger,
   Input,
 } from '@nextui-org/react'
-import { set } from 'mongoose'
 import React, { useState } from 'react'
-import { Ruleset } from '@/types/Ruleset'
 
 const GET_RULES = gql`
   query allTournaments($limit: Int, $offset: Int) {

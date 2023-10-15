@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
 import { Button, Card, CardBody, CardFooter, CardHeader, Divider, Input } from '@nextui-org/react'
+import React, { Dispatch, SetStateAction, useState } from 'react'
 
 interface SignUpProps {
   isSignInMode: boolean

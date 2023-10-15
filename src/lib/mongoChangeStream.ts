@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
 import Notification from '@/models/notificationModel'
+import mongoose from 'mongoose'
 
 let uri = 'null'
 
