@@ -73,7 +73,6 @@ export const SidebarWrapper = () => {
                   isActive={router.pathname === '/reports'}
                   title="Personal Stats"
                   icon={<ReportsIcon />}
-
                 />
               </Tooltip>
             </SidebarMenu>

@@ -16,7 +16,7 @@ const MatchPlayers: React.FC<matchPlayersProps> = ({ matchPlayers }) => {
       const intervalId = setInterval(() => {
         setTimeElapsed((prevTime) => prevTime + 1)
       }, 1000)
-      setTimerInterval(intervalId)
+      setTimerInterval(intervalId as unknown as number)
     } else if (!gameStarted && timerInterval !== null) {
       clearInterval(timerInterval)
       setTimerInterval(null)
@@ -29,7 +29,7 @@ const MatchPlayers: React.FC<matchPlayersProps> = ({ matchPlayers }) => {
     }
   }, [gameStarted, timerInterval])
 
-  const formatTime = (seconds) => {
+  const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600)
     const minutes = Math.floor((seconds % 3600) / 60)
     const remainingSeconds = seconds % 60
