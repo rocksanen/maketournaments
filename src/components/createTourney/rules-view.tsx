@@ -12,6 +12,7 @@ import {
 } from '@nextui-org/react'
 import { set } from 'mongoose'
 import React, { useState } from 'react'
+import { Ruleset } from '@/types/Ruleset'
 
 const GET_RULES = gql`
   query allTournaments($limit: Int, $offset: Int) {
@@ -138,7 +139,7 @@ function RulesView({
           onAction={(key) => setRuleFormFields(key)}
           items={rulesets}
         >
-          {(ruleset) => <DropdownItem key={ruleset.id}>{ruleset.name}</DropdownItem>}
+          {(ruleset: any) => <DropdownItem key={ruleset.id}>{ruleset.name}</DropdownItem>}
         </DropdownMenu>
       </Dropdown>
       {index == 0 ? (

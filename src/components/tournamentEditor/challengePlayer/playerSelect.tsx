@@ -18,8 +18,7 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tourname
   })
   const matchedPlayerIds = matchedPlayers.flat().map((player) => player.id)
 
-  useEffect(() => {
-  }, [selectedLeftId, selectedRightId])
+  useEffect(() => {}, [selectedLeftId, selectedRightId])
 
   useEffect(() => {
     const localStorageKey = `tournament_${tournamentId}_matchedPlayers`

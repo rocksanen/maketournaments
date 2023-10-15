@@ -1,6 +1,5 @@
 import { Chip, Spinner } from '@nextui-org/react'
 import React from 'react'
-import { invited_players } from './invitationdata'
 
 interface RenderCellProps {
   item: any
