@@ -16,7 +16,7 @@
     "@apollo/server": "^4.9.3",
     "@as-integrations/next": "^2.0.2",
     "@graphql-tools/load-files": "^7.0.0",
-    "@nextui-org/react": "^2.0.22",
+    "@nextui-org/react": "^2.1.13",
     "@types/supertest": "^2.0.14",
     "apexcharts": "^3.35.5",
     "apollo-server-core": "^3.12.1",

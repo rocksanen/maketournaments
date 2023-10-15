@@ -68,11 +68,14 @@ export const SidebarWrapper = () => {
                 icon={<ReportsIcon />}
                 href="/series/new"
               />
-              <SidebarItem
-                isActive={router.pathname === '/reports'}
-                title="Personal Stats"
-                icon={<ReportsIcon />}
-              />
+              <Tooltip content="Under construction">
+                <SidebarItem
+                  isActive={router.pathname === '/reports'}
+                  title="Personal Stats"
+                  icon={<ReportsIcon />}
+
+                />
+              </Tooltip>
             </SidebarMenu>
 
             <SidebarMenu title="General">
