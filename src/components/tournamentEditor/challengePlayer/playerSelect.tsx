@@ -13,24 +13,32 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tourname
   const [selectedRightId, setSelectedRightId] = useState<string | undefined>(undefined)
   const [matchedPlayers, setMatchedPlayers] = useState<User[][]>(() => {
     const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
-    const storedMatchedPlayers = localStorage.getItem(localStorageKey)
-    return storedMatchedPlayers ? JSON.parse(storedMatchedPlayers) : []
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const storedMatchedPlayers = localStorage.getItem(localStorageKey)
+      return storedMatchedPlayers ? JSON.parse(storedMatchedPlayers) : []
+    } else {
+      return []
+    }
   })
   const matchedPlayerIds = matchedPlayers.flat().map((player) => player.id)
 
   useEffect(() => {}, [selectedLeftId, selectedRightId])
 
   useEffect(() => {
-    const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
-    const storedMatchedPlayers = localStorage.getItem(localStorageKey)
-    if (storedMatchedPlayers) {
-      setMatchedPlayers(JSON.parse(storedMatchedPlayers))
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
+      const storedMatchedPlayers = localStorage.getItem(localStorageKey)
+      if (storedMatchedPlayers) {
+        setMatchedPlayers(JSON.parse(storedMatchedPlayers))
+      }
     }
   }, [tournamentId])
 
   useEffect(() => {
-    const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
-    localStorage.setItem(localStorageKey, JSON.stringify(matchedPlayers))
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
+      localStorage.setItem(localStorageKey, JSON.stringify(matchedPlayers))
+    }
   }, [matchedPlayers, tournamentId])
 
   const leftAvailablePlayers = acceptedPlayers.filter(
