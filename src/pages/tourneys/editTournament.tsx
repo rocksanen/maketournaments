@@ -1,22 +1,22 @@
 'use client'
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { Button } from '@nextui-org/react'
 import { ExportIcon } from '@/components/icons/accounts/export-icon'
-import SelectWrapper from '@/components/tournamentEditor/challengePlayer/playerSelect'
-import InvitationCard from '@/components/tournamentEditor/invitePlayers/InvitationCard'
 import { TableWrapper } from '@/components/tournamentEditor/invitePlayers/invitationTable'
-import PlayerTable from '@/components/tournamentEditor/scoreTable/PlayerTable'
+import { useMutation, useQuery } from '@apollo/client'
+import { useSession } from 'next-auth/react'
+import { User } from '@/types/User'
+import { GET_USER_BY_EMAIL } from '@/graphql/clientQueries/userOperations'
+import { GET_TOURNAMENT_BY_ID } from '@/graphql/clientQueries/tournamentOperations'
+import { GET_RULESET_BY_ID } from '@/graphql/clientQueries/rulesetOperations'
 import { SEND_INVITATION } from '@/graphql/clientQueries/invitationOperations'
 import { SEND_NOTIFICATION } from '@/graphql/clientQueries/notificationOperations'
-import { GET_RULESET_BY_ID } from '@/graphql/clientQueries/rulesetOperations'
-import { GET_TOURNAMENT_BY_ID } from '@/graphql/clientQueries/tournamentOperations'
-import { GET_USER_BY_EMAIL } from '@/graphql/clientQueries/userOperations'
-import { Ruleset } from '@/types/Ruleset'
 import { Tournament } from '@/types/Tournament'
-import { User } from '@/types/User'
-import { useMutation, useQuery } from '@apollo/client'
-import { Button } from '@nextui-org/react'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { Ruleset } from '@/types/Ruleset'
+import InvitationCard from '@/components/tournamentEditor/invitePlayers/InvitationCard'
+import PlayerTable from '@/components/tournamentEditor/scoreTable/PlayerTable'
+import SelectWrapper from '@/components/tournamentEditor/challengePlayer/playerSelect'
 
 const invited_placeholder = {
   name: 'JORMA',
@@ -83,17 +83,21 @@ export default function EditTournament() {
   const localStorageKey = tournamentId ? `invitedUsers_${tournamentId}` : null
 
   useEffect(() => {
-    if (localStorageKey) {
-      const storedInvitedUsers = localStorage.getItem(localStorageKey)
-      if (storedInvitedUsers) {
-        setInvitedUsers(JSON.parse(storedInvitedUsers))
+    if (typeof window !== 'undefined' && window.localStorage) {
+      if (localStorageKey) {
+        const storedInvitedUsers = localStorage.getItem(localStorageKey)
+        if (storedInvitedUsers) {
+          setInvitedUsers(JSON.parse(storedInvitedUsers))
+        }
       }
     }
   }, [localStorageKey])
 
   useEffect(() => {
-    if (localStorageKey && invitedUsers.length > 0) {
-      localStorage.setItem(localStorageKey, JSON.stringify(invitedUsers))
+    if (typeof window !== 'undefined' && window.localStorage) {
+      if (localStorageKey && invitedUsers.length > 0) {
+        localStorage.setItem(localStorageKey, JSON.stringify(invitedUsers))
+      }
     }
   }, [invitedUsers, localStorageKey])
 
