@@ -63,13 +63,6 @@ function TourneysNew() {
     const endDate = (form[2] as HTMLInputElement).value
     const invitationOnly = (form[3] as HTMLInputElement).checked
 
-    console.log('tourneyRuleset', tourneyRuleset.id)
-    console.log('tourneyName', tourneyName)
-    console.log('maxPlayers', maxPlayers)
-    console.log('endDate', endDate)
-    console.log('invitationOnly', invitationOnly)
-    console.log('session?.user?.id', session?.user?.id)
-
     if (!session?.user?.id) {
       alert('Please log in to create a tournament')
       return
@@ -100,7 +93,6 @@ function TourneysNew() {
 
     const createdTournament = result.data.createTournament
     const createdTournamentId = createdTournament.id
-    console.log('createdTournamentId', createdTournamentId)
     const createdTournamentName = createdTournament ? createdTournament.name : 'Default Name'
     router.push(`/tourneys/editTournament?id=${createdTournamentId}&name=${createdTournamentName}`)
   }

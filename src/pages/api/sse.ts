@@ -15,7 +15,6 @@ type ChangeObject = {
 
 export const setupUserEmail = (email: string) => {
   userEmail = email
-  console.log(userEmail, 'Setting up user email in sse.ts')
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -31,7 +30,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const sendUpdate = (change: ChangeObject) => {
       res.write(`data: ${JSON.stringify(change)}\n\n`)
-      console.log('Sent SSE update')
     }
 
     changeStream.on('change', (change) => {
@@ -39,8 +37,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
       if (operationType === 'insert') {
         const receiverEmail = fullDocument.receiverEmail
-
-        console.log(receiverEmail, ' in sse is equal to ', userEmail)
 
         if (receiverEmail === userEmail) {
           sendUpdate(change)

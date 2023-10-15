@@ -63,7 +63,6 @@ function RulesView({
     variables: { limit: 50, offset: 0 },
     onCompleted: (completedData) => {
       setRulesets([...rulesets, ...completedData.allRulesets])
-      console.log('rulesets', rulesets)
     },
   })
   const [mutateFunction] = useMutation(SAVE_RULESET)
@@ -76,18 +75,11 @@ function RulesView({
       alert('Ruleset not found')
     }
     setIndex(i)
-    console.log('key', key)
-    console.log('i', i)
-    console.log('index', index)
-
-    console.log('ruleset id', rulesets[i].id)
-    console.log('ruleset name', rulesets[i].name)
     setTourneyRuleset(rulesets[i])
   }
 
   const saveRuleset = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log('save ruleset')
     const form = e.currentTarget
     const name = (form[0] as HTMLInputElement).value
     const rounds = parseInt((form[1] as HTMLInputElement).value)
@@ -96,14 +88,6 @@ function RulesView({
     const drawpoints = parseInt((form[4] as HTMLInputElement).value)
     const nightmarePointsOn = (form[5] as HTMLInputElement).checked
     const nightmarepoints = parseInt((form[6] as HTMLInputElement).value)
-
-    console.log('name', name)
-    console.log('rounds', rounds)
-    console.log('winnerpoints', winnerpoints)
-    console.log('loserpoints', loserpoints)
-    console.log('drawpoints', drawpoints)
-    console.log('nightmarePointsOn', nightmarePointsOn)
-    console.log('nightmarepoints', nightmarepoints)
 
     const result = await mutateFunction({
       variables: {
@@ -120,7 +104,6 @@ function RulesView({
     })
 
     if (result && result.data) {
-      console.log('result', result.data)
       setRulesets([...rulesets, result.data.createRuleset])
     }
     if (result && result.errors) {
@@ -130,19 +113,15 @@ function RulesView({
 
   const deleteSelectedRuleset = async () => {
     if (window.confirm('Do you really want to delete this ruleset?')) {
-      console.log('delete ruleset')
-      console.log('indexdd', rulesets[index].id)
       const result = await deleteRulesetMutation({
         variables: {
           id: rulesets[index].id,
         },
       })
       if (result && result.data) {
-        console.log('result', result.data)
         setRulesets([...rulesets.slice(0, index), ...rulesets.slice(index + 1)])
         alert('Ruleset deleted')
       } else {
-        console.log('error', result.errors)
         alert('Ruleset not deleted')
       }
     }

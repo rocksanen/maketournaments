@@ -21,7 +21,7 @@ const getPositionByPoints = (player: Player, array: Player[]) => {
 
 const PlayerTable: React.FC<Props> = ({ combinedPlayers }) => {
   return (
-    <Table aria-label="Example static collection table">
+    <Table className="ml-4" aria-label="Example static collection table">
       <TableHeader>
         <TableColumn>POSITION</TableColumn>
         <TableColumn>NAME</TableColumn>
