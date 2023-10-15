@@ -1,23 +1,12 @@
 'use client'
-import React, { useState } from 'react'
-import {
-  Input,
-  Checkbox,
-  Button,
-  Card,
-  CardBody,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Link,
-} from '@nextui-org/react'
+import RulesView from '@/components/createTourney/rules-view'
+import { HouseIcon } from '@/components/icons/breadcrumb/house-icon'
+import { RulesetOutput } from '@/types/Ruleset'
 import { gql, useMutation } from '@apollo/client'
+import { Button, Card, CardBody, Checkbox, Input, Link } from '@nextui-org/react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import RulesView from '@/components/createTourney/rules-view'
-import { RulesetInput, RulesetOutput } from '@/types/Ruleset'
-import { HouseIcon } from '@/components/icons/breadcrumb/house-icon'
+import React, { useState } from 'react'
 
 const newTourneyMutation = gql`
   mutation CreateTournament($input: CreateTournamentInput!) {

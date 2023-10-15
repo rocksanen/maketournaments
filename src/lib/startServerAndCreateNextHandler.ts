@@ -1,10 +1,10 @@
-import { getBody } from './getBody'
-import { getHeaders } from './getHeader'
-import { isNextApiRequest } from './isNextApiRequest'
 import { ApolloServer, BaseContext, ContextFunction } from '@apollo/server'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { NextRequest } from 'next/server'
 import { parse } from 'url'
+import { getBody } from './getBody'
+import { getHeaders } from './getHeader'
+import { isNextApiRequest } from './isNextApiRequest'
 
 type HandlerRequest = NextApiRequest | NextRequest | Request
 

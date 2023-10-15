@@ -1,9 +1,6 @@
-import { Button, Card, CardBody, Image, CardHeader, Divider, CardFooter } from '@nextui-org/react'
-import Link from 'next/link'
-import { Sign } from 'crypto'
+import { Card, CardHeader, Divider } from '@nextui-org/react'
 import { GetServerSidePropsContext } from 'next'
-import { getSession, signOut, useSession } from 'next-auth/react'
-import React from 'react'
+import { getSession, useSession } from 'next-auth/react'
 
 function Profile() {
   const { data: session } = useSession()

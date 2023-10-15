@@ -1,5 +1,5 @@
-import { Tournament as Tournament } from '@/types/Tournament'
-import mongoose, { Types } from 'mongoose'
+import { Tournament } from '@/types/Tournament'
+import mongoose from 'mongoose'
 
 const tournamentSchema = new mongoose.Schema<Tournament>({
   name: {
@@ -46,5 +46,5 @@ const tournamentSchema = new mongoose.Schema<Tournament>({
   },
 })
 
-const Tournament = mongoose.models.Tournament || mongoose.model('Tournament', tournamentSchema)
-export default Tournament
+const TournamentModel = mongoose.models.Tournament || mongoose.model('Tournament', tournamentSchema)
+export default TournamentModel

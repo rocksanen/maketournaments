@@ -1,6 +1,5 @@
 import type { GetServerSidePropsContext, NextPage } from 'next'
 import { getSession } from 'next-auth/react'
-import Head from 'next/head'
 import Form from '../components/form'
 
 const Home: NextPage = () => {

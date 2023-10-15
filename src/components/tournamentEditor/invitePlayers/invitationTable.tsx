@@ -1,16 +1,8 @@
-import {
-  Link,
-  Table,
-  TableBody,
-  TableCell,
-  TableColumn,
-  TableHeader,
-  TableRow,
-} from '@nextui-org/react'
+import { User } from '@/types/User'
+import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/react'
 import React from 'react'
 import { columns } from './invitationdata'
 import { RenderCell } from './render-invitationCell'
-import { User } from '@/types/User'
 
 type TableWrapperProps = {
   invitedUsers: User[]

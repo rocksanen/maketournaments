@@ -1,7 +1,7 @@
-import { Tooltip, Chip } from '@nextui-org/react'
+import { Tournament } from '@/types/Tournament'
+import { Chip } from '@nextui-org/react'
 import React from 'react'
 import { EyeIcon } from '../icons/table/eye-icon'
-import { Tournament } from '@/types/Tournament'
 
 interface Props {
   tournament: Tournament

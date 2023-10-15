@@ -1,5 +1,5 @@
+import { Button, Card, CardHeader, Dropdown, DropdownItem, Input } from '@nextui-org/react'
 import React from 'react'
-import { Card, CardHeader, Input, Dropdown, DropdownItem, Button } from '@nextui-org/react'
 
 interface InviteCardProps {
   email: string

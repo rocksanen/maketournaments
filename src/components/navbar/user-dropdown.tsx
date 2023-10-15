@@ -4,13 +4,11 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownTrigger,
-  Navbar,
   NavbarItem,
 } from '@nextui-org/react'
-import React from 'react'
-import { DarkModeSwitch } from './darkmodeswitch'
-import { useSession, signOut } from 'next-auth/react'
+import { signOut, useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
+import { DarkModeSwitch } from './darkmodeswitch'
 
 export const UserDropdown = () => {
   const { data: session } = useSession()
