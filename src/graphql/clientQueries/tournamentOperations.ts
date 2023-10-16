@@ -107,6 +107,23 @@ const UPDATE_TOURNAMENT_ADD_PLAYER = gql`
     }
   }
 `
+const CREATE_TOURNAMENT = gql`
+  mutation CreateTournament($input: CreateTournamentInput!) {
+    createTournament(input: $input) {
+      name
+      ruleset {
+        id
+        name
+      }
+      date
+      admin {
+        id
+      }
+      invitationOnly
+      maxPlayers
+    }
+  }
+`
 
 export {
   SEND_INVITATION,
@@ -117,4 +134,5 @@ export {
   SAVE_TOURNEY,
   DELETE_TOURNEY,
   UPDATE_TOURNAMENT_ADD_PLAYER,
+  CREATE_TOURNAMENT,
 }
