@@ -7,39 +7,13 @@ import { Button, Card, CardBody, Checkbox, Input, Link } from '@nextui-org/react
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useState } from 'react'
-
-const newTourneyMutation = gql`
-  mutation CreateTournament($input: CreateTournamentInput!) {
-    createTournament(input: $input) {
-      name
-      ruleset {
-        id
-        name
-      }
-      date
-      admin {
-        id
-      }
-      invitationOnly
-      maxPlayers
-    }
-  }
-`
-const customRule: RulesetOutput = {
-  id: 'custom',
-  name: 'Create a new ruleset',
-  rounds: 3,
-  winnerpoints: 3,
-  loserpoints: 0,
-  drawpoints: 1,
-  nightmarepoints: 0,
-  nightmarePointsOn: false,
-}
+import { CREATE_TOURNAMENT } from '@/graphql/clientQueries/tournamentOperations'
+import { customRule } from '@/utils/customRules'
 
 function TourneysNew() {
   const [tourneyRuleset, setTourneyRuleset] = useState<RulesetOutput>(customRule)
 
-  const [mutateFunction, { data, loading, error }] = useMutation(newTourneyMutation)
+  const [mutateFunction, { data, loading, error }] = useMutation(CREATE_TOURNAMENT)
   const { data: session } = useSession()
   const router = useRouter()
 
@@ -121,12 +95,12 @@ function TourneysNew() {
               <Checkbox className="hidden" defaultSelected>
                 Invitation Only
               </Checkbox>
+              <RulesView tourneyRuleset={tourneyRuleset} setTourneyRuleset={setTourneyRuleset} />
               <Button color="primary" type="submit">
                 Create Tournament
               </Button>
             </form>
             <div className="mb-10"></div>
-            <RulesView tourneyRuleset={tourneyRuleset} setTourneyRuleset={setTourneyRuleset} />
           </CardBody>
         </Card>
       </div>

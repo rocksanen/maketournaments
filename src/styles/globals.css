@@ -75,3 +75,16 @@ body {
   align-items: center;
   margin-top: 1.6%;
 }
+
+.scrollable-dropdown {
+  max-height: 300px; /* Set to the maximum height you want for the dropdown */
+  overflow-y: auto; /* Allow vertical scrolling */
+}
+
+.dropdown-below {
+  margin-top: 5px; /* Or adjust as needed to give a bit of space below the button */
+}
+
+.flex-grow {
+  flex-grow: 1;
+}

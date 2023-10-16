@@ -1,6 +1,8 @@
 import { User } from '@/types/User'
 import { Button, Card, Spinner } from '@nextui-org/react'
 import React, { useEffect, useState } from 'react'
+import formatTime from '@/utils/formatTime'
+import { useGameTimer } from '@/components/hooks/useTimer'
 
 interface matchPlayersProps {
   matchPlayers: User[]
@@ -8,42 +10,9 @@ interface matchPlayersProps {
 
 const MatchPlayers: React.FC<matchPlayersProps> = ({ matchPlayers }) => {
   const [gameStarted, setGameStarted] = useState(false)
-  const [timeElapsed, setTimeElapsed] = useState(0)
-  const [timerInterval, setTimerInterval] = useState<number | null>(null)
-
-  useEffect(() => {
-    if (gameStarted && timerInterval === null) {
-      const intervalId = setInterval(() => {
-        setTimeElapsed((prevTime) => prevTime + 1)
-      }, 1000)
-      setTimerInterval(intervalId as unknown as number)
-    } else if (!gameStarted && timerInterval !== null) {
-      clearInterval(timerInterval)
-      setTimerInterval(null)
-    }
-
-    return () => {
-      if (timerInterval !== null) {
-        clearInterval(timerInterval)
-      }
-    }
-  }, [gameStarted, timerInterval])
-
-  const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    const remainingSeconds = seconds % 60
-
-    if (hours > 0) {
-      return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(
-        remainingSeconds,
-      ).padStart(2, '0')}`
-    } else if (minutes > 0) {
-      return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`
-    } else {
-      return `${String(remainingSeconds).padStart(2, '0')}`
-    }
-  }
+  const { timeElapsed, setTimeElapsed, timerInterval, setTimerInterval } = useGameTimer({
+    gameStarted,
+  })
 
   const handleStartClick = () => {
     setGameStarted(true)
