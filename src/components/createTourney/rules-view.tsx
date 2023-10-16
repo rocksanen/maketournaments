@@ -24,15 +24,6 @@ function RulesView({
   const [index, setIndex] = useState<number>(0)
   const [showForm, setShowForm] = useState(false)
 
-  const [formValues, setFormValues] = useState({
-    name: rulesets[index].name || '',
-    rounds: 0,
-    winnerpoints: 0,
-    loserpoints: 0,
-    drawpoints: 0,
-    nightmarepoints: 0,
-  })
-
   useQuery(GET_RULES, {
     variables: { limit: 50, offset: 0 },
     onCompleted: (completedData) => {
@@ -42,7 +33,6 @@ function RulesView({
 
   const [mutateFunction] = useMutation(SAVE_RULESET)
   const [deleteRulesetMutation] = useMutation(DELETE_RULESET)
-
   const setRuleFormFields = (key: string | number) => {
     const i = rulesets.findIndex((ruleset) => ruleset.id === key)
     if (i === -1) {
@@ -51,14 +41,6 @@ function RulesView({
     }
     setIndex(i)
     setTourneyRuleset(rulesets[i])
-    setFormValues({
-      name: rulesets[i].name,
-      rounds: rulesets[i].rounds,
-      winnerpoints: rulesets[i].winnerpoints,
-      loserpoints: rulesets[i].loserpoints,
-      drawpoints: rulesets[i].drawpoints,
-      nightmarepoints: rulesets[i].nightmarepoints,
-    })
     setShowForm(true) // Show the form once a ruleset is selected
   }
 
@@ -127,91 +109,75 @@ function RulesView({
         </DropdownMenu>
       </Dropdown>
 
-      {showForm && (
-        <form onSubmit={saveRuleset} className="space-y-4">
-          <h2>{index === 0 ? 'Custom ruleset' : 'Selected ruleset'}</h2>
-          {/* The form fields now use values from formValues */}
-          <Input
-            label="Ruleset name"
-            type="string"
-            value={formValues.name}
-            onChange={(e) => setFormValues((prev) => ({ ...prev, name: e.target.value }))}
-          />
-          <Input
-            label="Rounds"
-            type="number"
-            value={`${formValues.rounds}`}
-            onChange={(e) =>
-              setFormValues((prev) => ({ ...prev, rounds: parseInt(e.target.value) }))
-            }
-          />
-          <Input
-            label="Winner Points"
-            type="number"
-            value={`${formValues.winnerpoints}`}
-            onChange={(e) =>
-              setFormValues((prev) => ({ ...prev, winnerpoints: parseInt(e.target.value) }))
-            }
-          />
-          <Input
-            label="Loser Points"
-            type="number"
-            value={`${formValues.loserpoints}`}
-            onChange={(e) =>
-              setFormValues((prev) => ({ ...prev, loserpoints: parseInt(e.target.value) }))
-            }
-          />
-          <Input
-            label="Draw Points"
-            type="number"
-            value={`${formValues.drawpoints}`}
-            onChange={(e) =>
-              setFormValues((prev) => ({ ...prev, drawpoints: parseInt(e.target.value) }))
-            }
-          />
-          <Input
-            label="Nightmare Points"
-            type="number"
-            disabled={!rulesets[index].nightmarePointsOn}
-            value={`${formValues.nightmarepoints}`}
-            onChange={(e) =>
-              setFormValues((prev) => ({ ...prev, nightmarepoints: parseInt(e.target.value) }))
-            }
-          />
-          <Checkbox
-            defaultSelected={rulesets[index].nightmarePointsOn}
-            onValueChange={() =>
-              setRulesets([
-                ...rulesets.slice(0, index),
-                { ...rulesets[index], nightmarePointsOn: !rulesets[index].nightmarePointsOn },
-                ...rulesets.slice(index + 1),
-              ])
-            }
-          >
-            Nightmare points on {rulesets[index].nightmarePointsOn.toString()}
-          </Checkbox>
-          <Input
-            label="Nightmare Points"
-            type="number"
-            disabled={!rulesets[index].nightmarePointsOn}
-            value={formValues.nightmarepoints}
-            onChange={(e) =>
-              setFormValues((prev) => ({ ...prev, nightmarepoints: parseInt(e.target.value) }))
-            }
-          />
-          {index === 0 ? (
+      {showForm &&
+        (index == 0 ? (
+          <form onSubmit={saveRuleset} className="space-y-4">
+            <h2>Custom ruleset</h2>
+            <Input label="Ruleset name" type="string" defaultValue={rulesets[0].name.toString()} />
+            <Input label="Rounds" type="number" defaultValue={rulesets[index].rounds.toString()} />
+            <Input
+              label="Winner Points"
+              type="number"
+              defaultValue={rulesets[0].winnerpoints.toString()}
+            />
+            <Input
+              label="Loser Points"
+              type="number"
+              defaultValue={rulesets[0].loserpoints.toString()}
+            />
+            <Input
+              label="Draw Points"
+              type="number"
+              defaultValue={rulesets[0].drawpoints.toString()}
+            />
+            <Checkbox
+              defaultSelected
+              onValueChange={() =>
+                setRulesets([
+                  { ...rulesets[0], nightmarePointsOn: !rulesets[0].nightmarePointsOn },
+                  ...rulesets.slice(1),
+                ])
+              }
+            >
+              Nighmare poins on {rulesets[0].nightmarePointsOn.toString()}
+            </Checkbox>
+            <Input
+              label="Nightmare Points"
+              type="number"
+              disabled={!rulesets[0].nightmarePointsOn}
+              defaultValue={rulesets[0].nightmarepoints.toString()}
+            />
             <Button type="submit" color="primary">
               Save ruleset
             </Button>
-          ) : (
-            <div className="max-w-md space-y-4">
-              <Button onClick={deleteSelectedRuleset} color="danger">
-                Delete ruleset
-              </Button>
+          </form>
+        ) : (
+          <div className="max-w-md">
+            <div className="space-y-1">
+              <h4 className="text-medium font-medium">{rulesets[index].name}</h4>
             </div>
-          )}
-        </form>
-      )}
+            <Button onClick={deleteSelectedRuleset} color="danger">
+              Delete ruleset
+            </Button>
+
+            <Divider className="my-4" />
+            <div className="h-5 items-center space-y-4 text-small">
+              <div>Points gain for win: {rulesets[index].winnerpoints.toString()}</div>
+              <Divider orientation="horizontal" />
+              <div>Points loss for defeat: {rulesets[index].loserpoints.toString()}</div>
+              <Divider orientation="horizontal" />
+              <div>Points change from a draw: {rulesets[index].drawpoints.toString()}</div>
+              <Divider orientation="horizontal" />
+              <div>
+                {rulesets[index].nightmarePointsOn
+                  ? 'Nightmare mode enabled'
+                  : 'nightmare mode disabled'}
+              </div>
+              <Divider orientation="horizontal" />
+              <div>Nightmare mode points: {rulesets[index].nightmarepoints.toString()}</div>
+            </div>
+          </div>
+        ))}
     </div>
   )
 }
