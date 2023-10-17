@@ -95,13 +95,13 @@ function TourneysNew() {
               <Checkbox className="hidden" defaultSelected>
                 Invitation Only
               </Checkbox>
-              <RulesView tourneyRuleset={tourneyRuleset} setTourneyRuleset={setTourneyRuleset} />
-              <Button color="primary" type="submit">
-                Create Tournament
-              </Button>
             </form>
+            <RulesView tourneyRuleset={tourneyRuleset} setTourneyRuleset={setTourneyRuleset} />
             <div className="mb-10"></div>
           </CardBody>
+          <Button color="primary" type="submit">
+            Create Tournament
+          </Button>
         </Card>
       </div>
     </div>

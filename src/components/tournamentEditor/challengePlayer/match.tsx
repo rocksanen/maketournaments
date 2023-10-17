@@ -10,7 +10,7 @@ interface matchPlayersProps {
 
 const MatchPlayers: React.FC<matchPlayersProps> = ({ matchPlayers }) => {
   const [gameStarted, setGameStarted] = useState(false)
-  const { timeElapsed, setTimeElapsed, timerInterval, setTimerInterval } = useGameTimer({
+  const { timeElapsed } = useGameTimer({
     gameStarted,
   })
 
