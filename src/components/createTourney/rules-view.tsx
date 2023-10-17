@@ -153,13 +153,12 @@ function RulesView({
           </form>
         ) : (
           <div className="max-w-md">
-            <div className="space-y-1">
+            <div className="space-y-4">
+              <Button onClick={deleteSelectedRuleset} color="primary">
+                Delete ruleset
+              </Button>
               <h4 className="text-medium font-medium">{rulesets[index].name}</h4>
             </div>
-            <Button onClick={deleteSelectedRuleset} color="danger">
-              Delete ruleset
-            </Button>
-
             <Divider className="my-4" />
             <div className="h-5 items-center space-y-4 text-small">
               <div>Points gain for win: {rulesets[index].winnerpoints.toString()}</div>
