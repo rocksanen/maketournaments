@@ -1,5 +1,6 @@
 import { Types } from 'mongoose'
 import { Document } from 'mongoose'
+import { MatchFormat } from '@/types/MatchInterface'
 
 interface Tournament extends Document {
   name: string
@@ -8,7 +9,7 @@ interface Tournament extends Document {
   date: Date
   players: Types.ObjectId[]
   admin: Types.ObjectId[]
-  matches: Types.ObjectId[]
+  matches: MatchFormat[]
   invitationOnly: boolean
   maxPlayers: number
 }
@@ -20,7 +21,7 @@ interface TournamentInput {
   date: Date
   players: number[]
   admin: Types.ObjectId[]
-  matches: number[]
+  matches: MatchFormat[]
 }
 
 export type { Tournament, TournamentInput }

@@ -39,6 +39,18 @@ interface GetTournamentsByIdsArgs {
   ids: string[]
 }
 
+interface UpdateTournamentMatchesArgs {
+  tournamentId: string
+  match: {
+    players: string[]
+    winner?: string
+    tie?: boolean
+    startTime: Date
+    endTime: Date
+    totalTime: number
+  }
+}
+
 const tournamentResolvers = {
   Query: {
     tournament: async (_: any, { id }: { id: string }) => {
@@ -156,7 +168,7 @@ const tournamentResolvers = {
 
         // Use the Model to fetch and populate the document
         const result = await Tournament.findById(savedTournament._id).populate(
-          'ruleset admin players matches',
+          'ruleset admin players',
         )
 
         if (!result) {
@@ -245,6 +257,50 @@ const tournamentResolvers = {
       } catch (error) {
         console.error('Failed to add player to tournament:', error)
         throw new Error('Failed to add player to tournament')
+      }
+    },
+    updateTournamentMatches: async (
+      _: any,
+      args: UpdateTournamentMatchesArgs,
+      context: Context,
+    ) => {
+      const session = await mockSessionResolver(context)
+      if (!session) {
+        return {
+          success: false,
+          message: 'Please log in to access mutations',
+        }
+      }
+
+      const { tournamentId, match } = args
+
+      try {
+        const existingTournament = await Tournament.findById(tournamentId)
+
+        if (!existingTournament) {
+          throw new Error('Tournament not found')
+        }
+
+        // Ensure matches is initialized to an array if it's null or undefined
+        if (!existingTournament.matches) {
+          existingTournament.matches = []
+        }
+
+        // Push the new match to the matches array
+        existingTournament.matches.push(match)
+        await existingTournament.save()
+
+        // Fetch the updated tournament document to ensure you're returning the latest version
+        const updatedTournament = await Tournament.findById(tournamentId).populate(
+          'ruleset admin players matches',
+        )
+        const resultObj = updatedTournament.toJSON()
+        const out = renameIdField(resultObj)
+        console.log('Added match to tournament:', out)
+        return out
+      } catch (error) {
+        console.error('Failed to add match to tournament:', error)
+        throw new Error('Failed to add match to tournament')
       }
     },
 

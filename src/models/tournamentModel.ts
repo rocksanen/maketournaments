@@ -1,4 +1,5 @@
 import { Tournament } from '@/types/Tournament'
+import matchFormat from '@/models/matchFormat'
 import mongoose from 'mongoose'
 
 const tournamentSchema = new mongoose.Schema<Tournament>({
@@ -30,12 +31,7 @@ const tournamentSchema = new mongoose.Schema<Tournament>({
       required: true,
     },
   ],
-  matches: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Match',
-    },
-  ],
+  matches: [matchFormat],
   invitationOnly: {
     type: Boolean,
     required: true,
@@ -43,6 +39,9 @@ const tournamentSchema = new mongoose.Schema<Tournament>({
   maxPlayers: {
     type: Number,
     required: true,
+  },
+  description: {
+    type: String,
   },
 })
 

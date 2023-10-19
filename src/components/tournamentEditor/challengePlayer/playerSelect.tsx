@@ -34,13 +34,6 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tourname
     }
   }, [tournamentId])
 
-  useEffect(() => {
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
-      localStorage.setItem(localStorageKey, JSON.stringify(matchedPlayers))
-    }
-  }, [matchedPlayers, tournamentId])
-
   const leftAvailablePlayers = acceptedPlayers.filter(
     (player) => !matchedPlayerIds.includes(player.id) && player.id !== selectedRightId,
   )

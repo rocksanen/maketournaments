@@ -13,6 +13,7 @@ export const CREATE_MATCH = gql`
       tie
       startTime
       endTime
+      totalTime
     }
   }
 `
