@@ -7,14 +7,23 @@ import RadioGroupComponent from './RadioGroupComponent'
 
 interface matchPlayersProps {
   matchPlayers: User[]
+  onEnd: (winner: 'player-1' | 'player-2' | 'tie') => void // Add this line
 }
 
-const MatchPlayers: React.FC<matchPlayersProps> = ({ matchPlayers }) => {
+const MatchPlayers: React.FC<matchPlayersProps> = ({ matchPlayers, onEnd }) => {
   const [gameStarted, setGameStarted] = useState(false)
   const { timeElapsed } = useGameTimer({
     gameStarted,
   })
   const [isRadioGroupVisible, setRadioGroupVisible] = useState(false)
+
+  const handleEndMatch = (winner: 'player-1' | 'player-2' | 'tie') => {
+    // Logic to end the match
+    // For now, it just closes the RadioGroupComponent. Add your own logic here if needed.
+    setGameStarted(false)
+    handleCloseRadioGroup()
+    onEnd(winner)
+  }
 
   const handleStartClick = () => {
     setGameStarted(true)
@@ -70,6 +79,7 @@ const MatchPlayers: React.FC<matchPlayersProps> = ({ matchPlayers }) => {
             matchPlayers={matchPlayers}
             isVisible={isRadioGroupVisible}
             onClose={handleCloseRadioGroup}
+            onConfirm={handleEndMatch} // Passing the new handler to the RadioGroupComponent
           />
         </div>
       </div>

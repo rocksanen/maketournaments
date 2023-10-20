@@ -55,6 +55,12 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tourname
     }
   }
 
+  const handleMatchEnd = (playersPair: User[], winner: 'player-1' | 'player-2' | 'tie') => {
+    // Logic to remove the players from the matchedPlayers list and stop the timer
+    // Here, we'll just filter out the given playersPair from the matchedPlayers list
+    setMatchedPlayers((prev) => prev.filter((pair) => pair !== playersPair))
+  }
+
   return (
     <>
       <div className="flex w-full flex-wrap md:flex-nowrap gap-4 ">
@@ -102,7 +108,11 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tourname
       <div className="blue-line"></div>
       <div className="flex flex-col w-full gap-4">
         {matchedPlayers.map((playersPair, idx) => (
-          <MatchPlayers key={idx} matchPlayers={playersPair} />
+          <MatchPlayers
+            key={idx}
+            matchPlayers={playersPair}
+            onEnd={(winner) => handleMatchEnd(playersPair, winner)} // Passing a handler for when a match ends
+          />
         ))}
       </div>
     </>

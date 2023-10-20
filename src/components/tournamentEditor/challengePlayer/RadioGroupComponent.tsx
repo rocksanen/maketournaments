@@ -6,14 +6,24 @@ interface RadioGroupComponentProps {
   matchPlayers: User[]
   isVisible: boolean
   onClose: () => void
+  onConfirm: (winner: 'player-1' | 'player-2' | 'tie') => void // Added prop for handling confirm.
 }
 
 const RadioGroupComponent: React.FC<RadioGroupComponentProps> = ({
   matchPlayers,
   isVisible,
   onClose,
+  onConfirm,
 }) => {
   const [selectedValue, setSelectedValue] = useState<string | null>(null)
+
+  const handleConfirmClick = () => {
+    // New handler for confirming a result
+    if (selectedValue) {
+      onConfirm(selectedValue as 'player-1' | 'player-2' | 'tie')
+      handleClose()
+    }
+  }
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSelectedValue(event.target.value)
@@ -46,7 +56,7 @@ const RadioGroupComponent: React.FC<RadioGroupComponentProps> = ({
           <Tooltip content={!selectedValue ? 'Please choose a result!' : ''}>
             <button
               className="flex-button transparent-borderRight p-1 rounded"
-              onClick={handleClose}
+              onClick={handleConfirmClick} // Updated to use handleConfirmClick
               disabled={!selectedValue}
             >
               Confirm

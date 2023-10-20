@@ -17,6 +17,7 @@ import { Ruleset } from '@/types/Ruleset'
 import InvitationCard from '@/components/tournamentEditor/invitePlayers/InvitationCard'
 import PlayerTable from '@/components/tournamentEditor/scoreTable/PlayerTable'
 import SelectWrapper from '@/components/tournamentEditor/challengePlayer/playerSelect'
+import { awardPointsBasedOnMatchOutcome } from '@/utils/rulesFunctions'
 
 const invited_placeholder = {
   name: 'JORMA',
