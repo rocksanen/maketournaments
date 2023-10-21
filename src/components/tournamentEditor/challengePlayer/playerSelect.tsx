@@ -1,14 +1,25 @@
 import MatchPlayers from '@/components/tournamentEditor/challengePlayer/match'
 import { User } from '@/types/User'
 import { Button, Select, SelectItem, Tooltip } from '@nextui-org/react'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 interface SelectWrapperProps {
   acceptedPlayers: User[]
   tournamentId: string
+  setResult: React.Dispatch<
+    React.SetStateAction<{
+      player1_id: string
+      player2_id: string
+      resultType: 'player-1' | 'player-2' | 'tie'
+    } | null>
+  >
 }
 
-const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tournamentId }) => {
+const SelectWrapper: React.FC<SelectWrapperProps> = ({
+  acceptedPlayers,
+  tournamentId,
+  setResult,
+}) => {
   const [selectedLeftId, setSelectedLeftId] = useState<string | undefined>(undefined)
   const [selectedRightId, setSelectedRightId] = useState<string | undefined>(undefined)
   const [matchedPlayers, setMatchedPlayers] = useState<User[][]>(() => {
@@ -20,13 +31,10 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tourname
       return []
     }
   })
-  const matchedPlayerIds = matchedPlayers.flat().map((player) => player.id)
-
-  useEffect(() => {}, [selectedLeftId, selectedRightId])
 
   useEffect(() => {
+    const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
     if (typeof window !== 'undefined' && window.localStorage) {
-      const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
       const storedMatchedPlayers = localStorage.getItem(localStorageKey)
       if (storedMatchedPlayers) {
         setMatchedPlayers(JSON.parse(storedMatchedPlayers))
@@ -34,12 +42,25 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tourname
     }
   }, [tournamentId])
 
-  const leftAvailablePlayers = acceptedPlayers.filter(
-    (player) => !matchedPlayerIds.includes(player.id) && player.id !== selectedRightId,
+  const matchedPlayerIds = useMemo(
+    () => matchedPlayers.flat().map((player) => player.id),
+    [matchedPlayers],
   )
 
-  const rightAvailablePlayers = acceptedPlayers.filter(
-    (player) => !matchedPlayerIds.includes(player.id) && player.id !== selectedLeftId,
+  const leftAvailablePlayers = useMemo(
+    () =>
+      acceptedPlayers.filter(
+        (player) => !matchedPlayerIds.includes(player.id) && player.id !== selectedRightId,
+      ),
+    [acceptedPlayers, matchedPlayerIds, selectedRightId],
+  )
+
+  const rightAvailablePlayers = useMemo(
+    () =>
+      acceptedPlayers.filter(
+        (player) => !matchedPlayerIds.includes(player.id) && player.id !== selectedLeftId,
+      ),
+    [acceptedPlayers, matchedPlayerIds, selectedLeftId],
   )
 
   const arePlayersNotSelected = !selectedLeftId || !selectedRightId
@@ -49,16 +70,37 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tourname
     const rightPlayerMatch = acceptedPlayers.find((player) => player.id === selectedRightId)
 
     if (leftPlayerMatch && rightPlayerMatch) {
-      setMatchedPlayers((prev) => [...prev, [leftPlayerMatch, rightPlayerMatch]])
+      setMatchedPlayers((prev) => {
+        const updated = [...prev, [leftPlayerMatch, rightPlayerMatch]]
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
+          localStorage.setItem(localStorageKey, JSON.stringify(updated))
+        }
+        return updated
+      })
       setSelectedLeftId(undefined)
       setSelectedRightId(undefined)
     }
   }
 
-  const handleMatchEnd = (playersPair: User[], winner: 'player-1' | 'player-2' | 'tie') => {
-    // Logic to remove the players from the matchedPlayers list and stop the timer
-    // Here, we'll just filter out the given playersPair from the matchedPlayers list
-    setMatchedPlayers((prev) => prev.filter((pair) => pair !== playersPair))
+  const handleMatchEnd = (result: {
+    player1_id: string
+    player2_id: string
+    resultType: 'player-1' | 'player-2' | 'tie'
+  }) => {
+    const { player1_id, player2_id, resultType } = result
+
+    setMatchedPlayers((prev) => {
+      const updated = prev.filter((pair) => pair[0].id !== player1_id && pair[1].id !== player2_id)
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const localStorageKey = `tournament_${tournamentId}_matchedPlayers`
+        localStorage.setItem(localStorageKey, JSON.stringify(updated))
+      }
+      return updated
+    })
+
+    console.log(result, 'result in playerSelect')
+    setResult(result)
   }
 
   return (
@@ -111,7 +153,7 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({ acceptedPlayers, tourname
           <MatchPlayers
             key={idx}
             matchPlayers={playersPair}
-            onEnd={(winner) => handleMatchEnd(playersPair, winner)} // Passing a handler for when a match ends
+            onEnd={handleMatchEnd} // Passing a handler for when a match ends
           />
         ))}
       </div>

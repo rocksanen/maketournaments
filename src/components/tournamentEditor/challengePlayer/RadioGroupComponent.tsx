@@ -6,7 +6,11 @@ interface RadioGroupComponentProps {
   matchPlayers: User[]
   isVisible: boolean
   onClose: () => void
-  onConfirm: (winner: 'player-1' | 'player-2' | 'tie') => void // Added prop for handling confirm.
+  onConfirm: (result: {
+    player1_id: string | null
+    player2_id: string | null
+    resultType: 'player-1' | 'player-2' | 'tie'
+  }) => void
 }
 
 const RadioGroupComponent: React.FC<RadioGroupComponentProps> = ({
@@ -15,18 +19,26 @@ const RadioGroupComponent: React.FC<RadioGroupComponentProps> = ({
   onClose,
   onConfirm,
 }) => {
-  const [selectedValue, setSelectedValue] = useState<string | null>(null)
+  const [selectedValue, setSelectedValue] = useState<'player-1' | 'player-2' | 'tie' | null>(null)
 
   const handleConfirmClick = () => {
-    // New handler for confirming a result
     if (selectedValue) {
-      onConfirm(selectedValue as 'player-1' | 'player-2' | 'tie')
+      const player1_id = matchPlayers[0].id
+      const player2_id = matchPlayers[1].id
+      console.log(selectedValue, 'selectedValue in RadioGroupComponent')
+
+      onConfirm({
+        player1_id,
+        player2_id,
+        resultType: selectedValue,
+      })
+
       handleClose()
     }
   }
 
   const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedValue(event.target.value)
+    setSelectedValue(event.target.value as 'player-1' | 'player-2' | 'tie' | null)
   }
 
   const handleClose = () => {
