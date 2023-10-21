@@ -8,8 +8,8 @@ interface SelectWrapperProps {
   tournamentId: string
   setResult: React.Dispatch<
     React.SetStateAction<{
-      player1_id: string
-      player2_id: string
+      player1_id: string | null
+      player2_id: string | null
       resultType: 'player-1' | 'player-2' | 'tie'
     } | null>
   >

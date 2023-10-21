@@ -8,8 +8,8 @@ import RadioGroupComponent from './RadioGroupComponent'
 interface matchPlayersProps {
   matchPlayers: User[]
   onEnd: (result: {
-    player1_id: string
-    player2_id: string
+    player1_id: string | null
+    player2_id: string | null
     resultType: 'player-1' | 'player-2' | 'tie'
   }) => void // Update this line
 }
@@ -22,8 +22,8 @@ const MatchPlayers: React.FC<matchPlayersProps> = ({ matchPlayers, onEnd }) => {
   const [isRadioGroupVisible, setRadioGroupVisible] = useState(false)
 
   const handleEndMatch = (result: {
-    player1_id: string
-    player2_id: string
+    player1_id: string | null
+    player2_id: string | null
     resultType: 'player-1' | 'player-2' | 'tie'
   }) => {
     setGameStarted(false)

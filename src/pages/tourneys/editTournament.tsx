@@ -51,8 +51,8 @@ export default function EditTournament() {
   const [tournamentName, setTournamentName] = useState<string | null>(null)
   const [shouldFetchUser, setShouldFetchUser] = useState(false)
   const [result, setResult] = useState<{
-    player1_id: string
-    player2_id: string
+    player1_id: string | null
+    player2_id: string | null
     resultType: 'player-1' | 'player-2' | 'tie'
   } | null>(null)
 
