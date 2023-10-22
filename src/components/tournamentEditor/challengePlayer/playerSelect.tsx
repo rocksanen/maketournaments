@@ -84,8 +84,8 @@ const SelectWrapper: React.FC<SelectWrapperProps> = ({
   }
 
   const handleMatchEnd = (result: {
-    player1_id: string
-    player2_id: string
+    player1_id: string | null
+    player2_id: string | null
     resultType: 'player-1' | 'player-2' | 'tie'
   }) => {
     const { player1_id, player2_id, resultType } = result
