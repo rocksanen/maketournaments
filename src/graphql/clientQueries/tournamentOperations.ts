@@ -124,6 +124,25 @@ const CREATE_TOURNAMENT = gql`
     }
   }
 `
+const UPDATE_TOURNAMENT_MATCHES = gql`
+  mutation UpdateTournamentMatches($tournamentId: ID!, $match: MatchInput!) {
+    updateTournamentMatches(tournamentId: $tournamentId, match: $match) {
+      id
+      matches {
+        players {
+          id
+        }
+        winner {
+          id
+        }
+        tie
+        startTime
+        endTime
+        totalTime
+      }
+    }
+  }
+`
 
 export {
   SEND_INVITATION,
@@ -135,4 +154,5 @@ export {
   DELETE_TOURNEY,
   UPDATE_TOURNAMENT_ADD_PLAYER,
   CREATE_TOURNAMENT,
+  UPDATE_TOURNAMENT_MATCHES,
 }

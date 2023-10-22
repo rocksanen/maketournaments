@@ -17,8 +17,10 @@ import { Ruleset } from '@/types/Ruleset'
 import InvitationCard from '@/components/tournamentEditor/invitePlayers/InvitationCard'
 import PlayerTable from '@/components/tournamentEditor/scoreTable/PlayerTable'
 import SelectWrapper from '@/components/tournamentEditor/challengePlayer/playerSelect'
+import { awardPointsBasedOnMatchOutcome } from '@/utils/rulesFunctions'
 
 const invited_placeholder = {
+  id: 'placeholder',
   name: 'JORMA',
   wins: 0,
   tie: 0,
@@ -48,6 +50,11 @@ export default function EditTournament() {
   const combinedPlayers = [...acceptedPlayers, ...placeholders]
   const [tournamentName, setTournamentName] = useState<string | null>(null)
   const [shouldFetchUser, setShouldFetchUser] = useState(false)
+  const [result, setResult] = useState<{
+    player1_id: string | null
+    player2_id: string | null
+    resultType: 'player-1' | 'player-2' | 'tie'
+  } | null>(null)
 
   const {
     data,
@@ -112,6 +119,11 @@ export default function EditTournament() {
 
   if (rulesetError) {
     console.error('Error fetching ruleset by ID:', rulesetError)
+  }
+
+  if (rulesetData && rulesetData.ruleset) {
+    awardPointsBasedOnMatchOutcome(rulesetData.ruleset) // Here you should pass the actual ruleset object.
+    console.log(rulesetData, 'rulesetData in editTournament')
   }
 
   useEffect(() => {
@@ -230,7 +242,7 @@ export default function EditTournament() {
       <header className="flex flex-col items-center justify-center w-full h-1/6">
         <h1 className="text-4xl font-bold text-white">{tournamentName ? tournamentName : ''}</h1>
       </header>
-      <PlayerTable combinedPlayers={combinedPlayers} />
+      <PlayerTable combinedPlayers={combinedPlayers} result={result} />
       <div className="export-csv">
         <Button color="primary" startContent={<ExportIcon />}>
           Export to CSV
@@ -243,7 +255,11 @@ export default function EditTournament() {
         </>
       )}
       {acceptedPlayers.length >= maxPlayers ? (
-        <SelectWrapper acceptedPlayers={acceptedPlayers} tournamentId={tournamentId} />
+        <SelectWrapper
+          acceptedPlayers={acceptedPlayers}
+          tournamentId={tournamentId}
+          setResult={setResult}
+        />
       ) : null}
     </div>
   )

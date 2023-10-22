@@ -21,6 +21,15 @@ input CreateTournamentInput {
     invitationOnly: Boolean
 }
 
+input MatchInput {
+    players: [ID!]!
+    winner: ID
+    tie: Boolean!
+    startTime: String!
+    endTime: String!
+    totalTime: Int!
+}
+
 input UpdateTournamentInput {
     id: ID!
     name: String
@@ -28,7 +37,7 @@ input UpdateTournamentInput {
     date: String
     players: [ID!]
     admin: [ID!]
-    matches: [ID!]
+    matches: [MatchInput!]
 }
 
 type Query {
@@ -47,4 +56,5 @@ type Mutation {
     updateTournament(input: UpdateTournamentInput!): Tournament
     deleteTournament(id: ID!): Boolean
     updateTournamentPlayers(tournamentId: ID!, playerId: ID!): Tournament
+    updateTournamentMatches(tournamentId: ID!, match: MatchInput!): Tournament
 }

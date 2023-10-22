@@ -65,6 +65,10 @@ body {
   border: 1px solid rgba(238, 84, 138, 0.554); /* Transparent black border */
 }
 
+.transparent-borderResult {
+  border: 1px solid rgba(238, 84, 138, 0.554); /* Transparent black border */
+}
+
 .transparent-borderStart {
   border: 1px solid rgba(130, 238, 84, 0.554); /* Transparent black border */
 }
@@ -87,4 +91,36 @@ body {
 
 .flex-grow {
   flex-grow: 1;
+}
+
+.radio-group-scaled {
+  transform: scale(2);
+  transform-origin: center;
+}
+
+.fixed-size-button {
+  width: 100px; /* Set your desired width */
+  height: 40px; /* Set your desired height */
+  display: inline-block; /* Ensures the button respects the width and height */
+  text-align: center; /* Centers the text within the button */
+  /* Add any other desired styles */
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between; /* Adds space between the buttons */
+  gap: 10px; /* Provides space between the buttons, can adjust as needed */
+}
+
+.flex-button {
+  flex: 1; /* Makes each button take up equal width */
+  text-align: center; 
+  min-width: 80px; /* Minimum width you desire for the buttons */
+  margin-top: 20px
+}
+
+.flex-button:hover {
+  background-color: #333;  /* Darker background on hover */
+  color: #fff;             /* White text color on hover */
+  cursor: pointer;         /* Cursor changes to hand icon on hover */
 }

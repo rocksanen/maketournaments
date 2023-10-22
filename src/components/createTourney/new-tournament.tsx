@@ -6,7 +6,7 @@ import { gql, useMutation } from '@apollo/client'
 import { Button, Card, CardBody, Checkbox, Input, Link } from '@nextui-org/react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CREATE_TOURNAMENT } from '@/graphql/clientQueries/tournamentOperations'
 import { customRule } from '@/utils/customRules'
 
@@ -95,13 +95,14 @@ function TourneysNew() {
               <Checkbox className="hidden" defaultSelected>
                 Invitation Only
               </Checkbox>
+              <RulesView tourneyRuleset={tourneyRuleset} setTourneyRuleset={setTourneyRuleset} />
+              <Button color="primary" type="submit">
+                Create Tournament
+              </Button>
             </form>
-            <RulesView tourneyRuleset={tourneyRuleset} setTourneyRuleset={setTourneyRuleset} />
+
             <div className="mb-10"></div>
           </CardBody>
-          <Button color="primary" type="submit">
-            Create Tournament
-          </Button>
         </Card>
       </div>
     </div>
